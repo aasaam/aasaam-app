@@ -4,32 +4,26 @@ MAINTAINER Muhammad Hussein Fattahizadeh <m@mhf.ir>
 
 # env variable
 ENV DEBIAN_FRONTEND noninteractive
-
-# base dependencies
-RUN apt-get update && apt-get -y upgrade && apt-get install -y --no-install-recommends apt-utils && apt-get clean
-RUN apt-get install -y --no-install-recommends \
-  curl git locales lsb-release apt-transport-https bash-completion ca-certificates \
-  build-essential software-properties-common && apt-get clean
-
-# locale
-RUN localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
 ENV LANG en_US.utf8
 
-# libraries
-RUN cd /tmp && curl -Ls http://packages.couchbase.com/releases/couchbase-release/couchbase-release-1.0-2-amd64.deb > couchbase-release-1.0-2-amd64.deb \
-  && dpkg -i couchbase-release-1.0-2-amd64.deb && apt-get clean
-
-# repositories
-ADD conf/repo.list /etc/apt/sources.list.d/repo.list
-RUN curl -sL https://nginx.org/keys/nginx_signing.key | apt-key add - \
+# base dependencies
+RUN apt-get update && apt-get -y upgrade && apt-get install -y --no-install-recommends apt-utils \
+  && apt-get install -y --no-install-recommends \
+    curl git locales lsb-release apt-transport-https bash-completion ca-certificates \
+    build-essential software-properties-common && \
+  && localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US \
+  && cd /tmp && curl -Ls http://packages.couchbase.com/releases/couchbase-release/couchbase-release-1.0-2-amd64.deb > couchbase-release-1.0-2-amd64.deb \
+  && dpkg -i couchbase-release-1.0-2-amd64.deb \
+  && echo 'deb http://nginx.org/packages/ubuntu/ xenial nginx' > /etc/apt/sources.list.d/repo.list \
+  && echo 'deb-src http://nginx.org/packages/ubuntu/ xenial nginx' >> /etc/apt/sources.list.d/repo.list \
+  && echo 'deb https://dl.yarnpkg.com/debian/ stable main' >> /etc/apt/sources.list.d/repo.list \
+  && curl -sL https://nginx.org/keys/nginx_signing.key | apt-key add - \
   && curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
   && add-apt-repository -y ppa:ondrej/php \
   && add-apt-repository -y ppa:pinepain/libv8-5.9 && add-apt-repository -y ppa:pinepain/libv8-6.3 \
   && curl -sL https://deb.nodesource.com/setup_8.x > /tmp/setup_8.x \
-  && chmod +x /tmp/setup_8.x && /tmp/setup_8.x
-
-# compile nginx
-RUN mkdir -p /tmp/build/nginx && cd /tmp/build/nginx && apt-get -y build-dep nginx && apt-get -y source nginx \
+  && chmod +x /tmp/setup_8.x && /tmp/setup_8.x \
+  && mkdir -p /tmp/build/nginx && cd /tmp/build/nginx && apt-get -y build-dep nginx && apt-get -y source nginx \
   && git clone --depth=1 https://github.com/openresty/headers-more-nginx-module \
   && git clone --depth=1 https://github.com/arut/nginx-rtmp-module \
   && git clone --depth=1 https://github.com/kaltura/nginx-vod-module \
@@ -41,19 +35,16 @@ RUN mkdir -p /tmp/build/nginx && cd /tmp/build/nginx && apt-get -y build-dep ngi
   && dpkg-buildpackage -uc -b && dpkg -i /tmp/build/nginx/nginx_1*.deb  && rm -rf /tmp/build/nginx \
   && mkdir -p /tmp/build/nodejs && cd /tmp/build/nodejs && apt-get -y build-dep nodejs && apt-get -y source nodejs \
   && cd nodejs-* && sed -i 's#./configure --prefix=/usr#./configure --prefix=/usr --with-intl=full-icu --download=all#g' debian/rules \
-  && dpkg-buildpackage -uc -b && dpkg -i /tmp/build/nodejs/nodejs_8*.deb && cd / && npm update -g && rm -rf /tmp/build/nodejs && rm -rf ~/.npm && apt-get clean
-
-# installation
-RUN apt-get install -y --no-install-recommends \
+  && dpkg-buildpackage -uc -b && dpkg -i /tmp/build/nodejs/nodejs_8*.deb && cd / && npm update -g && rm -rf /tmp/build/nodejs \
+  && apt-get install -y --no-install-recommends \
   php7.1-bcmath php7.1-bz2 php7.1-cli php7.1-curl php7.1-dba php7.1-dev php7.1-enchant php7.1-fpm \
   php7.1-gd php7.1-gmp php7.1-intl php7.1-mbstring php7.1-mysql php7.1-opcache php7.1-pgsql \
   php7.1-phpdbg php7.1-soap php7.1-sqlite3 php7.1-tidy php7.1-xml php7.1-xmlrpc php7.1-xsl \
-  php7.1-zip python-pip \
+  php7.1-zip python-pip logrotate \
   libcouchbase-dev libevent-dev libfribidi-bin libgpgme11-dev libmagickwand-dev libmemcached-dev \
   librabbitmq-dev librrd-dev libsodium-dev libssh2-1-dev libuv1-dev libv8-5.9-dev libv8-6.3-dev \
   libyaml-dev libzmq-dev libcurl4-openssl-dev pkg-config \
   librabbitmq-dev libuv1-dev libsodium-dev libgpgme11-dev libgeoip-dev libfann-dev libvarnishapi-dev yarn \
-  && apt-get clean \
   && cd /tmp && curl -sL https://pecl.php.net/get/igbinary > igbinary.tgz && tar -xf igbinary.tgz && cd igbinary-* && phpize && ./configure \
   && make && make install && echo 'extension=igbinary.so' > /etc/php/7.1/mods-available/igbinary.ini && phpenmod igbinary \
   && cd /tmp && curl -sL https://pecl.php.net/get/msgpack > msgpack.tgz && tar -xf msgpack.tgz && cd msgpack-* && phpize && ./configure \
@@ -139,7 +130,8 @@ RUN apt-get install -y --no-install-recommends \
   && cd /tmp/ && git clone --depth=1 https://github.com/kr/beanstalkd && cd beanstalkd && make && make install \
   && pip install --upgrade pip && pip install setuptools && pip install supervisor \
   && curl -Ls https://getcomposer.org/download/1.5.2/composer.phar > /usr/bin/composer && chmod +x /usr/bin/composer && composer selfupdate \
-  && rm -rf /tmp && rm -rf ~/.cache && rm -rf ~/.composer && mkdir /tmp && chmod 777 /tmp
+  && rm -rf ~/.cache && rm -rf ~/.composer && rm -rf ~/.npm \
+  && rm -r /var/lib/apt/lists/* && rm -rf /tmp && mkdir /tmp && chmod 777 /tmp
 
 # env requirement
 ADD conf/.bashrc /root/.bashrc
@@ -148,13 +140,10 @@ ADD conf/entrypoint /usr/bin/entrypoint
 ADD conf/nginx.conf /etc/nginx/nginx.conf
 ADD conf/aasaam.ini /etc/php/7.1/mods-available/aasaam.ini
 ADD conf/www.conf /etc/php/7.1/fpm/pool.d/www.conf
-RUN chmod +x /usr/bin/entrypoint && phpenmod aasaam && apt-get install -y --no-install-recommends logrotate \
-  && rm -rf /etc/logrotate.d/ngin* /etc/logrotate.d/php*
 ADD conf/aasaam.ini /etc/logrotate.conf
 ENV COMPOSER_CACHE_DIR /app/var/cache/composer
 
-# clean up
-RUN apt-get clean && rm -r /var/lib/apt/lists/* && rm -rf /tmp && mkdir /tmp && chmod 777 /tmp
+RUN chmod +x /usr/bin/entrypoint && phpenmod aasaam && rm -rf /etc/logrotate.d/ngin* /etc/logrotate.d/php*
 
 # ports
 EXPOSE 80

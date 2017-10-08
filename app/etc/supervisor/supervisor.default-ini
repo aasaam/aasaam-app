@@ -1,3 +1,4 @@
+; for run rename me to supervisor.ini
 [unix_http_server]
 file = /app/var/run/supervisor.sock
 

@@ -1,45 +1,45 @@
 #!/bin/bash
 
-# php extensions
-phpenmod amqp
-phpenmod apcu
-phpenmod ast
-phpenmod ev
-phpenmod fann
-phpenmod geoip
-phpenmod gnupg
-phpenmod grpc
-phpenmod hprose
-phpenmod hrtime
-phpenmod imagick
-phpenmod libevent
-phpenmod memcached
-phpenmod molten
-phpenmod mongodb
-phpenmod opencensus
-phpenmod phpng_xhprof
-phpenmod raphf
-phpenmod rar
-phpenmod redis
-phpenmod request
-phpenmod rrd
-phpenmod seaslog
-phpenmod sodium
-phpenmod ssh2
-phpenmod swoole
-phpenmod sync
-phpenmod uv
-phpenmod v8
-phpenmod v8js
-phpenmod varnish
-phpenmod xdebug
-phpenmod yac
-phpenmod yaf
-phpenmod yaml
-phpenmod yar
-phpenmod zmq
-phpenmod zzz_couchbase
-phpenmod zzz_ds
+# php extensions enable uncomment them
+# phpenmod amqp
+# phpenmod apcu
+# phpenmod ast
+# phpenmod ev
+# phpenmod fann
+# phpenmod geoip
+# phpenmod gnupg
+# phpenmod grpc
+# phpenmod hprose
+# phpenmod hrtime
+# phpenmod imagick
+# phpenmod libevent
+# phpenmod memcached
+# phpenmod molten
+# phpenmod mongodb
+# phpenmod opencensus
+# phpenmod phpng_xhprof
+# phpenmod raphf
+# phpenmod rar
+# phpenmod redis
+# phpenmod request
+# phpenmod rrd
+# phpenmod seaslog
+# phpenmod sodium
+# phpenmod ssh2
+# phpenmod swoole
+# phpenmod sync
+# phpenmod uv
+# phpenmod v8
+# phpenmod v8js
+# phpenmod varnish
+# phpenmod xdebug
+# phpenmod yac
+# phpenmod yaf
+# phpenmod yaml
+# phpenmod yar
+# phpenmod zmq
+# phpenmod zzz_couchbase
+# phpenmod zzz_ds
 
 if [ -e "/app/etc/supervisor/supervisor.ini" ]; then
   supervisord -c /app/etc/supervisor/supervisor.default.ini
