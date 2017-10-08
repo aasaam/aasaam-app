@@ -1,3 +1,5 @@
+[![Docker Repository on Quay](https://quay.io/repository/aasaam/aasaam-app/status "Docker Repository on Quay")](https://quay.io/repository/aasaam/aasaam-app)
+
 # AASAAM Application Docker
 This repo is the boilerpate for aasaam docker PHP/JavaScript application.
 
