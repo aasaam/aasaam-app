@@ -10,7 +10,7 @@ ENV LANG en_US.utf8
 RUN apt-get update && apt-get -y upgrade && apt-get install -y --no-install-recommends apt-utils \
   && apt-get install -y --no-install-recommends \
     curl git locales lsb-release apt-transport-https bash-completion ca-certificates \
-    build-essential software-properties-common && \
+    build-essential software-properties-common \
   && localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US \
   && cd /tmp && curl -Ls http://packages.couchbase.com/releases/couchbase-release/couchbase-release-1.0-2-amd64.deb > couchbase-release-1.0-2-amd64.deb \
   && dpkg -i couchbase-release-1.0-2-amd64.deb \
