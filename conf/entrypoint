@@ -1,0 +1,7 @@
+#!/bin/bash
+
+if [ -e "/app/entrypoint" ]; then
+  /app/entrypoint
+fi
+
+tail -f /dev/null

@@ -1,0 +1,31 @@
+[unix_http_server]
+file = /app/var/run/supervisor.sock
+
+[supervisord]
+logfile          = /app/var/logs/supervisord.log
+logfile_maxbytes = 16MB
+logfile_backups  = 10
+loglevel         = info
+pidfile          = /app/var/run/supervisor.pid
+nodaemon         = false
+minfds           = 1024
+minprocs         = 200
+
+[rpcinterface:supervisor]
+supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
+
+[supervisorctl]
+serverurl = unix:///app/var/run/supervisor.sock
+
+[program:beanstalkd]
+command                   = bash -c "beanstalkd -z 262143 -s 41943040 -l 127.0.0.1 -p 11300"
+autorestart               = true
+autostart                 = true
+numprocs                  = 1
+process_name              = beanstalkd_%(process_num)s
+startretries              = -1
+stderr_logfile            = /app/var/logs/supervisor.beanstalkd.err.log
+stderr_logfile_maxbytes   = 1MB
+stdout_logfile            = /app/var/logs/supervisor.beanstalkd.out.log
+stdout_logfile_maxbytes   = 1MB
+user                      = root
