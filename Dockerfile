@@ -140,7 +140,7 @@ ADD conf/entrypoint /usr/bin/entrypoint
 ADD conf/nginx.conf /etc/nginx/nginx.conf
 ADD conf/aasaam.ini /etc/php/7.1/mods-available/aasaam.ini
 ADD conf/www.conf /etc/php/7.1/fpm/pool.d/www.conf
-ADD conf/aasaam.ini /etc/logrotate.conf
+ADD conf/logrotate.conf /etc/logrotate.conf
 ENV COMPOSER_CACHE_DIR /app/var/cache/composer
 
 RUN chmod +x /usr/bin/entrypoint && phpenmod aasaam && rm -rf /etc/logrotate.d/ngin* /etc/logrotate.d/php*

@@ -4,8 +4,9 @@
 Docker image for aasaam PHP/JavaScript application.
 
 * Based on Ubuntu xenial
-* Nginx stable with modules
+* nginx stable
 
+  with modules:
   headers-more, rtmp, vod, redis2, http-concat, srcache
 * PHP7.1:
 
@@ -21,7 +22,7 @@ Docker image for aasaam PHP/JavaScript application.
   ```docker pull quay.io/aasaam/aasaam-app```
 
 ### Configure:
-1. Intialize container
+1. Initialize container
   `app/entrypoint`
 2. Nginx configuration
   `app/etc/nginx`
