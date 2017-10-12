@@ -58,7 +58,7 @@ RUN apt-get update && apt-get -y upgrade && apt-get install -y --no-install-reco
   libcouchbase-dev libevent-dev libfribidi-bin libgpgme11-dev libmagickwand-dev libmemcached-dev \
   librabbitmq-dev librrd-dev libsodium-dev libssh2-1-dev libuv1-dev libv8-5.9-dev libv8-6.3-dev \
   libyaml-dev libzmq-dev libcurl4-openssl-dev pkg-config \
-  librabbitmq-dev libuv1-dev libsodium-dev libgpgme11-dev libgeoip-dev libfann-dev libvarnishapi-dev yarn \
+  librabbitmq-dev libuv1-dev libsodium-dev libgpgme11-dev libgeoip-dev libfann-dev libvarnishapi-dev yarn imagemagick \
   && cd /tmp && curl -sL https://pecl.php.net/get/igbinary > igbinary.tgz && tar -xf igbinary.tgz && cd igbinary-* && phpize && ./configure \
   && make && make install && echo 'extension=igbinary.so' > /etc/php/7.1/mods-available/igbinary.ini && phpenmod igbinary \
   && cd /tmp && curl -sL https://pecl.php.net/get/msgpack > msgpack.tgz && tar -xf msgpack.tgz && cd msgpack-* && phpize && ./configure \
