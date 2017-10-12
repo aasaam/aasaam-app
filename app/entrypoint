@@ -4,6 +4,8 @@
 # phpenmod amqp
 # phpenmod apcu
 # phpenmod ast
+# phpenmod couchbase
+# phpenmod ds
 # phpenmod ev
 # phpenmod fann
 # phpenmod geoip
@@ -38,11 +40,19 @@
 # phpenmod yaml
 # phpenmod yar
 # phpenmod zmq
-# phpenmod zzz_couchbase
-# phpenmod zzz_ds
+
+mkdir -p /app/var/logs && chown www-data:www-data /app/var/logs -R
+mkdir -p /app/var/cache/nginx/fastcgi \
+  && mkdir -p /app/var/cache/nginx/proxy \
+  && chown www-data:www-data /app/var/cache/nginx -R
+
+# npm install -g grunt
+# cd /app/app && composer update
+# cd /app/app && npm update
+# cd /app/app && grunt build
 
 if [ -e "/app/etc/supervisor/supervisor.ini" ]; then
-  supervisord -c /app/etc/supervisor/supervisor.default.ini
+  supervisord -c /app/etc/supervisor/supervisor.ini
 fi
 
 service php7.1-fpm start

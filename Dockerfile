@@ -60,9 +60,11 @@ RUN apt-get update && apt-get -y upgrade && apt-get install -y --no-install-reco
   libyaml-dev libzmq-dev libcurl4-openssl-dev pkg-config \
   librabbitmq-dev libuv1-dev libsodium-dev libgpgme11-dev libgeoip-dev libfann-dev libvarnishapi-dev yarn imagemagick \
   && cd /tmp && curl -sL https://pecl.php.net/get/igbinary > igbinary.tgz && tar -xf igbinary.tgz && cd igbinary-* && phpize && ./configure \
-  && make && make install && echo 'extension=igbinary.so' > /etc/php/7.1/mods-available/igbinary.ini && phpenmod igbinary \
+  && make && make install && echo '; priority=10' > /etc/php/7.1/mods-available/igbinary.ini \
+  && echo 'extension=igbinary.so' >> /etc/php/7.1/mods-available/igbinary.ini && phpenmod igbinary \
   && cd /tmp && curl -sL https://pecl.php.net/get/msgpack > msgpack.tgz && tar -xf msgpack.tgz && cd msgpack-* && phpize && ./configure \
-  && make && make install && echo 'extension=msgpack.so' > /etc/php/7.1/mods-available/msgpack.ini && phpenmod msgpack \
+  && make && make install && echo '; priority=10' >> /etc/php/7.1/mods-available/msgpack.ini \
+  && echo 'extension=msgpack.so' >> /etc/php/7.1/mods-available/msgpack.ini && phpenmod msgpack \
   && cd /tmp && curl -sL https://pecl.php.net/get/yaml > yaml.tgz && tar -xf yaml.tgz && cd yaml-* && phpize && ./configure \
   && make && make install && echo 'extension=yaml.so' > /etc/php/7.1/mods-available/yaml.ini && phpenmod yaml \
   && cd /tmp && curl -sL https://pecl.php.net/get/imagick > imagick.tgz && tar -xf imagick.tgz && cd imagick-* && phpize && ./configure \
@@ -72,7 +74,8 @@ RUN apt-get update && apt-get -y upgrade && apt-get install -y --no-install-reco
   && cd /tmp && curl -sL https://pecl.php.net/get/hrtime > hrtime.tgz && tar -xf hrtime.tgz && cd hrtime-* && phpize && ./configure \
   && make && make install && echo 'extension=hrtime.so' > /etc/php/7.1/mods-available/hrtime.ini \
   && cd /tmp && curl -sL https://pecl.php.net/get/ds > ds.tgz && tar -xf ds.tgz && cd ds-* && phpize && ./configure \
-  && make && make install && echo 'extension=ds.so' > /etc/php/7.1/mods-available/zzz_ds.ini \
+  && make && make install && echo '; priority=90' > /etc/php/7.1/mods-available/ds.ini \
+  && echo 'extension=ds.so' >> /etc/php/7.1/mods-available/ds.ini \
   && cd /tmp && curl -sL https://pecl.php.net/get/zmq > zmq.tgz && tar -xf zmq.tgz && cd zmq-* && phpize && ./configure \
   && make && make install && echo 'extension=zmq.so' > /etc/php/7.1/mods-available/zmq.ini \
   && cd /tmp && curl -sL https://pecl.php.net/get/ssh2 > ssh2.tgz && tar -xf ssh2.tgz && cd ssh2-* && phpize && ./configure \
@@ -84,7 +87,8 @@ RUN apt-get update && apt-get -y upgrade && apt-get install -y --no-install-reco
   && cd /tmp && curl -sL https://pecl.php.net/get/mongodb > mongodb.tgz && tar -xf mongodb.tgz && cd mongodb-* && phpize && ./configure \
   && make && make install && echo 'extension=mongodb.so' > /etc/php/7.1/mods-available/mongodb.ini \
   && cd /tmp && curl -sL https://pecl.php.net/get/couchbase > couchbase.tgz && tar -xf couchbase.tgz && cd couchbase-* && phpize && ./configure \
-  && make && make install && echo 'extension=couchbase.so' > /etc/php/7.1/mods-available/zzz_couchbase.ini \
+  && make && make install && echo '; priority=90' > /etc/php/7.1/mods-available/couchbase.ini \
+  && echo 'extension=couchbase.so' >> /etc/php/7.1/mods-available/couchbase.ini \
   && cd /tmp && curl -sL https://pecl.php.net/get/swoole > swoole.tgz && tar -xf swoole.tgz && cd swoole-* && phpize && ./configure \
   && make && make install && echo 'extension=swoole.so' > /etc/php/7.1/mods-available/swoole.ini \
   && cd /tmp && curl -sL https://pecl.php.net/get/amqp > amqp.tgz && tar -xf amqp.tgz && cd amqp-* && phpize && ./configure \
@@ -141,10 +145,13 @@ RUN apt-get update && apt-get -y upgrade && apt-get install -y --no-install-reco
   && make && make install && echo 'extension=phpng_xhprof.so' > /etc/php/7.1/mods-available/phpng_xhprof.ini \
   && cd /tmp && curl -sL https://pecl.php.net/get/Xdebug > Xdebug.tgz && tar -xf Xdebug.tgz && cd xdebug-* && phpize && ./configure \
   && make && make install && echo 'zend_extension=/usr/lib/php/20160303/xdebug.so' > /etc/php/7.1/mods-available/xdebug.ini \
+  && echo 'xdebug.profiler_enable_trigger=1' >> /etc/php/7.1/mods-available/xdebug.ini \
+  && echo 'xdebug.profiler_output_dir="/app/var/logs"' >> /etc/php/7.1/mods-available/xdebug.ini \
   && cd /tmp/ && git clone --depth=1 https://github.com/kr/beanstalkd && cd beanstalkd && make && make install \
   && pip install --upgrade pip && pip install setuptools && pip install supervisor \
   && curl -Ls https://getcomposer.org/download/1.5.2/composer.phar > /usr/bin/composer && chmod +x /usr/bin/composer && composer selfupdate \
   && rm -rf ~/.cache && rm -rf ~/.composer && rm -rf ~/.npm \
+  rm -rf /etc/logrotate.d/ngin* /etc/logrotate.d/php* \
   && rm -r /var/lib/apt/lists/* && rm -rf /tmp && mkdir /tmp && chmod 777 /tmp
 
 # env requirement
@@ -157,7 +164,7 @@ ADD conf/www.conf /etc/php/7.1/fpm/pool.d/www.conf
 ADD conf/logrotate.conf /etc/logrotate.conf
 ENV COMPOSER_CACHE_DIR /app/var/cache/composer
 
-RUN chmod +x /usr/bin/entrypoint && phpenmod aasaam && rm -rf /etc/logrotate.d/ngin* /etc/logrotate.d/php*
+RUN chmod +x /usr/bin/entrypoint && phpenmod aasaam
 
 # ports
 EXPOSE 80
