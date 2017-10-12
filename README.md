@@ -1,6 +1,6 @@
 [![Docker Repository on Quay](https://quay.io/repository/aasaam/aasaam-app/status "Docker Repository on Quay")](https://quay.io/repository/aasaam/aasaam-app)
 
-# AASAAM Application Docker
+# AASAAM Application Docker Image
 Docker image for aasaam PHP/JavaScript application.
 
 * Based on Ubuntu xenial

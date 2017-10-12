@@ -2,6 +2,20 @@
 FROM ubuntu:xenial
 MAINTAINER Muhammad Hussein Fattahizadeh <m@mhf.ir>
 
+# build-time metadata as defined at http://label-schema.org
+ARG BUILD_DATE
+ARG VCS_REF
+ARG VERSION
+LABEL org.label-schema.build-date=$BUILD_DATE \
+      org.label-schema.name="AASAAM Application Docker Imagee" \
+      org.label-schema.description="Docker image for aasaam PHP/JavaScript application." \
+      org.label-schema.url="https://aasaam.com" \
+      org.label-schema.vcs-ref=$VCS_REF \
+      org.label-schema.vcs-url="https://github.com/AASAAM/aasaam-app" \
+      org.label-schema.vendor="AASAAM" \
+      org.label-schema.version=$VERSION \
+      org.label-schema.schema-version="1.0"
+
 # env variable
 ENV DEBIAN_FRONTEND noninteractive
 ENV LANG en_US.utf8
