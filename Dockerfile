@@ -7,8 +7,8 @@ ARG BUILD_DATE
 ARG VCS_REF
 ARG VERSION
 LABEL org.label-schema.build-date=$BUILD_DATE \
-      org.label-schema.name="AASAAM Application Docker Imagee" \
-      org.label-schema.description="Docker image for aasaam PHP/JavaScript application." \
+      org.label-schema.name="AAASAAM Application Docker Image" \
+      org.label-schema.description="Docker image for PHP and JavaScript applications." \
       org.label-schema.url="https://aasaam.com" \
       org.label-schema.vcs-ref=$VCS_REF \
       org.label-schema.vcs-url="https://github.com/AASAAM/aasaam-app" \
@@ -63,7 +63,7 @@ RUN apt-get update && apt-get -y upgrade && apt-get install -y --no-install-reco
   && make && make install && echo '; priority=10' > /etc/php/7.1/mods-available/igbinary.ini \
   && echo 'extension=igbinary.so' >> /etc/php/7.1/mods-available/igbinary.ini && phpenmod igbinary \
   && cd /tmp && curl -sL https://pecl.php.net/get/msgpack > msgpack.tgz && tar -xf msgpack.tgz && cd msgpack-* && phpize && ./configure \
-  && make && make install && echo '; priority=10' >> /etc/php/7.1/mods-available/msgpack.ini \
+  && make && make install && echo '; priority=10' > /etc/php/7.1/mods-available/msgpack.ini \
   && echo 'extension=msgpack.so' >> /etc/php/7.1/mods-available/msgpack.ini && phpenmod msgpack \
   && cd /tmp && curl -sL https://pecl.php.net/get/yaml > yaml.tgz && tar -xf yaml.tgz && cd yaml-* && phpize && ./configure \
   && make && make install && echo 'extension=yaml.so' > /etc/php/7.1/mods-available/yaml.ini && phpenmod yaml \
@@ -141,6 +141,14 @@ RUN apt-get update && apt-get -y upgrade && apt-get install -y --no-install-reco
   && make && make install && echo 'extension=varnish.so' > /etc/php/7.1/mods-available/varnish.ini \
   && cd /tmp && git clone --depth=1 https://github.com/expressif/pecl-event-libevent && cd pecl-event-libevent && phpize && ./configure \
   && make && make install && echo 'extension=libevent.so' > /etc/php/7.1/mods-available/libevent.ini \
+  && cd /tmp && git clone --depth=1 https://github.com/viest/v-collect && cd v-collect && phpize && ./configure \
+  && make && make install && echo 'extension=vcollect.so' > /etc/php/7.1/mods-available/vcollect.ini \
+  && cd /tmp && git clone --depth=1 https://github.com/php-geospatial/geospatial && cd geospatial && phpize && ./configure \
+  && make && make install && echo 'extension=geospatial.so' > /etc/php/7.1/mods-available/geospatial.ini \
+  && cd /tmp && git clone --depth=1 https://github.com/NoiseByNorthwest/php-spx && cd php-spx && phpize && ./configure \
+  && make && make install && echo 'extension=spx.so' > /etc/php/7.1/mods-available/spx.ini \
+  && cd /tmp && git clone --depth=1 https://github.com/emirb/php-geohash-ext && cd php-geohash-ext && phpize && ./configure \
+  && make && make install && echo 'extension=geohash.so' > /etc/php/7.1/mods-available/geohash.ini \
   && cd /tmp && git clone --depth=1 https://github.com/yaoguais/phpng-xhprof && cd phpng-xhprof && phpize && ./configure \
   && make && make install && echo 'extension=phpng_xhprof.so' > /etc/php/7.1/mods-available/phpng_xhprof.ini \
   && cd /tmp && curl -sL https://pecl.php.net/get/Xdebug > Xdebug.tgz && tar -xf Xdebug.tgz && cd xdebug-* && phpize && ./configure \

@@ -8,7 +8,9 @@
 # phpenmod ds
 # phpenmod ev
 # phpenmod fann
+# phpenmod geohash
 # phpenmod geoip
+# phpenmod geospatial
 # phpenmod gnupg
 # phpenmod grpc
 # phpenmod hprose
@@ -27,6 +29,7 @@
 # phpenmod rrd
 # phpenmod seaslog
 # phpenmod sodium
+# phpenmod spx
 # phpenmod ssh2
 # phpenmod swoole
 # phpenmod sync
@@ -34,6 +37,7 @@
 # phpenmod v8
 # phpenmod v8js
 # phpenmod varnish
+# phpenmod vcollect
 # phpenmod xdebug
 # phpenmod yac
 # phpenmod yaf
