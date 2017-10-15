@@ -142,16 +142,16 @@ sysvshm,
   [Read more...](http://kr.github.io/beanstalkd/)
 
 ##  Usage
-### 1. Pull docker image
+### Pull docker image
 
   ```docker pull quay.io/aasaam/aasaam-app```
 
-### 2. Clone application structure
+### Clone application structure
   ```git clone --depth=1 https://github.com/AASAAM/aasaam-app example-app```
 
   Remove `.git`, `Dockerfile`, `README.md` and `conf`. You dont need them for your app.
 
-### 3. Configure:
+### Configure:
 ##### Modify initialize container
 
   Modify `app/entrypoint`
@@ -162,9 +162,9 @@ sysvshm,
 
 ##### Supervisor configuration `app/etc/supervisor/supervisor.ini`
 
-  Copy `supervisor.default-ini` to `supervisor.default` and modify it.
+  Copy `supervisor.default-ini` to `supervisor.ini` and modify it.
 
-### 4.Start container
+### Start container
 ```
 docker run --restart=always --name example-app -h example-app \
   -it -v $(pwd)/app:/app -v $(pwd)/tmp:/tmp -v $(pwd)/files:/files \
