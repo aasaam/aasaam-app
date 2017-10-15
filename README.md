@@ -106,6 +106,7 @@ sysvshm,
 [v8js](http://php.net/v8js),
 [varnish](http://php.net/varnish),
 [vcollect](https://github.com/viest/v-collect),
+[vips](https://github.com/jcupitt/php-vips-ext),
 [wddx](http://php.net/wddx),
 [xdebug](https://xdebug.org/),
 [xhprof](http://php.net/xhprof),
@@ -140,20 +141,30 @@ sysvshm,
   Beanstalk is a simple, fast work queue.
   [Read more...](http://kr.github.io/beanstalkd/)
 
-## Usage
+## 1. Usage
 ### Pull docker image
 
   ```docker pull quay.io/aasaam/aasaam-app```
 
-### Configure:
-1. Initialize container
-  `app/entrypoint`
-2. Nginx configuration
-  `app/etc/nginx`
-3. Supervisor configuration
-  `app/etc/supervisor/supervisor.ini`
+### 2. Clone application structure
+  ```git clone --depth=1 https://github.com/AASAAM/aasaam-app example-app```
 
-### Start container
+  Remove `.git`, `Dockerfile`, `README.md` and `conf`. You dont need them for your app.
+
+### 3. Configure:
+##### Modify initialize container
+
+  Modify `app/entrypoint`
+
+##### Modify your nginx configuration `app/etc/nginx`
+
+  Copy `default.conf-sample` to `default.conf` and modify it.
+
+##### Supervisor configuration `app/etc/supervisor/supervisor.ini`
+
+  Copy `supervisor.default-ini` to `supervisor.default` and modify it.
+
+### 4.Start container
 ```
 docker run --restart=always --name example-app -h example-app \
   -it -v $(pwd)/app:/app -v $(pwd)/tmp:/tmp -v $(pwd)/files:/files \

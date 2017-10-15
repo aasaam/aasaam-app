@@ -38,6 +38,7 @@
 # phpenmod v8js
 # phpenmod varnish
 # phpenmod vcollect
+# phpenmod vips
 # phpenmod xdebug
 # phpenmod yac
 # phpenmod yaf

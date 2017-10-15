@@ -58,7 +58,7 @@ RUN apt-get update && apt-get -y upgrade && apt-get install -y --no-install-reco
   libcouchbase-dev libevent-dev libfribidi-bin libgpgme11-dev libmagickwand-dev libmemcached-dev \
   librabbitmq-dev librrd-dev libsodium-dev libssh2-1-dev libuv1-dev libv8-5.9-dev libv8-6.3-dev \
   libyaml-dev libzmq-dev libcurl4-openssl-dev pkg-config \
-  librabbitmq-dev libuv1-dev libsodium-dev libgpgme11-dev libgeoip-dev libfann-dev libvarnishapi-dev yarn imagemagick \
+  librabbitmq-dev libuv1-dev libsodium-dev libgpgme11-dev libgeoip-dev libfann-dev libvarnishapi-dev libvips libvips-dev yarn imagemagick \
   && cd /tmp && curl -sL https://pecl.php.net/get/igbinary > igbinary.tgz && tar -xf igbinary.tgz && cd igbinary-* && phpize && ./configure \
   && make && make install && echo '; priority=10' > /etc/php/7.1/mods-available/igbinary.ini \
   && echo 'extension=igbinary.so' >> /etc/php/7.1/mods-available/igbinary.ini && phpenmod igbinary \
@@ -135,6 +135,8 @@ RUN apt-get update && apt-get -y upgrade && apt-get install -y --no-install-reco
   && make && make install && echo 'extension=seaslog.so' > /etc/php/7.1/mods-available/seaslog.ini \
   && cd /tmp && curl -sL https://pecl.php.net/get/fann > fann.tgz && tar -xf fann.tgz && cd fann-* && phpize && ./configure \
   && make && make install && echo 'extension=fann.so' > /etc/php/7.1/mods-available/fann.ini \
+  && cd /tmp && curl -sL https://pecl.php.net/get/vips > vips.tgz && tar -xf vips.tgz && cd vips-* && phpize && ./configure \
+  && make && make install && echo 'extension=vips.so' > /etc/php/7.1/mods-available/vips.ini \
   && cd /tmp && curl -sL https://pecl.php.net/get/opencensus > opencensus.tgz && tar -xf opencensus.tgz && cd opencensus-* && phpize && ./configure \
   && make && make install && echo 'extension=opencensus.so' > /etc/php/7.1/mods-available/opencensus.ini \
   && cd /tmp && curl -sL https://pecl.php.net/get/varnish > varnish.tgz && tar -xf varnish.tgz && cd varnish-* && phpize && ./configure \
