@@ -141,8 +141,8 @@ sysvshm,
   Beanstalk is a simple, fast work queue.
   [Read more...](http://kr.github.io/beanstalkd/)
 
-## 1. Usage
-### Pull docker image
+##  Usage
+### 1. Pull docker image
 
   ```docker pull quay.io/aasaam/aasaam-app```
 
