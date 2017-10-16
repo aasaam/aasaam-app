@@ -108,7 +108,7 @@ RUN apt-get update && apt-get -y upgrade && apt-get install -y --no-install-reco
   && cd /tmp && curl -sL https://pecl.php.net/get/hprose > hprose.tgz && tar -xf hprose.tgz && cd hprose-* && phpize && ./configure \
   && make && make install && echo 'extension=hprose.so' > /etc/php/7.1/mods-available/hprose.ini \
   && cd /tmp && curl -sL https://pecl.php.net/get/libsodium > libsodium.tgz && tar -xf libsodium.tgz && cd libsodium-* && phpize && ./configure \
-  && make && make install && echo 'extension=sodium.so' > /etc/php/7.1/mods-available/sodium.ini \
+  && make && make install && echo 'extension=libsodium.so' > /etc/php/7.1/mods-available/libsodium.ini \
   && cd /tmp && curl -sL https://pecl.php.net/get/gnupg > gnupg.tgz && tar -xf gnupg.tgz && cd gnupg-* && phpize && ./configure \
   && make && make install && echo 'extension=gnupg.so' > /etc/php/7.1/mods-available/gnupg.ini \
   && cd /tmp && curl -sL https://pecl.php.net/get/raphf > raphf.tgz && tar -xf raphf.tgz && cd raphf-* && phpize && ./configure \

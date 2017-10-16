@@ -17,6 +17,7 @@
 # phpenmod hrtime
 # phpenmod imagick
 # phpenmod libevent
+# phpenmod libsodium
 # phpenmod memcached
 # phpenmod molten
 # phpenmod mongodb
