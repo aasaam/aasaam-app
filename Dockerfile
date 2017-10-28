@@ -18,6 +18,8 @@ LABEL org.label-schema.build-date=$BUILD_DATE \
 
 # env variable
 ENV DEBIAN_FRONTEND noninteractive
+ENV YARN_CACHE_FOLDER /tmp/yarn
+ENV COMPOSER_CACHE_DIR /tmp/composer
 ENV LANG en_US.utf8
 
 # base dependencies
@@ -26,6 +28,7 @@ RUN apt-get update && apt-get -y upgrade && apt-get install -y --no-install-reco
     curl git locales lsb-release apt-transport-https bash-completion ca-certificates \
     build-essential software-properties-common \
   && localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US \
+  && mkdir -p /tmp/yarn && echo 'cache = "/tmp/npm"' > /root/.npmrc \
   && cd /tmp && curl -Ls http://packages.couchbase.com/releases/couchbase-release/couchbase-release-1.0-2-amd64.deb > couchbase-release-1.0-2-amd64.deb \
   && dpkg -i couchbase-release-1.0-2-amd64.deb \
   && echo 'deb http://nginx.org/packages/ubuntu/ xenial nginx' > /etc/apt/sources.list.d/repo.list \
@@ -49,7 +52,7 @@ RUN apt-get update && apt-get -y upgrade && apt-get install -y --no-install-reco
   && dpkg-buildpackage -uc -b && dpkg -i /tmp/build/nginx/nginx_1*.deb  && rm -rf /tmp/build/nginx \
   && mkdir -p /tmp/build/nodejs && cd /tmp/build/nodejs && apt-get -y build-dep nodejs && apt-get -y source nodejs \
   && cd nodejs-* && sed -i 's#./configure --prefix=/usr#./configure --prefix=/usr --with-intl=full-icu --download=all#g' debian/rules \
-  && dpkg-buildpackage -uc -b && dpkg -i /tmp/build/nodejs/nodejs_8*.deb && cd / && npm update -g && rm -rf /tmp/build/nodejs \
+  && dpkg-buildpackage -uc -b && dpkg -i /tmp/build/nodejs/nodejs_8*.deb && cd / && npm update -g && npm cache clean && rm -rf /tmp/build/nodejs \
   && apt-get install -y --no-install-recommends \
   php7.1-bcmath php7.1-bz2 php7.1-cli php7.1-curl php7.1-dba php7.1-dev php7.1-enchant php7.1-fpm \
   php7.1-gd php7.1-gmp php7.1-intl php7.1-mbstring php7.1-mysql php7.1-opcache php7.1-pgsql \
@@ -172,6 +175,7 @@ ADD conf/nginx.conf /etc/nginx/nginx.conf
 ADD conf/aasaam.ini /etc/php/7.1/mods-available/aasaam.ini
 ADD conf/www.conf /etc/php/7.1/fpm/pool.d/www.conf
 ADD conf/logrotate.conf /etc/logrotate.conf
+ENV YARN_CACHE_FOLDER /app/var/cache/yarn
 ENV COMPOSER_CACHE_DIR /app/var/cache/composer
 
 RUN chmod +x /usr/bin/entrypoint && phpenmod aasaam
