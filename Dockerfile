@@ -52,7 +52,7 @@ RUN apt-get update && apt-get -y upgrade && apt-get install -y --no-install-reco
   && dpkg-buildpackage -uc -b && dpkg -i /tmp/build/nginx/nginx_1*.deb  && rm -rf /tmp/build/nginx \
   && mkdir -p /tmp/build/nodejs && cd /tmp/build/nodejs && apt-get -y build-dep nodejs && apt-get -y source nodejs \
   && cd nodejs-* && sed -i 's#./configure --prefix=/usr#./configure --prefix=/usr --with-intl=full-icu --download=all#g' debian/rules \
-  && dpkg-buildpackage -uc -b && dpkg -i /tmp/build/nodejs/nodejs_8*.deb && cd / && npm update -g && npm cache clean && rm -rf /tmp/build/nodejs \
+  && dpkg-buildpackage -uc -b && dpkg -i /tmp/build/nodejs/nodejs_8*.deb && cd / && npm update -g && rm -rf /tmp/build/nodejs \
   && apt-get install -y --no-install-recommends \
   php7.1-bcmath php7.1-bz2 php7.1-cli php7.1-curl php7.1-dba php7.1-dev php7.1-enchant php7.1-fpm \
   php7.1-gd php7.1-gmp php7.1-intl php7.1-mbstring php7.1-mysql php7.1-opcache php7.1-pgsql \
