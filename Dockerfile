@@ -37,7 +37,7 @@ RUN apt-get update && apt-get -y upgrade && apt-get install -y --no-install-reco
   && curl -sL https://nginx.org/keys/nginx_signing.key | apt-key add - \
   && curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
   && add-apt-repository -y ppa:ondrej/php \
-  && add-apt-repository -y ppa:pinepain/libv8-5.9 && add-apt-repository -y ppa:pinepain/libv8-6.3 \
+  && add-apt-repository -y ppa:pinepain/libv8-5.9 && add-apt-repository -y ppa:pinepain/libv8-6.4 \
   && curl -sL https://deb.nodesource.com/setup_8.x > /tmp/setup_8.x \
   && chmod +x /tmp/setup_8.x && /tmp/setup_8.x \
   && mkdir -p /tmp/build/nginx && cd /tmp/build/nginx && apt-get -y build-dep nginx && apt-get -y source nginx \
