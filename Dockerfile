@@ -58,8 +58,8 @@ RUN apt-get update && apt-get -y upgrade && apt-get install -y --no-install-reco
   php7.1-gd php7.1-gmp php7.1-intl php7.1-mbstring php7.1-mysql php7.1-opcache php7.1-pgsql \
   php7.1-phpdbg php7.1-soap php7.1-sqlite3 php7.1-tidy php7.1-xml php7.1-xmlrpc php7.1-xsl \
   php7.1-zip python-pip logrotate \
-  libcouchbase-dev libevent-dev libfribidi-bin libgpgme11-dev libmagickwand-dev libmemcached-dev \
-  librabbitmq-dev librrd-dev libsodium-dev libssh2-1-dev libuv1-dev libv8-5.9-dev libv8-6.3-dev \
+  libcouchbase-dev libevent-dev libfribidi-bin libgpgme11-dev libmagickwand-dev libmemcached-dev libnghttp2-dev \
+  librabbitmq-dev librrd-dev libsodium-dev libssh2-1-dev libuv1-dev libv8-5.9-dev libv8-6.3-dev libhiredis-dev \
   libyaml-dev libzmq-dev libcurl4-openssl-dev pkg-config \
   librabbitmq-dev libuv1-dev libsodium-dev libgpgme11-dev libgeoip-dev libfann-dev libvarnishapi-dev libvips libvips-dev yarn imagemagick \
   && cd /tmp && curl -sL https://pecl.php.net/get/igbinary > igbinary.tgz && tar -xf igbinary.tgz && cd igbinary-* && phpize && ./configure \
@@ -92,7 +92,7 @@ RUN apt-get update && apt-get -y upgrade && apt-get install -y --no-install-reco
   && cd /tmp && curl -sL https://pecl.php.net/get/couchbase > couchbase.tgz && tar -xf couchbase.tgz && cd couchbase-* && phpize && ./configure \
   && make && make install && echo '; priority=90' > /etc/php/7.1/mods-available/couchbase.ini \
   && echo 'extension=couchbase.so' >> /etc/php/7.1/mods-available/couchbase.ini \
-  && cd /tmp && curl -sL https://pecl.php.net/get/swoole > swoole.tgz && tar -xf swoole.tgz && cd swoole-* && phpize && ./configure \
+  && cd /tmp && curl -sL https://pecl.php.net/get/swoole > swoole.tgz && tar -xf swoole.tgz && cd swoole-* && phpize && ./configure --enable-openssl --enable-http2 --enable-async-redis \
   && make && make install && echo 'extension=swoole.so' > /etc/php/7.1/mods-available/swoole.ini \
   && cd /tmp && curl -sL https://pecl.php.net/get/amqp > amqp.tgz && tar -xf amqp.tgz && cd amqp-* && phpize && ./configure \
   && make && make install && echo 'extension=amqp.so' > /etc/php/7.1/mods-available/amqp.ini \
