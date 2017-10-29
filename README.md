@@ -13,7 +13,7 @@ Docker image for PHP and JavaScript applications.
   [Read more...](https://nginx.org/)
 
 ###### Modules:
-  [headers-more](https://github.com/openresty/headers-more-nginx-module), [rtmp](https://github.com/arut/nginx-rtmp-module), [vod](https://github.com/kaltura/nginx-vod-module), [redis2](https://github.com/kaltura/nginx-vod-module), [http-concat](https://github.com/alibaba/nginx-http-concat), [srcache](https://github.com/openresty/srcache-nginx-module)
+  [headers-more](https://github.com/openresty/headers-more-nginx-module), [rtmp](https://github.com/arut/nginx-rtmp-module), [vod](https://github.com/kaltura/nginx-vod-module), [redis2](https://github.com/kaltura/nginx-vod-module), [http-concat](https://github.com/alibaba/nginx-http-concat), [srcache](https://github.com/openresty/srcache-nginx-module), [nchan](https://github.com/slact/nchan), [memc-nginx-module](https://github.com/openresty/memc-nginx-module), [testcookie-nginx-module](https://github.com/kyprizel/testcookie-nginx-module)
 
 ### PHP
   Latest stable version **7.1** of PHP with many extension that could be enabled by entrypoint file in `app/entrypoint`
@@ -57,7 +57,6 @@ Core,
 [intl](http://php.net/intl),
 [json](http://php.net/json),
 [libevent](http://php.net/libevent),
-[libsodium](https://github.com/jedisct1/libsodium-php),
 [libxml](http://php.net/libxml),
 [mbstring](http://php.net/mbstring),
 [memcached](http://php.net/memcached),
@@ -90,6 +89,7 @@ Core,
 [SimpleXML](http://php.net/SimpleXML),
 [soap](http://php.net/soap),
 [sockets](http://php.net/sockets),
+[sodium](https://github.com/jedisct1/libsodium-php),
 [SPL](http://php.net/SPL),
 [SPX](https://github.com/NoiseByNorthwest/php-spx),
 [sqlite3](http://php.net/sqlite3),

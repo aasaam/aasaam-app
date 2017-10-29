@@ -47,21 +47,23 @@ RUN apt-get update && apt-get -y upgrade && apt-get install -y --no-install-reco
   && git clone --depth=1 https://github.com/openresty/redis2-nginx-module \
   && git clone --depth=1 https://github.com/alibaba/nginx-http-concat \
   && git clone --depth=1 https://github.com/openresty/srcache-nginx-module \
+  && git clone --depth=1 https://github.com/slact/nchan \
+  && git clone --depth=1 https://github.com/openresty/memc-nginx-module \
+  && git clone --depth=1 https://github.com/kyprizel/testcookie-nginx-module \
   && cd nginx-1* \
-  && sed -i 's#--prefix=/etc/nginx#--prefix=/etc/nginx --add-module=/tmp/build/nginx/headers-more-nginx-module --add-module=/tmp/build/nginx/nginx-rtmp-module --add-module=/tmp/build/nginx/nginx-vod-module --add-module=/tmp/build/nginx/redis2-nginx-module --add-module=/tmp/build/nginx/nginx-http-concat --add-module=/tmp/build/nginx/srcache-nginx-module#g' debian/rules \
+  && sed -i 's#--prefix=/etc/nginx#--prefix=/etc/nginx --add-module=/tmp/build/nginx/headers-more-nginx-module --add-module=/tmp/build/nginx/nginx-rtmp-module --add-module=/tmp/build/nginx/nginx-vod-module --add-module=/tmp/build/nginx/redis2-nginx-module --add-module=/tmp/build/nginx/nginx-http-concat --add-module=/tmp/build/nginx/srcache-nginx-module --add-module=/tmp/build/nginx/nchan --add-module=/tmp/build/nginx/memc-nginx-module --add-module=/tmp/build/nginx/testcookie-nginx-module#g' debian/rules \
   && dpkg-buildpackage -uc -b && dpkg -i /tmp/build/nginx/nginx_1*.deb  && rm -rf /tmp/build/nginx \
   && mkdir -p /tmp/build/nodejs && cd /tmp/build/nodejs && apt-get -y build-dep nodejs && apt-get -y source nodejs \
   && cd nodejs-* && sed -i 's#./configure --prefix=/usr#./configure --prefix=/usr --with-intl=full-icu --download=all#g' debian/rules \
   && dpkg-buildpackage -uc -b && dpkg -i /tmp/build/nodejs/nodejs_8*.deb && cd / && npm update -g && rm -rf /tmp/build/nodejs \
   && apt-get install -y --no-install-recommends \
-  php7.1-bcmath php7.1-bz2 php7.1-cli php7.1-curl php7.1-dba php7.1-dev php7.1-enchant php7.1-fpm \
-  php7.1-gd php7.1-gmp php7.1-intl php7.1-mbstring php7.1-mysql php7.1-opcache php7.1-pgsql \
-  php7.1-phpdbg php7.1-soap php7.1-sqlite3 php7.1-tidy php7.1-xml php7.1-xmlrpc php7.1-xsl \
-  php7.1-zip python-pip logrotate \
-  libcouchbase-dev libevent-dev libfribidi-bin libgpgme11-dev libmagickwand-dev libmemcached-dev libnghttp2-dev \
-  librabbitmq-dev librrd-dev libsodium-dev libssh2-1-dev libuv1-dev libv8-5.9-dev libv8-6.4-dev libhiredis-dev \
-  libyaml-dev libzmq-dev libcurl4-openssl-dev pkg-config \
-  librabbitmq-dev libuv1-dev libsodium-dev libgpgme11-dev libgeoip-dev libfann-dev libvarnishapi-dev libvips libvips-dev yarn imagemagick \
+  php7.1-bcmath php7.1-bz2 php7.1-cli php7.1-curl php7.1-dba php7.1-dev php7.1-enchant php7.1-fpm php7.1-gd \
+  php7.1-gmp php7.1-intl php7.1-mbstring php7.1-mysql php7.1-opcache php7.1-pgsql php7.1-phpdbg php7.1-soap \
+  php7.1-sqlite3 php7.1-tidy php7.1-xml php7.1-xmlrpc php7.1-xsl php7.1-zip \
+  imagemagick libcouchbase-dev libcurl4-openssl-dev libevent-dev libfann-dev libfribidi-bin libgeoip-dev \
+  libgpgme11-dev libhiredis-dev libmagickwand-dev libmemcached-dev libnghttp2-dev librabbitmq-dev librrd-dev \
+  libsodium-dev libssh2-1-dev libuv1-dev libv8-5.9-dev libv8-6.4-dev libvarnishapi-dev libvips libvips-dev \
+  libyaml-dev libzmq-dev logrotate pkg-config python-pip yarn \
   && cd /tmp && curl -sL https://pecl.php.net/get/igbinary > igbinary.tgz && tar -xf igbinary.tgz && cd igbinary-* && phpize && ./configure \
   && make && make install && echo '; priority=10' > /etc/php/7.1/mods-available/igbinary.ini \
   && echo 'extension=igbinary.so' >> /etc/php/7.1/mods-available/igbinary.ini && phpenmod igbinary \
@@ -112,7 +114,7 @@ RUN apt-get update && apt-get -y upgrade && apt-get install -y --no-install-reco
   && cd /tmp && curl -sL https://pecl.php.net/get/hprose > hprose.tgz && tar -xf hprose.tgz && cd hprose-* && phpize && ./configure \
   && make && make install && echo 'extension=hprose.so' > /etc/php/7.1/mods-available/hprose.ini \
   && cd /tmp && curl -sL https://pecl.php.net/get/libsodium > libsodium.tgz && tar -xf libsodium.tgz && cd libsodium-* && phpize && ./configure \
-  && make && make install && echo 'extension=libsodium.so' > /etc/php/7.1/mods-available/libsodium.ini \
+  && make && make install && echo 'extension=sodium.so' > /etc/php/7.1/mods-available/sodium.ini \
   && cd /tmp && curl -sL https://pecl.php.net/get/gnupg > gnupg.tgz && tar -xf gnupg.tgz && cd gnupg-* && phpize && ./configure \
   && make && make install && echo 'extension=gnupg.so' > /etc/php/7.1/mods-available/gnupg.ini \
   && cd /tmp && curl -sL https://pecl.php.net/get/raphf > raphf.tgz && tar -xf raphf.tgz && cd raphf-* && phpize && ./configure \

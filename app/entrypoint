@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# php extensions
+# Enable php extensions if you need:
 # phpenmod amqp
 # phpenmod apcu
 # phpenmod ast
@@ -17,7 +17,6 @@
 # phpenmod hrtime
 # phpenmod imagick
 # phpenmod libevent
-# phpenmod libsodium
 # phpenmod memcached
 # phpenmod molten
 # phpenmod mongodb
@@ -47,20 +46,24 @@
 # phpenmod yar
 # phpenmod zmq
 
+# Fix permission of nginx and php app directories
 mkdir -p /app/var/logs && chown www-data:www-data /app/var/logs -R
 mkdir -p /app/var/tmp && chown www-data:www-data /app/var/tmp -R
 mkdir -p /app/var/cache/nginx/fastcgi \
   && mkdir -p /app/var/cache/nginx/proxy \
   && chown www-data:www-data /app/var/cache/nginx -R
 
+# Install global and local packages
+# yarn global add grunt-cli
 # cd /app/app && yarn install
 # cd /app/app && composer update
 # cd /app/app && grunt build
 
+# Run supervisor
 if [ -e "/app/etc/supervisor/supervisor.ini" ]; then
   supervisord -c /app/etc/supervisor/supervisor.ini
 fi
 
-service cron start
+# start php and nginx
 service php7.1-fpm start
 service nginx start
