@@ -163,8 +163,8 @@ RUN apt-get update && apt-get -y upgrade && apt-get install -y --no-install-reco
   && cd /tmp/ && git clone --depth=1 https://github.com/kr/beanstalkd && cd beanstalkd && make && make install \
   && pip install --upgrade pip && pip install setuptools && pip install supervisor \
   && curl -Ls https://getcomposer.org/download/1.5.2/composer.phar > /usr/bin/composer && chmod +x /usr/bin/composer && composer selfupdate \
-  && rm -rf ~/.cache && rm -rf ~/.composer && rm -rf ~/.npm \
-  rm -rf /etc/logrotate.d/ngin* /etc/logrotate.d/php* \
+  && rm -rf ~/.cache && rm -rf ~/.composer && rm -rf ~/.npm && rm -rf ~/.cache/yarn \
+  && rm -rf /etc/logrotate.d/ngin* /etc/logrotate.d/php* \
   && rm -r /var/lib/apt/lists/* && rm -rf /tmp && mkdir /tmp && chmod 777 /tmp
 
 # env requirement

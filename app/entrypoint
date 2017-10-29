@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# php extensions enable uncomment them
+# php extensions
 # phpenmod amqp
 # phpenmod apcu
 # phpenmod ast
@@ -48,13 +48,13 @@
 # phpenmod zmq
 
 mkdir -p /app/var/logs && chown www-data:www-data /app/var/logs -R
+mkdir -p /app/var/tmp && chown www-data:www-data /app/var/tmp -R
 mkdir -p /app/var/cache/nginx/fastcgi \
   && mkdir -p /app/var/cache/nginx/proxy \
   && chown www-data:www-data /app/var/cache/nginx -R
 
-# npm install -g grunt
+# cd /app/app && yarn install
 # cd /app/app && composer update
-# cd /app/app && npm update
 # cd /app/app && grunt build
 
 if [ -e "/app/etc/supervisor/supervisor.ini" ]; then
