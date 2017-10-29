@@ -92,7 +92,8 @@ RUN apt-get update && apt-get -y upgrade && apt-get install -y --no-install-reco
   && cd /tmp && curl -sL https://pecl.php.net/get/couchbase > couchbase.tgz && tar -xf couchbase.tgz && cd couchbase-* && phpize && ./configure \
   && make && make install && echo '; priority=90' > /etc/php/7.1/mods-available/couchbase.ini \
   && echo 'extension=couchbase.so' >> /etc/php/7.1/mods-available/couchbase.ini \
-  && cd /tmp && curl -sL https://pecl.php.net/get/swoole > swoole.tgz && tar -xf swoole.tgz && cd swoole-* && phpize && ./configure --enable-openssl --enable-http2 --enable-async-redis \
+  && cd /tmp && curl -sL https://pecl.php.net/get/swoole > swoole.tgz && tar -xf swoole.tgz && cd swoole-* && phpize \
+  && ./configure --enable-openssl --enable-http2 --enable-async-redis --enable-mysqlnd \
   && make && make install && echo 'extension=swoole.so' > /etc/php/7.1/mods-available/swoole.ini \
   && cd /tmp && curl -sL https://pecl.php.net/get/amqp > amqp.tgz && tar -xf amqp.tgz && cd amqp-* && phpize && ./configure \
   && make && make install && echo 'extension=amqp.so' > /etc/php/7.1/mods-available/amqp.ini \

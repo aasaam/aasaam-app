@@ -61,5 +61,6 @@ if [ -e "/app/etc/supervisor/supervisor.ini" ]; then
   supervisord -c /app/etc/supervisor/supervisor.ini
 fi
 
+service cron start
 service php7.1-fpm start
 service nginx start
