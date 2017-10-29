@@ -59,7 +59,7 @@ RUN apt-get update && apt-get -y upgrade && apt-get install -y --no-install-reco
   php7.1-phpdbg php7.1-soap php7.1-sqlite3 php7.1-tidy php7.1-xml php7.1-xmlrpc php7.1-xsl \
   php7.1-zip python-pip logrotate \
   libcouchbase-dev libevent-dev libfribidi-bin libgpgme11-dev libmagickwand-dev libmemcached-dev libnghttp2-dev \
-  librabbitmq-dev librrd-dev libsodium-dev libssh2-1-dev libuv1-dev libv8-5.9-dev libv8-6.3-dev libhiredis-dev \
+  librabbitmq-dev librrd-dev libsodium-dev libssh2-1-dev libuv1-dev libv8-5.9-dev libv8-6.4-dev libhiredis-dev \
   libyaml-dev libzmq-dev libcurl4-openssl-dev pkg-config \
   librabbitmq-dev libuv1-dev libsodium-dev libgpgme11-dev libgeoip-dev libfann-dev libvarnishapi-dev libvips libvips-dev yarn imagemagick \
   && cd /tmp && curl -sL https://pecl.php.net/get/igbinary > igbinary.tgz && tar -xf igbinary.tgz && cd igbinary-* && phpize && ./configure \
@@ -133,7 +133,7 @@ RUN apt-get update && apt-get -y upgrade && apt-get install -y --no-install-reco
   && make && make install && echo 'extension=rar.so' > /etc/php/7.1/mods-available/rar.ini \
   && cd /tmp && curl -sL https://pecl.php.net/get/v8js > v8js.tgz && tar -xf v8js.tgz && cd v8js-* && phpize && ./configure --with-v8js=/opt/libv8-5.9/ \
   && make && make install && echo 'extension=v8js.so' > /etc/php/7.1/mods-available/v8js.ini \
-  && cd /tmp && curl -sL https://pecl.php.net/get/v8 > v8.tgz && tar -xf v8.tgz && cd v8-* && phpize && ./configure --with-v8=/opt/libv8-6.3/ \
+  && cd /tmp && curl -sL https://pecl.php.net/get/v8 > v8.tgz && tar -xf v8.tgz && cd v8-* && phpize && ./configure --with-v8=/opt/libv8-6.4/ \
   && make && make install && echo 'extension=v8.so' > /etc/php/7.1/mods-available/v8.ini \
   && cd /tmp && curl -sL https://pecl.php.net/get/SeasLog > SeasLog.tgz && tar -xf SeasLog.tgz && cd SeasLog-* && phpize && ./configure \
   && make && make install && echo 'extension=seaslog.so' > /etc/php/7.1/mods-available/seaslog.ini \
