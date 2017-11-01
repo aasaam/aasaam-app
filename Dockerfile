@@ -63,7 +63,7 @@ RUN apt-get update && apt-get -y upgrade && apt-get install -y --no-install-reco
   imagemagick libcouchbase-dev libcurl4-openssl-dev libevent-dev libfann-dev libfribidi-bin libgeoip-dev \
   libgpgme11-dev libhiredis-dev libmagickwand-dev libmemcached-dev libnghttp2-dev librabbitmq-dev librrd-dev \
   libsodium-dev libssh2-1-dev libuv1-dev libv8-5.9-dev libv8-6.4-dev libvarnishapi-dev libvips libvips-dev \
-  libyaml-dev libzmq-dev logrotate pkg-config python-pip yarn \
+  libyaml-dev libzmq-dev logrotate pkg-config python-pip yarn re2c \
   && cd /tmp && curl -sL https://pecl.php.net/get/igbinary > igbinary.tgz && tar -xf igbinary.tgz && cd igbinary-* && phpize && ./configure \
   && make && make install && echo '; priority=10' > /etc/php/7.1/mods-available/igbinary.ini \
   && echo 'extension=igbinary.so' >> /etc/php/7.1/mods-available/igbinary.ini && phpenmod igbinary \
@@ -163,6 +163,10 @@ RUN apt-get update && apt-get -y upgrade && apt-get install -y --no-install-reco
   && make && make install && echo 'zend_extension=/usr/lib/php/20160303/xdebug.so' > /etc/php/7.1/mods-available/xdebug.ini \
   && echo 'xdebug.profiler_enable_trigger=1' >> /etc/php/7.1/mods-available/xdebug.ini \
   && echo 'xdebug.profiler_output_dir="/app/var/logs"' >> /etc/php/7.1/mods-available/xdebug.ini \
+  && cd /tmp && git clone --depth=1 https://github.com/phalcon/php-zephir-parser --branch master && cd php-zephir-parser && ./install \
+  && echo '[Zephir Parser]' > /etc/php/7.1/mods-available/zephir_parser.ini \
+  && echo 'extension=zephir_parser.so' >> /etc/php/7.1/mods-available/zephir_parser.ini \
+  && git clone --depth=1 https://github.com/phalcon/zephir --branch master /opt/zephir && cd /opt/zephir && ./install-nosudo -c \
   && cd /tmp/ && git clone --depth=1 https://github.com/kr/beanstalkd && cd beanstalkd && make && make install \
   && pip install --upgrade pip && pip install setuptools && pip install supervisor \
   && curl -Ls https://getcomposer.org/download/1.5.2/composer.phar > /usr/bin/composer && chmod +x /usr/bin/composer && composer selfupdate \

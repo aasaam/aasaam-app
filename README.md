@@ -121,6 +121,7 @@ sysvshm,
 [yaml](http://php.net/yaml),
 [yar](http://php.net/yar),
 [Zend OPcache](http://php.net/manual/en/book.opcache.php),
+[Zephir](https://zephir-lang.com/),
 [zip](http://php.net/zip),
 [zlib](http://php.net/zlib),
 [zmq](http://php.net/zmq)
