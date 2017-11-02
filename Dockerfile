@@ -1,6 +1,5 @@
 # ubuntu:xenial
 FROM ubuntu:xenial
-MAINTAINER Muhammad Hussein Fattahizadeh <m@mhf.ir>
 
 # build-time metadata as defined at http://label-schema.org
 ARG BUILD_DATE
@@ -14,19 +13,18 @@ LABEL org.label-schema.build-date=$BUILD_DATE \
       org.label-schema.vcs-url="https://github.com/AASAAM/aasaam-app" \
       org.label-schema.vendor="AASAAM" \
       org.label-schema.version=$VERSION \
-      org.label-schema.schema-version="1.0"
-
-# env variable
-ENV DEBIAN_FRONTEND noninteractive
-ENV YARN_CACHE_FOLDER /tmp/yarn
-ENV COMPOSER_CACHE_DIR /tmp/composer
-ENV LANG en_US.utf8
+      org.label-schema.schema-version="1.0" \
+      maintainer="Muhammad Hussein Fattahizadeh <m@mhf.ir>"
 
 # base dependencies
-RUN apt-get update && apt-get -y upgrade && apt-get install -y --no-install-recommends apt-utils \
+RUN export DEBIAN_FRONTEND=noninteractive ; \
+  export YARN_CACHE_FOLDER=/tmp/yarn ; \
+  export COMPOSER_CACHE_DIR=/tmp/composer ; \
+  LANG=en_US.utf8 ; \
+  apt-get update && apt-get -y upgrade && apt-get install -y --no-install-recommends apt-utils \
   && apt-get install -y --no-install-recommends \
     curl git locales lsb-release apt-transport-https bash-completion ca-certificates \
-    build-essential software-properties-common \
+    build-essential software-properties-common sudo \
   && localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US \
   && mkdir -p /tmp/yarn && echo 'cache = "/tmp/npm"' > /root/.npmrc \
   && cd /tmp && curl -Ls http://packages.couchbase.com/releases/couchbase-release/couchbase-release-1.0-2-amd64.deb > couchbase-release-1.0-2-amd64.deb \
@@ -165,13 +163,14 @@ RUN apt-get update && apt-get -y upgrade && apt-get install -y --no-install-reco
   && echo 'xdebug.profiler_output_dir="/app/var/logs"' >> /etc/php/7.1/mods-available/xdebug.ini \
   && cd /tmp && git clone --depth=1 https://github.com/phalcon/php-zephir-parser --branch master && cd php-zephir-parser && ./install \
   && echo '[Zephir Parser]' > /etc/php/7.1/mods-available/zephir_parser.ini \
-  && echo 'extension=zephir_parser.so' >> /etc/php/7.1/mods-available/zephir_parser.ini \
-  && git clone --depth=1 https://github.com/phalcon/zephir --branch master /opt/zephir && cd /opt/zephir && ./install-nosudo -c \
+  && echo 'extension=zephir_parser.so' >> /etc/php/7.1/mods-available/zephir_parser.ini && phpenmode zephir_parser \
+  && git clone --depth=1 https://github.com/phalcon/zephir --branch master /opt/zephir && cd /opt/zephir && ./install -c \
   && cd /tmp/ && git clone --depth=1 https://github.com/kr/beanstalkd && cd beanstalkd && make && make install \
   && pip install --upgrade pip && pip install setuptools && pip install supervisor \
   && curl -Ls https://getcomposer.org/download/1.5.2/composer.phar > /usr/bin/composer && chmod +x /usr/bin/composer && composer selfupdate \
   && rm -rf ~/.cache && rm -rf ~/.composer && rm -rf ~/.npm && rm -rf ~/.cache/yarn \
   && rm -rf /etc/logrotate.d/ngin* /etc/logrotate.d/php* \
+  && apt-get clean && apt-get autoremove -y \
   && rm -r /var/lib/apt/lists/* && rm -rf /tmp && mkdir /tmp && chmod 777 /tmp
 
 # env requirement
