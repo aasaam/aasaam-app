@@ -20,7 +20,7 @@ LABEL org.label-schema.build-date=$BUILD_DATE \
 RUN export DEBIAN_FRONTEND=noninteractive ; \
   export YARN_CACHE_FOLDER=/tmp/yarn ; \
   export COMPOSER_CACHE_DIR=/tmp/composer ; \
-  LANG=en_US.utf8 ; \
+  export LANG=en_US.utf8 ; \
   apt-get update && apt-get -y upgrade && apt-get install -y --no-install-recommends apt-utils \
   && apt-get install -y --no-install-recommends \
     curl git locales lsb-release apt-transport-https bash-completion ca-certificates \
@@ -164,7 +164,7 @@ RUN export DEBIAN_FRONTEND=noninteractive ; \
   && cd /tmp && git clone --depth=1 https://github.com/phalcon/php-zephir-parser --branch master && cd php-zephir-parser && ./install \
   && echo '[Zephir Parser]' > /etc/php/7.1/mods-available/zephir_parser.ini \
   && echo 'extension=zephir_parser.so' >> /etc/php/7.1/mods-available/zephir_parser.ini && phpenmode zephir_parser \
-  && git clone --depth=1 https://github.com/phalcon/zephir --branch master /opt/zephir && cd /opt/zephir && ./install -c \
+  && git clone --depth=1 https://github.com/phalcon/zephir --branch master /opt/zephir && cd /opt/zephir && ./install -c && phpdismode zephir_parser \
   && cd /tmp/ && git clone --depth=1 https://github.com/kr/beanstalkd && cd beanstalkd && make && make install \
   && pip install --upgrade pip && pip install setuptools && pip install supervisor \
   && curl -Ls https://getcomposer.org/download/1.5.2/composer.phar > /usr/bin/composer && chmod +x /usr/bin/composer && composer selfupdate \
