@@ -163,9 +163,9 @@ RUN export DEBIAN_FRONTEND=noninteractive ; \
   && echo 'xdebug.profiler_output_dir="/app/var/logs"' >> /etc/php/7.1/mods-available/xdebug.ini \
   && cd /tmp && curl -L https://github.com/phalcon/php-zephir-parser/archive/v1.1.0.tar.gz > php-zephir-parser.tgz && tar -xf php-zephir-parser.tgz && cd php-zephir-parser* && ./install \
   && echo '[Zephir Parser]' > /etc/php/7.1/mods-available/zephir_parser.ini \
-  && echo 'extension=zephir_parser.so' >> /etc/php/7.1/mods-available/zephir_parser.ini && phpenmode zephir_parser \
+  && echo 'extension=zephir_parser.so' >> /etc/php/7.1/mods-available/zephir_parser.ini && phpenmod zephir_parser \
   && curl -L https://github.com/phalcon/zephir/archive/0.10.4.tar.gz > /opt/zephir.tgz && cd /opt && tar -xf zephir.tgz && rm -rf zephir.tgz \
-  && mv zephir-* zephir && cd zephir && ./install -c && phpdismode zephir_parser \
+  && mv zephir-* zephir && cd zephir && ./install -c && phpdismod zephir_parser \
   && cd /tmp/ && git clone --depth=1 https://github.com/kr/beanstalkd && cd beanstalkd && make && make install \
   && pip install --upgrade pip && pip install setuptools && pip install supervisor \
   && curl -Ls https://getcomposer.org/download/1.5.2/composer.phar > /usr/bin/composer && chmod +x /usr/bin/composer && composer selfupdate \
