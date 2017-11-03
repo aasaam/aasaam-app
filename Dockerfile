@@ -162,9 +162,6 @@ RUN export DEBIAN_FRONTEND=noninteractive ; \
   && make && make install && echo 'zend_extension=/usr/lib/php/20160303/xdebug.so' > /etc/php/7.1/mods-available/xdebug.ini \
   && echo 'xdebug.profiler_enable_trigger=1' >> /etc/php/7.1/mods-available/xdebug.ini \
   && echo 'xdebug.profiler_output_dir="/app/var/logs"' >> /etc/php/7.1/mods-available/xdebug.ini \
-  && cd /tmp && curl -L https://github.com/phalcon/php-zephir-parser/archive/v1.1.0.tar.gz > php-zephir-parser.tgz && tar -xf php-zephir-parser.tgz && cd php-zephir-parser* && ./install \
-  && echo '[Zephir Parser]' > /etc/php/7.1/mods-available/zephir_parser.ini \
-  && echo 'extension=zephir_parser.so' >> /etc/php/7.1/mods-available/zephir_parser.ini \
   && cd /tmp/ && git clone --depth=1 https://github.com/kr/beanstalkd && cd beanstalkd && make && make install \
   && curl -Ls https://getcomposer.org/download/1.5.2/composer.phar > /usr/bin/composer && chmod +x /usr/bin/composer && composer selfupdate \
   && phpdismod amqp && phpdismod apcu && phpdismod ast && phpdismod bcmath && phpdismod bz2 && phpdismod calendar \
@@ -196,12 +193,12 @@ ADD conf/.npmrc /root/.npmrc
 ADD conf/entrypoint /usr/bin/entrypoint
 ADD conf/install-zephir /usr/bin/install-zephir
 ADD conf/nginx.conf /etc/nginx/nginx.conf
-ADD conf/aasaam.ini /etc/php/7.1/mods-available/aasaam.ini
+ADD conf/aasaam-php-configure.ini /etc/php/7.1/mods-available/aasaam-php-configure.ini
 ADD conf/www.conf /etc/php/7.1/fpm/pool.d/www.conf
 ADD conf/logrotate.conf /etc/logrotate.conf
 ENV YARN_CACHE_FOLDER /app/var/cache/yarn
 ENV COMPOSER_CACHE_DIR /app/var/cache/composer
-RUN chmod +x /usr/bin/entrypoint && chmod +x /usr/bin/install-zephir && phpenmod aasaam
+RUN chmod +x /usr/bin/entrypoint && chmod +x /usr/bin/install-zephir && phpenmod aasaam-php-configure
 
 # ports
 EXPOSE 80
