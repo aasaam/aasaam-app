@@ -6,6 +6,13 @@ Docker image for PHP and JavaScript applications.
 ### Ubuntu Xenial
   Docker image based on latest LTS version of popular linux distro.
   [Read more...](https://wiki.ubuntu.com/XenialXerus/ReleaseNotes)
+
+### nghttp2
+
+  This is an implementation of Hypertext Transfer Protocol version 2.
+
+  [Read more...](https://nghttp2.org/)
+
 ### Nginx
 
   Latest stable version of nginx with http2 support also additional modules.
@@ -125,6 +132,10 @@ sysvshm,
 [zip](http://php.net/zip),
 [zlib](http://php.net/zlib),
 [zmq](http://php.net/zmq)
+
+###### Zephir installation
+
+  Use `install-zephir` and it's installed globaly for compile zehpir codes.
 
 ###### Composer
   Latest version of php package manager also installed globaly. [Read more...](https://getcomposer.org/)

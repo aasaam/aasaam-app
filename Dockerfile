@@ -2,21 +2,16 @@
 FROM ubuntu:xenial
 
 # build-time metadata as defined at http://label-schema.org
-ARG BUILD_DATE
-ARG VCS_REF
-ARG VERSION
-LABEL org.label-schema.build-date=$BUILD_DATE \
-      org.label-schema.name="AAASAAM Application Docker Image" \
+LABEL org.label-schema.name="AAASAAM Application Docker Image" \
       org.label-schema.description="Docker image for PHP and JavaScript applications." \
       org.label-schema.url="https://aasaam.com" \
-      org.label-schema.vcs-ref=$VCS_REF \
       org.label-schema.vcs-url="https://github.com/AASAAM/aasaam-app" \
       org.label-schema.vendor="AASAAM" \
-      org.label-schema.version=$VERSION \
+      org.label-schema.version="1.0" \
       org.label-schema.schema-version="1.0" \
       maintainer="Muhammad Hussein Fattahizadeh <m@mhf.ir>"
 
-# base dependencies
+# installation
 RUN export DEBIAN_FRONTEND=noninteractive ; \
   export YARN_CACHE_FOLDER=/tmp/yarn ; \
   export COMPOSER_CACHE_DIR=/tmp/composer ; \
@@ -58,10 +53,16 @@ RUN export DEBIAN_FRONTEND=noninteractive ; \
   php7.1-bcmath php7.1-bz2 php7.1-cli php7.1-curl php7.1-dba php7.1-dev php7.1-enchant php7.1-fpm php7.1-gd \
   php7.1-gmp php7.1-intl php7.1-mbstring php7.1-mysql php7.1-opcache php7.1-pgsql php7.1-phpdbg php7.1-soap \
   php7.1-sqlite3 php7.1-tidy php7.1-xml php7.1-xmlrpc php7.1-xsl php7.1-zip \
-  imagemagick libcouchbase-dev libcurl4-openssl-dev libevent-dev libfann-dev libfribidi-bin libgeoip-dev \
-  libgpgme11-dev libhiredis-dev libmagickwand-dev libmemcached-dev libnghttp2-dev librabbitmq-dev librrd-dev \
-  libsodium-dev libssh2-1-dev libuv1-dev libv8-5.9-dev libv8-6.4-dev libvarnishapi-dev libvips libvips-dev \
-  libyaml-dev libzmq-dev logrotate pkg-config python-pip yarn re2c \
+  autoconf automake autotools-dev binutils cython imagemagick libc-ares-dev libcouchbase-dev libcunit1-dev \
+  libcurl4-openssl-dev libev-dev libevent-dev libfann-dev libfribidi-bin libgeoip-dev libgpgme11-dev libhiredis-dev \
+  libjansson-dev libjemalloc-dev libmagickwand-dev libmemcached-dev librabbitmq-dev librrd-dev libsodium-dev \
+  libspdylay-dev libssh2-1-dev libssl-dev libsystemd-dev libtool libuv1-dev libv8-5.9-dev libv8-6.4-dev \
+  libvarnishapi-dev libvips libvips-dev libxml2-dev libyaml-dev libzmq-dev logrotate pkg-config \
+  python-pip re2c yarn zlib1g-dev \
+  && pip install --upgrade pip && pip install setuptools && pip install supervisor \
+  && curl -L https://github.com/nghttp2/nghttp2/releases/download/v1.27.0/nghttp2-1.27.0.tar.gz > /tmp/nghttp2.tgz \
+  && cd /tmp && tar -xf nghttp2.tgz && cd nghttp2-* && ./configure --enable-app \
+  && make && make install \
   && cd /tmp && curl -sL https://pecl.php.net/get/igbinary > igbinary.tgz && tar -xf igbinary.tgz && cd igbinary-* && phpize && ./configure \
   && make && make install && echo '; priority=10' > /etc/php/7.1/mods-available/igbinary.ini \
   && echo 'extension=igbinary.so' >> /etc/php/7.1/mods-available/igbinary.ini && phpenmod igbinary \
@@ -163,37 +164,51 @@ RUN export DEBIAN_FRONTEND=noninteractive ; \
   && echo 'xdebug.profiler_output_dir="/app/var/logs"' >> /etc/php/7.1/mods-available/xdebug.ini \
   && cd /tmp && curl -L https://github.com/phalcon/php-zephir-parser/archive/v1.1.0.tar.gz > php-zephir-parser.tgz && tar -xf php-zephir-parser.tgz && cd php-zephir-parser* && ./install \
   && echo '[Zephir Parser]' > /etc/php/7.1/mods-available/zephir_parser.ini \
-  && echo 'extension=zephir_parser.so' >> /etc/php/7.1/mods-available/zephir_parser.ini && phpenmod zephir_parser \
-  && curl -L https://github.com/phalcon/zephir/archive/0.10.4.tar.gz > /opt/zephir.tgz && cd /opt && tar -xf zephir.tgz && rm -rf zephir.tgz \
-  && mv zephir-* zephir && cd zephir && ./install -c && phpdismod zephir_parser \
+  && echo 'extension=zephir_parser.so' >> /etc/php/7.1/mods-available/zephir_parser.ini \
   && cd /tmp/ && git clone --depth=1 https://github.com/kr/beanstalkd && cd beanstalkd && make && make install \
-  && pip install --upgrade pip && pip install setuptools && pip install supervisor \
   && curl -Ls https://getcomposer.org/download/1.5.2/composer.phar > /usr/bin/composer && chmod +x /usr/bin/composer && composer selfupdate \
+  && phpdismod amqp && phpdismod apcu && phpdismod ast && phpdismod bcmath && phpdismod bz2 && phpdismod calendar \
+  && phpdismod couchbase && phpdismod ctype && phpdismod curl && phpdismod dba && phpdismod dom && phpdismod ds \
+  && phpdismod enchant && phpdismod ev && phpdismod exif && phpdismod fann && phpdismod fileinfo && phpdismod ftp \
+  && phpdismod gd && phpdismod geohash && phpdismod geoip && phpdismod geospatial && phpdismod gettext \
+  && phpdismod gmp && phpdismod gnupg && phpdismod grpc && phpdismod hprose && phpdismod hrtime \
+  && phpdismod iconv && phpdismod imagick && phpdismod intl && phpdismod json \
+  && phpdismod libevent && phpdismod mbstring && phpdismod memcached && phpdismod molten && phpdismod mongodb \
+  && phpdismod mysqli && phpdismod mysqlnd && phpdismod opcache && phpdismod opencensus \
+  && phpdismod pdo && phpdismod pdo_mysql && phpdismod pdo_pgsql && phpdismod pdo_sqlite && phpdismod pgsql \
+  && phpdismod phar && phpdismod phpng_xhprof && phpdismod posix && phpdismod raphf && phpdismod rar \
+  && phpdismod readline && phpdismod redis && phpdismod request && phpdismod rrd && phpdismod seaslog \
+  && phpdismod shmop && phpdismod simplexml && phpdismod soap && phpdismod sockets && phpdismod sodium \
+  && phpdismod spx && phpdismod sqlite3 && phpdismod ssh2 && phpdismod swoole && phpdismod sync \
+  && phpdismod sysvmsg && phpdismod sysvsem && phpdismod sysvshm && phpdismod tidy && phpdismod tokenizer \
+  && phpdismod uv && phpdismod v8 && phpdismod v8js && phpdismod varnish && phpdismod vcollect && phpdismod vips \
+  && phpdismod wddx && phpdismod xdebug && phpdismod xml && phpdismod xmlreader && phpdismod xmlrpc \
+  && phpdismod xmlwriter && phpdismod xsl && phpdismod yac && phpdismod yaf && phpdismod yaml && phpdismod yar \
+  && phpdismod zephir_parser && phpdismod zip && phpdismod zmq \
   && rm -rf ~/.cache && rm -rf ~/.composer && rm -rf ~/.npm && rm -rf ~/.cache/yarn \
   && rm -rf /etc/logrotate.d/ngin* /etc/logrotate.d/php* \
   && apt-get clean && apt-get autoremove -y \
   && rm -r /var/lib/apt/lists/* && rm -rf /tmp && mkdir /tmp && chmod 777 /tmp
 
-# env requirement
+# configuration
 ADD conf/.bashrc /root/.bashrc
 ADD conf/.npmrc /root/.npmrc
 ADD conf/entrypoint /usr/bin/entrypoint
+ADD conf/install-zephir /usr/bin/install-zephir
 ADD conf/nginx.conf /etc/nginx/nginx.conf
 ADD conf/aasaam.ini /etc/php/7.1/mods-available/aasaam.ini
 ADD conf/www.conf /etc/php/7.1/fpm/pool.d/www.conf
 ADD conf/logrotate.conf /etc/logrotate.conf
 ENV YARN_CACHE_FOLDER /app/var/cache/yarn
 ENV COMPOSER_CACHE_DIR /app/var/cache/composer
-
-RUN chmod +x /usr/bin/entrypoint && phpenmod aasaam
+RUN chmod +x /usr/bin/entrypoint && chmod +x /usr/bin/install-zephir && phpenmod aasaam
 
 # ports
 EXPOSE 80
 EXPOSE 443
 
 # volume
-VOLUME ["/app"]
-VOLUME ["/tmp"]
+VOLUME ["/app", "/tmp"]
 
 # commands
 CMD ["/bin/bash", "/usr/bin/entrypoint"]

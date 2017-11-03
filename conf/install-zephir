@@ -1,0 +1,4 @@
+#!/bin/bash
+phpenmod zephir_parser && cd /opt && rm -rf zephi* && curl -L https://github.com/phalcon/zephir/archive/0.10.4.tar.gz > /opt/zephir.tgz \
+  && tar -xf zephir.tgz && rm -rf zephir.tgz \
+  && mv zephir-* zephir && cd zephir && ./install -c
