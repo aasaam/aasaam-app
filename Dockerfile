@@ -148,6 +148,8 @@ RUN export DEBIAN_FRONTEND=noninteractive ; \
   && make && make install && echo 'extension=varnish.so' > /etc/php/7.1/mods-available/varnish.ini \
   && cd /tmp && git clone --depth=1 https://github.com/expressif/pecl-event-libevent && cd pecl-event-libevent && phpize && ./configure \
   && make && make install && echo 'extension=libevent.so' > /etc/php/7.1/mods-available/libevent.ini \
+  && cd /tmp && git clone --depth=1 https://github.com/jbboehr/php-psr && cd php-psr && phpize && ./configure \
+  && make && make install && echo 'extension=psr.so' > /etc/php/7.1/mods-available/psr.ini \
   && cd /tmp && git clone --depth=1 https://github.com/viest/v-collect && cd v-collect && phpize && ./configure \
   && make && make install && echo 'extension=vcollect.so' > /etc/php/7.1/mods-available/vcollect.ini \
   && cd /tmp && git clone --depth=1 https://github.com/php-geospatial/geospatial && cd geospatial && phpize && ./configure \
@@ -181,7 +183,7 @@ RUN export DEBIAN_FRONTEND=noninteractive ; \
   && phpdismod uv && phpdismod v8 && phpdismod v8js && phpdismod varnish && phpdismod vcollect && phpdismod vips \
   && phpdismod wddx && phpdismod xdebug && phpdismod xml && phpdismod xmlreader && phpdismod xmlrpc \
   && phpdismod xmlwriter && phpdismod xsl && phpdismod yac && phpdismod yaf && phpdismod yaml && phpdismod yar \
-  && phpdismod zephir_parser && phpdismod zip && phpdismod zmq \
+  && phpdismod zephir_parser && phpdismod zip && phpdismod zmq && phpdismod psr \
   && rm -rf ~/.cache && rm -rf ~/.composer && rm -rf ~/.npm && rm -rf ~/.cache/yarn \
   && rm -rf /etc/logrotate.d/ngin* /etc/logrotate.d/php* \
   && apt-get clean && apt-get autoremove -y \
