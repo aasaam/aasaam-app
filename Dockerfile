@@ -62,7 +62,7 @@ RUN export DEBIAN_FRONTEND=noninteractive ; \
   && pip install --upgrade pip && pip install setuptools && pip install supervisor \
   && curl -L https://github.com/nghttp2/nghttp2/releases/download/v1.27.0/nghttp2-1.27.0.tar.gz > /tmp/nghttp2.tgz \
   && cd /tmp && tar -xf nghttp2.tgz && cd nghttp2-* && ./configure --enable-app \
-  && make && make install \
+  && make && make install && sudo ldconfig \
   && cd /tmp && curl -sL https://pecl.php.net/get/igbinary > igbinary.tgz && tar -xf igbinary.tgz && cd igbinary-* && phpize && ./configure \
   && make && make install && echo '; priority=10' > /etc/php/7.1/mods-available/igbinary.ini \
   && echo 'extension=igbinary.so' >> /etc/php/7.1/mods-available/igbinary.ini && phpenmod igbinary \
@@ -170,12 +170,12 @@ RUN export DEBIAN_FRONTEND=noninteractive ; \
   && phpdismod couchbase && phpdismod ctype && phpdismod curl && phpdismod dba && phpdismod dom && phpdismod ds \
   && phpdismod enchant && phpdismod ev && phpdismod exif && phpdismod fann && phpdismod fileinfo && phpdismod ftp \
   && phpdismod gd && phpdismod geohash && phpdismod geoip && phpdismod geospatial && phpdismod gettext \
-  && phpdismod gmp && phpdismod gnupg && phpdismod grpc && phpdismod hprose && phpdismod hrtime \
-  && phpdismod iconv && phpdismod imagick && phpdismod intl && phpdismod json \
-  && phpdismod libevent && phpdismod mbstring && phpdismod memcached && phpdismod molten && phpdismod mongodb \
-  && phpdismod mysqli && phpdismod mysqlnd && phpdismod opcache && phpdismod opencensus \
-  && phpdismod pdo && phpdismod pdo_mysql && phpdismod pdo_pgsql && phpdismod pdo_sqlite && phpdismod pgsql \
-  && phpdismod phar && phpdismod phpng_xhprof && phpdismod posix && phpdismod raphf && phpdismod rar \
+  && phpdismod gmp && phpdismod gnupg && phpdismod grpc && phpdismod hprose && phpdismod hrtime && phpdismod iconv \
+  && phpdismod igbinary && phpdismod imagick && phpdismod intl && phpdismod json && phpdismod libevent \
+  && phpdismod mbstring && phpdismod memcached && phpdismod molten && phpdismod mongodb && phpdismod msgpack \
+  && phpdismod mysqli && phpdismod mysqlnd && phpdismod opcache && phpdismod opencensus && phpdismod pdo \
+  && phpdismod pdo_mysql && phpdismod pdo_pgsql && phpdismod pdo_sqlite && phpdismod pgsql && phpdismod phar \
+  && phpdismod phpng_xhprof && phpdismod posix && phpdismod psr && phpdismod raphf && phpdismod rar \
   && phpdismod readline && phpdismod redis && phpdismod request && phpdismod rrd && phpdismod seaslog \
   && phpdismod shmop && phpdismod simplexml && phpdismod soap && phpdismod sockets && phpdismod sodium \
   && phpdismod spx && phpdismod sqlite3 && phpdismod ssh2 && phpdismod swoole && phpdismod sync \
@@ -183,7 +183,7 @@ RUN export DEBIAN_FRONTEND=noninteractive ; \
   && phpdismod uv && phpdismod v8 && phpdismod v8js && phpdismod varnish && phpdismod vcollect && phpdismod vips \
   && phpdismod wddx && phpdismod xdebug && phpdismod xml && phpdismod xmlreader && phpdismod xmlrpc \
   && phpdismod xmlwriter && phpdismod xsl && phpdismod yac && phpdismod yaf && phpdismod yaml && phpdismod yar \
-  && phpdismod zephir_parser && phpdismod zip && phpdismod zmq && phpdismod psr \
+  && phpdismod zip && phpdismod zmq \
   && rm -rf ~/.cache && rm -rf ~/.composer && rm -rf ~/.npm && rm -rf ~/.cache/yarn \
   && rm -rf /etc/logrotate.d/ngin* /etc/logrotate.d/php* \
   && apt-get clean && apt-get autoremove -y \
@@ -200,7 +200,8 @@ ADD conf/www.conf /etc/php/7.1/fpm/pool.d/www.conf
 ADD conf/logrotate.conf /etc/logrotate.conf
 ENV YARN_CACHE_FOLDER /app/var/cache/yarn
 ENV COMPOSER_CACHE_DIR /app/var/cache/composer
-RUN chmod +x /usr/bin/entrypoint && chmod +x /usr/bin/install-zephir && phpenmod aasaam-php-configure
+RUN chmod +x /usr/bin/entrypoint && chmod +x /usr/bin/install-zephir && phpenmod aasaam-php-configure \
+  && phpenmod igbinary && phpenmod msgpack && phpenmod yaml
 
 # ports
 EXPOSE 80
@@ -208,6 +209,9 @@ EXPOSE 443
 
 # volume
 VOLUME ["/app", "/tmp"]
+
+# work directory
+WORKDIR /app
 
 # commands
 CMD ["/bin/bash", "/usr/bin/entrypoint"]

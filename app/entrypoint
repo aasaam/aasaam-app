@@ -50,6 +50,7 @@
 # phpenmod phar
 # phpenmod phpng_xhprof
 # phpenmod posix
+# phpenmod psr
 # phpenmod raphf
 # phpenmod rar
 # phpenmod readline
@@ -87,9 +88,7 @@
 # phpenmod xsl
 # phpenmod yac
 # phpenmod yaf
-# phpenmod yaml
 # phpenmod yar
-# phpenmod zephir_parser
 # phpenmod zip
 # phpenmod zmq
 
