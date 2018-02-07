@@ -1,9 +1,9 @@
 #!/bin/bash
 echo "Installing zephir parser 1.1.0 and zephire 0.10.4..." \
-  && cd /tmp && curl -s -L https://github.com/phalcon/php-zephir-parser/archive/v1.1.0.tar.gz > php-zephir-parser.tgz && tar -xf php-zephir-parser.tgz && cd php-zephir-parser* && ./install \
+  && cd /tmp && curl -s -L https://github.com/phalcon/php-zephir-parser/archive/v1.1.2.tar.gz > php-zephir-parser.tgz && tar -xf php-zephir-parser.tgz && cd php-zephir-parser* && ./install \
   && echo '[Zephir Parser]' > /etc/php/7.1/mods-available/zephir_parser.ini \
   && echo 'extension=zephir_parser.so' >> /etc/php/7.1/mods-available/zephir_parser.ini \
   && rm -rf /tmp/zeph* \
-  && phpenmod zephir_parser && cd /opt && rm -rf zephi* && curl -s -L https://github.com/phalcon/zephir/archive/0.10.4.tar.gz > /opt/zephir.tgz \
+  && phpenmod zephir_parser && cd /opt && rm -rf zephi* && curl -s -L https://github.com/phalcon/zephir/archive/0.10.7.tar.gz > /opt/zephir.tgz \
   && tar -xf zephir.tgz && rm -rf zephir.tgz \
   && mv zephir-* zephir && cd zephir && ./install -c && echo "Done."

@@ -22,8 +22,8 @@ RUN export DEBIAN_FRONTEND=noninteractive ; \
     build-essential software-properties-common sudo \
   && localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US \
   && mkdir -p /tmp/yarn && echo 'cache = "/tmp/npm"' > /root/.npmrc \
-  && cd /tmp && curl -Ls http://packages.couchbase.com/releases/couchbase-release/couchbase-release-1.0-2-amd64.deb > couchbase-release-1.0-2-amd64.deb \
-  && dpkg -i couchbase-release-1.0-2-amd64.deb \
+  && cd /tmp && curl -Ls http://packages.couchbase.com/releases/couchbase-release/couchbase-release-1.0-4-amd64.deb > couchbase-amd64.deb \
+  && dpkg -i couchbase-amd64.deb \
   && echo 'deb http://nginx.org/packages/ubuntu/ xenial nginx' > /etc/apt/sources.list.d/repo.list \
   && echo 'deb-src http://nginx.org/packages/ubuntu/ xenial nginx' >> /etc/apt/sources.list.d/repo.list \
   && echo 'deb https://dl.yarnpkg.com/debian/ stable main' >> /etc/apt/sources.list.d/repo.list \
@@ -60,7 +60,7 @@ RUN export DEBIAN_FRONTEND=noninteractive ; \
   libvarnishapi-dev libvips libvips-dev libxml2-dev libyaml-dev libzmq-dev logrotate pkg-config \
   python-pip re2c yarn zlib1g-dev \
   && pip install --upgrade pip && pip install setuptools && pip install supervisor \
-  && curl -L https://github.com/nghttp2/nghttp2/releases/download/v1.27.0/nghttp2-1.27.0.tar.gz > /tmp/nghttp2.tgz \
+  && curl -L https://github.com/nghttp2/nghttp2/releases/download/v1.30.0/nghttp2-1.30.0.tar.gz > /tmp/nghttp2.tgz \
   && cd /tmp && tar -xf nghttp2.tgz && cd nghttp2-* && ./configure --enable-app \
   && make && make install && sudo ldconfig \
   && cd /tmp && curl -sL https://pecl.php.net/get/igbinary > igbinary.tgz && tar -xf igbinary.tgz && cd igbinary-* && phpize && ./configure \
@@ -88,6 +88,8 @@ RUN export DEBIAN_FRONTEND=noninteractive ; \
   && make && make install && echo 'extension=redis.so' > /etc/php/7.1/mods-available/redis.ini \
   && cd /tmp && curl -sL https://pecl.php.net/get/APCu > APCu.tgz && tar -xf APCu.tgz && cd apcu-* && phpize && ./configure \
   && make && make install && echo 'extension=apcu.so' > /etc/php/7.1/mods-available/apcu.ini \
+  && cd /tmp && curl -sL https://pecl.php.net/get/jsond > jsond.tgz && tar -xf jsond.tgz && cd jsond-* && phpize && ./configure \
+  && make && make install && echo 'extension=jsond.so' > /etc/php/7.1/mods-available/jsond.ini \
   && cd /tmp && curl -sL https://pecl.php.net/get/mongodb > mongodb.tgz && tar -xf mongodb.tgz && cd mongodb-* && phpize && ./configure \
   && make && make install && echo 'extension=mongodb.so' > /etc/php/7.1/mods-available/mongodb.ini \
   && cd /tmp && curl -sL https://pecl.php.net/get/couchbase > couchbase.tgz && tar -xf couchbase.tgz && cd couchbase-* && phpize && ./configure \
@@ -104,6 +106,8 @@ RUN export DEBIAN_FRONTEND=noninteractive ; \
   && make && make install && echo 'extension=yaf.so' > /etc/php/7.1/mods-available/yaf.ini \
   && cd /tmp && curl -sL https://pecl.php.net/get/ev > ev.tgz && tar -xf ev.tgz && cd ev-* && phpize && ./configure \
   && make && make install && echo 'extension=ev.so' > /etc/php/7.1/mods-available/ev.ini \
+  && cd /tmp && curl -sL https://pecl.php.net/get/event > event.tgz && tar -xf event.tgz && cd event-* && phpize && ./configure --with-event-core --with-event-extra --with-event-openssl \
+  && make && make install && echo 'extension=event.so' > /etc/php/7.1/mods-available/event.ini \
   && cd /tmp && curl -sL https://pecl.php.net/get/yar > yar.tgz && tar -xf yar.tgz && cd yar-* && phpize && ./configure --enable-msgpack \
   && make && make install && echo 'extension=yar.so' > /etc/php/7.1/mods-available/yar.ini \
   && cd /tmp && curl -sL https://pecl.php.net/get/yac > yac.tgz && tar -xf yac.tgz && cd yac-* && phpize && ./configure \
@@ -156,8 +160,6 @@ RUN export DEBIAN_FRONTEND=noninteractive ; \
   && make && make install && echo 'extension=geospatial.so' > /etc/php/7.1/mods-available/geospatial.ini \
   && cd /tmp && git clone --depth=1 https://github.com/NoiseByNorthwest/php-spx && cd php-spx && phpize && ./configure \
   && make && make install && echo 'extension=spx.so' > /etc/php/7.1/mods-available/spx.ini \
-  && cd /tmp && git clone --depth=1 https://github.com/emirb/php-geohash-ext && cd php-geohash-ext && phpize && ./configure \
-  && make && make install && echo 'extension=geohash.so' > /etc/php/7.1/mods-available/geohash.ini \
   && cd /tmp && git clone --depth=1 https://github.com/yaoguais/phpng-xhprof && cd phpng-xhprof && phpize && ./configure \
   && make && make install && echo 'extension=phpng_xhprof.so' > /etc/php/7.1/mods-available/phpng_xhprof.ini \
   && cd /tmp && curl -sL https://pecl.php.net/get/Xdebug > Xdebug.tgz && tar -xf Xdebug.tgz && cd xdebug-* && phpize && ./configure \
@@ -168,22 +170,21 @@ RUN export DEBIAN_FRONTEND=noninteractive ; \
   && curl -Ls https://getcomposer.org/download/1.5.2/composer.phar > /usr/bin/composer && chmod +x /usr/bin/composer && composer selfupdate \
   && phpdismod amqp && phpdismod apcu && phpdismod ast && phpdismod bcmath && phpdismod bz2 && phpdismod calendar \
   && phpdismod couchbase && phpdismod ctype && phpdismod curl && phpdismod dba && phpdismod dom && phpdismod ds \
-  && phpdismod enchant && phpdismod ev && phpdismod exif && phpdismod fann && phpdismod fileinfo && phpdismod ftp \
-  && phpdismod gd && phpdismod geohash && phpdismod geoip && phpdismod geospatial && phpdismod gettext \
-  && phpdismod gmp && phpdismod gnupg && phpdismod grpc && phpdismod hprose && phpdismod hrtime && phpdismod iconv \
-  && phpdismod igbinary && phpdismod imagick && phpdismod intl && phpdismod json && phpdismod libevent \
-  && phpdismod mbstring && phpdismod memcached && phpdismod molten && phpdismod mongodb && phpdismod msgpack \
-  && phpdismod mysqli && phpdismod mysqlnd && phpdismod opcache && phpdismod opencensus && phpdismod pdo \
-  && phpdismod pdo_mysql && phpdismod pdo_pgsql && phpdismod pdo_sqlite && phpdismod pgsql && phpdismod phar \
-  && phpdismod phpng_xhprof && phpdismod posix && phpdismod psr && phpdismod raphf && phpdismod rar \
-  && phpdismod readline && phpdismod redis && phpdismod request && phpdismod rrd && phpdismod seaslog \
-  && phpdismod shmop && phpdismod simplexml && phpdismod soap && phpdismod sockets && phpdismod sodium \
-  && phpdismod spx && phpdismod sqlite3 && phpdismod ssh2 && phpdismod swoole && phpdismod sync \
-  && phpdismod sysvmsg && phpdismod sysvsem && phpdismod sysvshm && phpdismod tidy && phpdismod tokenizer \
-  && phpdismod uv && phpdismod v8 && phpdismod v8js && phpdismod varnish && phpdismod vcollect && phpdismod vips \
-  && phpdismod wddx && phpdismod xdebug && phpdismod xml && phpdismod xmlreader && phpdismod xmlrpc \
-  && phpdismod xmlwriter && phpdismod xsl && phpdismod yac && phpdismod yaf && phpdismod yaml && phpdismod yar \
-  && phpdismod zip && phpdismod zmq \
+  && phpdismod enchant && phpdismod ev && phpdismod event && phpdismod exif && phpdismod fann && phpdismod fileinfo \
+  && phpdismod ftp && phpdismod gd && phpdismod geoip && phpdismod geospatial && phpdismod gettext && phpdismod gmp \
+  && phpdismod gnupg && phpdismod grpc && phpdismod hprose && phpdismod hrtime && phpdismod iconv && phpdismod igbinary \
+  && phpdismod imagick && phpdismod intl && phpdismod json && phpdismod jsond && phpdismod libevent && phpdismod mbstring \
+  && phpdismod memcached && phpdismod molten && phpdismod mongodb && phpdismod msgpack && phpdismod mysqli \
+  && phpdismod mysqlnd && phpdismod opcache && phpdismod opencensus && phpdismod pdo && phpdismod pdo_mysql \
+  && phpdismod pdo_pgsql && phpdismod pdo_sqlite && phpdismod pgsql && phpdismod phar && phpdismod phpng_xhprof \
+  && phpdismod posix && phpdismod psr && phpdismod raphf && phpdismod rar && phpdismod readline && phpdismod redis \
+  && phpdismod request && phpdismod rrd && phpdismod seaslog && phpdismod shmop && phpdismod simplexml \
+  && phpdismod soap && phpdismod sockets && phpdismod sodium && phpdismod spx && phpdismod sqlite3 \
+  && phpdismod ssh2 && phpdismod swoole && phpdismod sync && phpdismod sysvmsg && phpdismod sysvsem && phpdismod sysvshm \
+  && phpdismod tidy && phpdismod tokenizer && phpdismod uv && phpdismod v8 && phpdismod v8js && phpdismod varnish \
+  && phpdismod vcollect && phpdismod vips && phpdismod wddx && phpdismod xdebug && phpdismod xml && phpdismod xmlreader \
+  && phpdismod xmlrpc && phpdismod xmlwriter && phpdismod xsl && phpdismod yac && phpdismod yaf && phpdismod yaml \
+  && phpdismod yar && phpdismod zip && phpdismod zmq \
   && rm -rf ~/.cache && rm -rf ~/.composer && rm -rf ~/.npm && rm -rf ~/.cache/yarn \
   && rm -rf /etc/logrotate.d/ngin* /etc/logrotate.d/php* \
   && apt-get clean && apt-get autoremove -y \
@@ -201,7 +202,7 @@ ADD conf/logrotate.conf /etc/logrotate.conf
 ENV YARN_CACHE_FOLDER /app/var/cache/yarn
 ENV COMPOSER_CACHE_DIR /app/var/cache/composer
 RUN chmod +x /usr/bin/entrypoint && chmod +x /usr/bin/install-zephir && phpenmod aasaam-php-configure \
-  && phpenmod igbinary && phpenmod msgpack && phpenmod yaml
+  && phpenmod igbinary && phpenmod msgpack && phpenmod yaml && phpenmod json
 
 # ports
 EXPOSE 80
@@ -211,7 +212,7 @@ EXPOSE 443
 VOLUME ["/app", "/tmp"]
 
 # work directory
-WORKDIR /app
+WORKDIR /app/app
 
 # commands
 CMD ["/bin/bash", "/usr/bin/entrypoint"]

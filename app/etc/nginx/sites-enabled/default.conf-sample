@@ -1,17 +1,19 @@
 # fastcgi cache
 fastcgi_cache_path /app/var/cache/nginx/fastcgi levels=1:2:2 keys_zone=FASTCGICACHE:512m inactive=15m;
-fastcgi_cache_key $request_method$host$request_uri;
+fastcgi_cache_key $scheme$host$request_method$request_uri;
 fastcgi_cache_lock on;
+fastcgi_cache_revalidate off;
 fastcgi_cache_use_stale error timeout updating http_500 http_503;
-fastcgi_cache_valid 1h;
+fastcgi_cache_valid 200 304 1h;
 fastcgi_cache_methods GET;
 
 # proxy cache
 proxy_cache_path /app/var/cache/nginx/proxy levels=1:2:2 keys_zone=PROXYCACHE:512m inactive=15m;
 proxy_cache_key $request_method$host$request_uri;
 proxy_cache_lock on;
+proxy_cache_revalidate off;
 proxy_cache_use_stale error timeout updating http_500 http_503;
-proxy_cache_valid 1h;
+proxy_cache_valid 200 304 1h;
 proxy_cache_methods GET;
 
 server {
@@ -32,6 +34,9 @@ server {
 
   server_name example.tld;
 
+  # dhparm generate: `openssl dhparam -out /app/etc/nginx/ssl/dhparams.pem 2048`
+  ssl_dhparam /app/etc/nginx/ssl/dhparams.pem;
+
   ssl_certificate /app/etc/nginx/ssl/public.key;
   ssl_certificate_key /app/etc/nginx/ssl/private.key;
   ssl_session_timeout 1d;
@@ -42,9 +47,13 @@ server {
   ssl_prefer_server_ciphers on;
   add_header 'X-Frame-Options' 'SAMEORIGIN';
   add_header 'X-Xss-Protection' '1; mode=block';
-  add_header 'Strict-Transport-Security' 'max-age=63072000; includeSubDomains; preload';
+
+  # enable on real production server
+  # add_header 'Strict-Transport-Security' 'max-age=63072000; includeSubDomains; preload';
   # ssl_stapling on;
   # ssl_stapling_verify on;
+  # resolver 4.2.2.4 8.8.8.8 217.66.209.130;
+
 
   include /app/etc/nginx/conf.d/host-config.conf;
 }

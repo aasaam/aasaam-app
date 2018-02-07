@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# fix tmp permission
+# chmod 777 /tmp
+
+# configure the libraries
+# ldconfig
+
 # Enable or disable php extensions if you need: phpenmod, phpdismod
 # phpenmod amqp
 # phpenmod apcu
@@ -15,12 +21,12 @@
 # phpenmod ds
 # phpenmod enchant
 # phpenmod ev
+# phpenmod event
 # phpenmod exif
 # phpenmod fann
 # phpenmod fileinfo
 # phpenmod ftp
 # phpenmod gd
-# phpenmod geohash
 # phpenmod geoip
 # phpenmod geospatial
 # phpenmod gettext
@@ -32,7 +38,7 @@
 # phpenmod iconv
 # phpenmod imagick
 # phpenmod intl
-# phpenmod json
+# phpenmod jsond
 # phpenmod libevent
 # phpenmod mbstring
 # phpenmod memcached
@@ -92,23 +98,45 @@
 # phpenmod zip
 # phpenmod zmq
 
-# Fix permission of nginx and php app directories
-mkdir -p /app/var/logs && chown www-data:www-data /app/var/logs -R
-mkdir -p /app/var/tmp && chown www-data:www-data /app/var/tmp -R
-mkdir -p /app/var/cache/nginx/fastcgi \
-  && mkdir -p /app/var/cache/nginx/proxy \
-  && chown www-data:www-data /app/var/cache/nginx -R
+# nginx cache
+mkdir -p /app/var/cache/nginx/fastcgi
+mkdir -p /app/var/cache/nginx/proxy
+find /app/var/cache/nginx -type f -delete
+
+# application cache
+mkdir -p /app/var/cache/application/php
+mkdir -p /app/var/cache/application/nodejs
+find /app/var/cache/application -type f -delete
+
+# permissions
+chmod 777 /app/var/cache -R
+chmod 777 /app/var/logs -R
+
+# upload path
+mkdir -p /app/var/tmp/uploads
+find /app/var/tmp/uploads -type f -delete
+chmod 777 /app/var/tmp -R
 
 # Install global and local packages
 # yarn global add grunt-cli
-# cd /app/app && yarn install
 # cd /app/app && composer update
+# cd /app/app && yarn install --pure-lockfile
 # cd /app/app && grunt build
+
+# optimize autoload on
+if [ "$AASAAM_APP_ENV" = "prod" ]; then
+  cd /app/app && composer dump-autoload --optimize --no-dev
+fi
 
 # Run supervisor
 if [ -e "/app/etc/supervisor/supervisor.ini" ]; then
   supervisord -c /app/etc/supervisor/supervisor.ini
 fi
+
+# echo "fastcgi_param AASAAM_APP_ENV '$AASAAM_APP_ENV';" > /app/var/cache/nginx/fastcgi_param
+# echo "fastcgi_param AASAAM_APP_PORT '$AASAAM_APP_PORT';" >> /app/var/cache/nginx/fastcgi_param
+# echo "proxy_set_header X-Aasaam-App-Env '$AASAAM_APP_ENV';" > /app/var/cache/nginx/proxy_headers
+# echo "proxy_set_header X-Aasaam-App-Port '$AASAAM_APP_PORT';" > /app/var/cache/nginx/proxy_headers
 
 # start php and nginx
 service php7.1-fpm start
