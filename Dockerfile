@@ -45,7 +45,7 @@ RUN export DEBIAN_FRONTEND=noninteractive ; \
   && git clone --depth=1 https://github.com/kyprizel/testcookie-nginx-module \
   && cd nginx-1* \
   && sed -i 's#--prefix=/etc/nginx#--prefix=/etc/nginx --add-module=/tmp/build/nginx/headers-more-nginx-module --add-module=/tmp/build/nginx/nginx-rtmp-module --add-module=/tmp/build/nginx/nginx-vod-module --add-module=/tmp/build/nginx/redis2-nginx-module --add-module=/tmp/build/nginx/nginx-http-concat --add-module=/tmp/build/nginx/srcache-nginx-module --add-module=/tmp/build/nginx/nchan --add-module=/tmp/build/nginx/memc-nginx-module --add-module=/tmp/build/nginx/testcookie-nginx-module#g' debian/rules \
-  && dpkg-buildpackage -uc -b && dpkg -i /tmp/build/nginx/nginx_1*.deb  && rm -rf /tmp/build/nginx \
+  && dpkg-buildpackage -uc -b && dpkg -i /tmp/build/nginx/nginx_1*.deb  && rm -rf /tmp/build/nginx && cd /tmp \
   && apt-get install -y --no-install-recommends \
   php7.1-bcmath php7.1-bz2 php7.1-cli php7.1-curl php7.1-dba php7.1-dev php7.1-enchant php7.1-fpm php7.1-gd \
   php7.1-gmp php7.1-intl php7.1-mbstring php7.1-mysql php7.1-opcache php7.1-pgsql php7.1-phpdbg php7.1-soap \
