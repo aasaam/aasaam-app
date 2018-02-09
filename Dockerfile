@@ -46,9 +46,6 @@ RUN export DEBIAN_FRONTEND=noninteractive ; \
   && cd nginx-1* \
   && sed -i 's#--prefix=/etc/nginx#--prefix=/etc/nginx --add-module=/tmp/build/nginx/headers-more-nginx-module --add-module=/tmp/build/nginx/nginx-rtmp-module --add-module=/tmp/build/nginx/nginx-vod-module --add-module=/tmp/build/nginx/redis2-nginx-module --add-module=/tmp/build/nginx/nginx-http-concat --add-module=/tmp/build/nginx/srcache-nginx-module --add-module=/tmp/build/nginx/nchan --add-module=/tmp/build/nginx/memc-nginx-module --add-module=/tmp/build/nginx/testcookie-nginx-module#g' debian/rules \
   && dpkg-buildpackage -uc -b && dpkg -i /tmp/build/nginx/nginx_1*.deb  && rm -rf /tmp/build/nginx \
-  && mkdir -p /tmp/build/nodejs && cd /tmp/build/nodejs && apt-get -y build-dep nodejs && apt-get -y source nodejs \
-  && cd nodejs-* && sed -i 's#./configure --prefix=/usr#./configure --prefix=/usr --with-intl=full-icu --download=all#g' debian/rules \
-  && dpkg-buildpackage -uc -b && dpkg -i /tmp/build/nodejs/nodejs_8*.deb && cd / && npm update -g && rm -rf /tmp/build/nodejs \
   && apt-get install -y --no-install-recommends \
   php7.1-bcmath php7.1-bz2 php7.1-cli php7.1-curl php7.1-dba php7.1-dev php7.1-enchant php7.1-fpm php7.1-gd \
   php7.1-gmp php7.1-intl php7.1-mbstring php7.1-mysql php7.1-opcache php7.1-pgsql php7.1-phpdbg php7.1-soap \
@@ -58,7 +55,8 @@ RUN export DEBIAN_FRONTEND=noninteractive ; \
   libjansson-dev libjemalloc-dev libmagickwand-dev libmemcached-dev librabbitmq-dev librrd-dev libsodium-dev \
   libspdylay-dev libssh2-1-dev libssl-dev libsystemd-dev libtool libuv1-dev libv8-5.9-dev libv8-6.4-dev \
   libvarnishapi-dev libvips libvips-dev libxml2-dev libyaml-dev libzmq-dev logrotate pkg-config \
-  python-pip re2c yarn zlib1g-dev \
+  python-pip re2c yarn zlib1g-dev nodejs \
+  && npm update -g \
   && pip install --upgrade pip && pip install setuptools && pip install supervisor \
   && curl -L https://github.com/nghttp2/nghttp2/releases/download/v1.30.0/nghttp2-1.30.0.tar.gz > /tmp/nghttp2.tgz \
   && cd /tmp && tar -xf nghttp2.tgz && cd nghttp2-* && ./configure --enable-app \
@@ -84,7 +82,7 @@ RUN export DEBIAN_FRONTEND=noninteractive ; \
   && make && make install && echo 'extension=zmq.so' > /etc/php/7.1/mods-available/zmq.ini \
   && cd /tmp && curl -sL https://pecl.php.net/get/ssh2 > ssh2.tgz && tar -xf ssh2.tgz && cd ssh2-* && phpize && ./configure \
   && make && make install && echo 'extension=ssh2.so' > /etc/php/7.1/mods-available/ssh2.ini \
-  && cd /tmp && curl -sL https://pecl.php.net/get/redis > redis.tgz && tar -xf redis.tgz && cd redis-* && phpize && ./configure --enable-redis-igbinary \
+  && cd /tmp && curl -sL https://pecl.php.net/get/redis-3.1.6.tgz > redis.tgz && tar -xf redis.tgz && cd redis-* && phpize && ./configure --enable-redis-igbinary \
   && make && make install && echo 'extension=redis.so' > /etc/php/7.1/mods-available/redis.ini \
   && cd /tmp && curl -sL https://pecl.php.net/get/APCu > APCu.tgz && tar -xf APCu.tgz && cd apcu-* && phpize && ./configure \
   && make && make install && echo 'extension=apcu.so' > /etc/php/7.1/mods-available/apcu.ini \
@@ -95,7 +93,7 @@ RUN export DEBIAN_FRONTEND=noninteractive ; \
   && cd /tmp && curl -sL https://pecl.php.net/get/couchbase > couchbase.tgz && tar -xf couchbase.tgz && cd couchbase-* && phpize && ./configure \
   && make && make install && echo '; priority=90' > /etc/php/7.1/mods-available/couchbase.ini \
   && echo 'extension=couchbase.so' >> /etc/php/7.1/mods-available/couchbase.ini \
-  && cd /tmp && curl -sL https://pecl.php.net/get/swoole > swoole.tgz && tar -xf swoole.tgz && cd swoole-* && phpize \
+  && cd /tmp && curl -sL https://pecl.php.net/get/swoole-1.10.1.tgz > swoole.tgz && tar -xf swoole.tgz && cd swoole-* && phpize \
   && ./configure --enable-openssl --enable-http2 --enable-async-redis --enable-mysqlnd \
   && make && make install && echo 'extension=swoole.so' > /etc/php/7.1/mods-available/swoole.ini \
   && cd /tmp && curl -sL https://pecl.php.net/get/amqp > amqp.tgz && tar -xf amqp.tgz && cd amqp-* && phpize && ./configure \
@@ -150,10 +148,10 @@ RUN export DEBIAN_FRONTEND=noninteractive ; \
   && make && make install && echo 'extension=opencensus.so' > /etc/php/7.1/mods-available/opencensus.ini \
   && cd /tmp && curl -sL https://pecl.php.net/get/varnish > varnish.tgz && tar -xf varnish.tgz && cd varnish-* && phpize && ./configure \
   && make && make install && echo 'extension=varnish.so' > /etc/php/7.1/mods-available/varnish.ini \
+  && cd /tmp && curl -sL https://pecl.php.net/get/psr > psr.tgz && tar -xf psr.tgz && cd psr-* && phpize && ./configure \
+  && make && make install && echo 'extension=psr.so' > /etc/php/7.1/mods-available/psr.ini \
   && cd /tmp && git clone --depth=1 https://github.com/expressif/pecl-event-libevent && cd pecl-event-libevent && phpize && ./configure \
   && make && make install && echo 'extension=libevent.so' > /etc/php/7.1/mods-available/libevent.ini \
-  && cd /tmp && git clone --depth=1 https://github.com/jbboehr/php-psr && cd php-psr && phpize && ./configure \
-  && make && make install && echo 'extension=psr.so' > /etc/php/7.1/mods-available/psr.ini \
   && cd /tmp && git clone --depth=1 https://github.com/viest/v-collect && cd v-collect && phpize && ./configure \
   && make && make install && echo 'extension=vcollect.so' > /etc/php/7.1/mods-available/vcollect.ini \
   && cd /tmp && git clone --depth=1 https://github.com/php-geospatial/geospatial && cd geospatial && phpize && ./configure \
@@ -167,7 +165,7 @@ RUN export DEBIAN_FRONTEND=noninteractive ; \
   && echo 'xdebug.profiler_enable_trigger=1' >> /etc/php/7.1/mods-available/xdebug.ini \
   && echo 'xdebug.profiler_output_dir="/app/var/logs"' >> /etc/php/7.1/mods-available/xdebug.ini \
   && cd /tmp/ && git clone --depth=1 https://github.com/kr/beanstalkd && cd beanstalkd && make && make install \
-  && curl -Ls https://getcomposer.org/download/1.5.2/composer.phar > /usr/bin/composer && chmod +x /usr/bin/composer && composer selfupdate \
+  && curl -Ls https://getcomposer.org/download/1.6.3/composer.phar > /usr/bin/composer && chmod +x /usr/bin/composer && composer selfupdate \
   && phpdismod amqp && phpdismod apcu && phpdismod ast && phpdismod bcmath && phpdismod bz2 && phpdismod calendar \
   && phpdismod couchbase && phpdismod ctype && phpdismod curl && phpdismod dba && phpdismod dom && phpdismod ds \
   && phpdismod enchant && phpdismod ev && phpdismod event && phpdismod exif && phpdismod fann && phpdismod fileinfo \

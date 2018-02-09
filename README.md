@@ -142,7 +142,7 @@ sysvshm,
   Latest version of php package manager also installed globaly. [Read more...](https://getcomposer.org/)
 
 ### Node.js
-  Latest 8 version compiled with embedded icu. [Read more...](https://nodejs.org/en/)
+  Latest 8 version. [Read more...](https://nodejs.org/en/)
 
   Latest version of [npm](http://npmjs.org/) and [yarn](https://yarnpkg.com/) also installed.
 
