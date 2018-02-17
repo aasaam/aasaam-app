@@ -27,8 +27,10 @@ RUN export DEBIAN_FRONTEND=noninteractive ; \
   && echo 'deb http://nginx.org/packages/ubuntu/ xenial nginx' > /etc/apt/sources.list.d/repo.list \
   && echo 'deb-src http://nginx.org/packages/ubuntu/ xenial nginx' >> /etc/apt/sources.list.d/repo.list \
   && echo 'deb https://dl.yarnpkg.com/debian/ stable main' >> /etc/apt/sources.list.d/repo.list \
+  && echo 'deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main' >> /etc/apt/sources.list.d/repo.list \
   && curl -sL https://nginx.org/keys/nginx_signing.key | apt-key add - \
   && curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
+  && curl -sS https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
   && add-apt-repository -y ppa:ondrej/php \
   && add-apt-repository -y ppa:pinepain/libv8-5.9 && add-apt-repository -y ppa:pinepain/libv8-6.4 \
   && curl -sL https://deb.nodesource.com/setup_8.x > /tmp/setup_8.x \
@@ -55,7 +57,7 @@ RUN export DEBIAN_FRONTEND=noninteractive ; \
   libjansson-dev libjemalloc-dev libmagickwand-dev libmemcached-dev librabbitmq-dev librrd-dev libsodium-dev \
   libspdylay-dev libssh2-1-dev libssl-dev libsystemd-dev libtool libuv1-dev libv8-5.9-dev libv8-6.4-dev \
   libvarnishapi-dev libvips libvips-dev libxml2-dev libyaml-dev libzmq-dev logrotate pkg-config \
-  python-pip re2c yarn zlib1g-dev nodejs \
+  python-pip re2c yarn zlib1g-dev nodejs xvfb google-chrome-stable \
   && npm update -g \
   && pip install --upgrade pip && pip install setuptools && pip install supervisor \
   && curl -L https://github.com/nghttp2/nghttp2/releases/download/v1.30.0/nghttp2-1.30.0.tar.gz > /tmp/nghttp2.tgz \
