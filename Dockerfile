@@ -31,7 +31,7 @@ RUN export DEBIAN_FRONTEND=noninteractive ; \
   && curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
   && curl -sS https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
   && add-apt-repository -y ppa:ondrej/php \
-  && add-apt-repository -y ppa:pinepain/libv8-5.9 && add-apt-repository -y ppa:pinepain/libv8-6.4 \
+  && add-apt-repository -y ppa:pinepain/libv8-6.6 \
   && curl -sL https://deb.nodesource.com/setup_8.x > /tmp/setup_8.x \
   && chmod +x /tmp/setup_8.x && /tmp/setup_8.x \
   && mkdir -p /tmp/build/nginx && cd /tmp/build/nginx && apt-get -y build-dep nginx && apt-get -y source nginx \
@@ -54,9 +54,9 @@ RUN export DEBIAN_FRONTEND=noninteractive ; \
   autoconf automake autotools-dev binutils cython imagemagick libc-ares-dev libcouchbase-dev libcunit1-dev \
   libcurl4-openssl-dev libev-dev libevent-dev libfann-dev libfribidi-bin libgeoip-dev libgpgme11-dev libhiredis-dev \
   libjansson-dev libjemalloc-dev libmagickwand-dev libmemcached-dev librabbitmq-dev librrd-dev libsodium-dev \
-  libspdylay-dev libssh2-1-dev libssl-dev libsystemd-dev libtool libuv1-dev libv8-5.9-dev libv8-6.4-dev \
+  libspdylay-dev libssh2-1-dev libssl-dev libsystemd-dev libtool libuv1-dev libv8-6.6-dev \
   libvarnishapi-dev libvips libvips-dev libxml2-dev libyaml-dev libzmq-dev logrotate pkg-config \
-  python-pip re2c yarn zlib1g-dev nodejs xvfb chromium-browser \
+  python-pip re2c yarn zlib1g-dev nodejs chromium-browser \
   && npm update -g \
   && pip install --upgrade pip && pip install setuptools && pip install supervisor \
   && curl -L https://github.com/nghttp2/nghttp2/releases/download/v1.30.0/nghttp2-1.30.0.tar.gz > /tmp/nghttp2.tgz \
@@ -135,9 +135,9 @@ RUN export DEBIAN_FRONTEND=noninteractive ; \
   && make && make install && echo 'extension=geoip.so' > /etc/php/7.1/mods-available/geoip.ini \
   && cd /tmp && curl -sL https://pecl.php.net/get/rar > rar.tgz && tar -xf rar.tgz && cd rar-* && phpize && ./configure \
   && make && make install && echo 'extension=rar.so' > /etc/php/7.1/mods-available/rar.ini \
-  && cd /tmp && curl -sL https://pecl.php.net/get/v8js > v8js.tgz && tar -xf v8js.tgz && cd v8js-* && phpize && ./configure --with-v8js=/opt/libv8-5.9/ \
+  && cd /tmp && curl -sL https://pecl.php.net/get/v8js > v8js.tgz && tar -xf v8js.tgz && cd v8js-* && phpize && LDFLAGS="-lstdc++" ./configure --with-v8js=/opt/libv8-6.6/ \
   && make && make install && echo 'extension=v8js.so' > /etc/php/7.1/mods-available/v8js.ini \
-  && cd /tmp && curl -sL https://pecl.php.net/get/v8 > v8.tgz && tar -xf v8.tgz && cd v8-* && phpize && ./configure --with-v8=/opt/libv8-6.4/ \
+  && cd /tmp && curl -sL https://pecl.php.net/get/v8 > v8.tgz && tar -xf v8.tgz && cd v8-* && phpize && ./configure --with-v8=/opt/libv8-6.6/ \
   && make && make install && echo 'extension=v8.so' > /etc/php/7.1/mods-available/v8.ini \
   && cd /tmp && curl -sL https://pecl.php.net/get/SeasLog > SeasLog.tgz && tar -xf SeasLog.tgz && cd SeasLog-* && phpize && ./configure \
   && make && make install && echo 'extension=seaslog.so' > /etc/php/7.1/mods-available/seaslog.ini \
