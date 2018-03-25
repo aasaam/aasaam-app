@@ -31,7 +31,7 @@ RUN export DEBIAN_FRONTEND=noninteractive ; \
   && curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
   && curl -sS https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
   && add-apt-repository -y ppa:ondrej/php \
-  && add-apt-repository -y ppa:pinepain/libv8-6.6 \
+  && add-apt-repository -y ppa:pinepain/libv8 \
   && curl -sL https://deb.nodesource.com/setup_8.x > /tmp/setup_8.x \
   && chmod +x /tmp/setup_8.x && /tmp/setup_8.x \
   && mkdir -p /tmp/build/nginx && cd /tmp/build/nginx && apt-get -y build-dep nginx && apt-get -y source nginx \
