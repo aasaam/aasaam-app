@@ -1,0 +1,68 @@
+#!/usr/bin/env php
+<?php
+
+    ini_set('display_errors', '1');
+    ini_set('display_startup_errors', '1');
+    error_reporting(E_ALL);
+
+    define('SLOWLOGPATH', '/tmpfs/logs/php.fpm.slow.log');
+    define('SLOWLOGPATH_OUTPUT', '/tmpfs/logs/php.fpm.slow.parsed.log');
+
+    function readFileLine(string $path)
+    {
+        $handle = fopen($path, "r");
+        if ($handle) {
+            while (($line = fgets($handle)) !== false) {
+                yield trim($line);
+            }
+            fclose($handle);
+            return;
+        }
+    }
+
+    function run() {
+        if (!file_exists(SLOWLOGPATH) || filesize(SLOWLOGPATH) < 10) {
+            return;
+        }
+    
+        $id = 0;
+        $patterns = [
+            'firstLine' => '/^\[(?P<date>[^\]]+)\].*pid\s[0-9]+$/',
+            'methodLine' => '/^\[[^\]]+\]\s(?P<method>[^\s]+)\s(?P<file>[^\s]+)\:(?P<line>[0-9]+)$/',
+            'otherLine' => '/^\[[^\]]+\]\s(?P<message>.*)$/',
+        ];
+    
+        $logs = [];
+    
+        foreach (readFileLine(SLOWLOGPATH) as $line) {
+            $matches = [];
+            if (preg_match($patterns['firstLine'], $line, $matches)) {
+                $id++;
+                $logs[$id]['time'] = gmdate('Y-m-d\TH:i:s', strtotime($matches['date']));
+            } elseif (preg_match($patterns['methodLine'], $line, $matches)) {
+                $logs[$id]['trace'][] = [
+                    'method' => $matches['method'],
+                    'file' => $matches['file'],
+                    'line' => $matches['line'],
+                ]; 
+            } elseif (preg_match($patterns['otherLine'], $line, $matches)) {
+                $logs[$id]['trace'][] = [
+                    'message' => $matches['message'],
+                ];
+            }
+        }
+    
+        $file = fopen(SLOWLOGPATH_OUTPUT, "a");
+        foreach ($logs as $log) {
+            fwrite($file, json_encode($log) . "\n");
+        }
+        fclose($file);
+        file_put_contents(SLOWLOGPATH, '');
+    }
+
+    while (true) {
+        run();
+        sleep(5);
+    }
+
+    

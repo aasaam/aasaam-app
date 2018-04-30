@@ -1,0 +1,15 @@
+[prefs]
+runLog:
+  type: file
+  path: /tmpfs/logs/jobber.log
+  maxFileLen: 8m
+  maxHistories: 4
+
+[jobs]
+- name: LogRotate
+  cmd: /usr/sbin/logrotate -f /etc/logrotate.conf
+  time: '* * 0 * * *'
+  onError: Continue
+  notifyOnError: true
+  notifyOnFailure: true
+  notifyOnSuccess: true

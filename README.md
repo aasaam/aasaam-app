@@ -1,31 +1,30 @@
 [![Docker Repository on Quay](https://quay.io/repository/aasaam/aasaam-app/status "Docker Repository on Quay")](https://quay.io/repository/aasaam/aasaam-app)
 
 # AASAAM Application Docker Image
+
 Docker image for PHP and JavaScript applications.
 
-### Ubuntu Xenial
+## Ubuntu 18.04 LTS (Bionic Beaver)
+
   Docker image based on latest LTS version of popular linux distro.
-  [Read more...](https://wiki.ubuntu.com/XenialXerus/ReleaseNotes)
+  [Read more...](https://wiki.ubuntu.com/BionicBeaver/ReleaseNotes)
 
 ### nghttp2
 
   This is an implementation of Hypertext Transfer Protocol version 2.
-
   [Read more...](https://nghttp2.org/)
 
 ### Nginx
 
   Latest stable version of nginx with http2 support also additional modules.
-
   [Read more...](https://nginx.org/)
 
-###### Modules:
-  [headers-more](https://github.com/openresty/headers-more-nginx-module), [rtmp](https://github.com/arut/nginx-rtmp-module), [vod](https://github.com/kaltura/nginx-vod-module), [redis2](https://github.com/kaltura/nginx-vod-module), [http-concat](https://github.com/alibaba/nginx-http-concat), [srcache](https://github.com/openresty/srcache-nginx-module), [nchan](https://github.com/slact/nchan), [memc-nginx-module](https://github.com/openresty/memc-nginx-module), [testcookie-nginx-module](https://github.com/kyprizel/testcookie-nginx-module)
-
 ### PHP
-  Latest stable version **7.1** of PHP with many extension that could be enabled by entrypoint file in `app/entrypoint`
 
-###### Extensions:
+  Latest stable version **7.2** of PHP with many extension that could be enabled by entrypoint file in `app/entrypoint`
+
+#### Extensions
+
 [apcu](http://php.net/apcu),
 [amqp](https://github.com/php-amqplib/php-amqplib),
 [ast](https://github.com/nikic/php-ast),
@@ -33,7 +32,6 @@ Docker image for PHP and JavaScript applications.
 [bz2](http://php.net/manual/en/book.bzip2.php),
 [calendar](http://php.net/calendar),
 Core,
-[couchbase](https://github.com/couchbase/php-couchbase),
 [ctype](http://php.net/ctype),
 [curl](http://php.net/curl),
 [date](http://php.net/manual/en/book.datetime.php),
@@ -134,54 +132,70 @@ sysvshm,
 [zlib](http://php.net/zlib),
 [zmq](http://php.net/zmq)
 
-###### Zephir installation
+#### Zephir installation
 
   Use `install-zephir` and it's installed globaly for compile zehpir codes.
 
-###### Composer
+#### Composer
+
   Latest version of php package manager also installed globaly. [Read more...](https://getcomposer.org/)
 
 ### Node.js
+
   Latest 8 version. [Read more...](https://nodejs.org/en/)
 
   Latest version of [npm](http://npmjs.org/) and [yarn](https://yarnpkg.com/) also installed.
 
+### immortal
 
-### Supervisor
-  Supervisor is a client/server system that allows its users to monitor and control a number of processes on UNIX-like operating systems.
-  [Read more...](http://supervisord.org/)
+  A *nix cross-platform (OS agnostic) supervisor.
+  [Read more...](https://immortal.run/)
 
-### Beanstalk
-  Beanstalk is a simple, fast work queue.
-  [Read more...](http://kr.github.io/beanstalkd/)
+### Jobber
 
-##  Usage
+  Jobber is a utility for Unix-like systems that can run arbitrary commands, or “jobs”, according to a schedule. It is meant to be a better alternative to the classic Unix utility cron. 
+  [Read more...](https://dshearer.github.io/jobber/)
+
+### Fluentbit
+
+  Fluent Bit is an open source and multi-platform Log Processor and Forwarder which allows you to collect data/logs from different sources, unify and send them to multiple destinations.
+  [Read more...](https://fluentbit.io/)
+
+  All logs store in json format in `/tmpfs/fluentbit/logs.log`.
+
+## Usage
+
 ### Pull docker image
 
-  ```docker pull quay.io/aasaam/aasaam-app```
+```bash
+docker pull quay.io/aasaam/aasaam-app:php7.2
+```
 
 ### Clone application structure
-  ```git clone --depth=1 https://github.com/AASAAM/aasaam-app example-app```
+
+```bash
+git clone --depth=1 -b php7.2 https://github.com/AASAAM/aasaam-app example-app
+```
 
   Remove `.git`, `Dockerfile`, `README.md` and `conf`. You dont need them for your app.
 
-### Configure:
-##### Modify initialize container
+### Configure
+
+#### Modify initialize container
 
   Modify `app/entrypoint`
 
-##### Modify your nginx configuration `app/etc/nginx`
+#### Modify your nginx configuration `app/etc/nginx`
 
   Copy `default.conf-sample` to `default.conf` and modify it.
 
-##### Supervisor configuration `app/etc/supervisor/supervisor.ini`
+#### Start container
 
-  Copy `supervisor.default-ini` to `supervisor.ini` and modify it.
-
-### Start container
-```
-docker run --restart=always --name example-app -h example-app \
-  -it -v $(pwd)/app:/app -v $(pwd)/tmp:/tmp -v $(pwd)/files:/files \
-  --publish=443:443 --publish=80:80 \
-  -d quay.io/aasaam/aasaam-app:latest entrypoint
+```bash
+docker run --name aasaam-test -h aasaam-test \
+  -it -v $(pwd)/app:/app  \
+  --cap-add SYS_PTRACE \
+  --tmpfs /tmpfs:rw,size=2048m,mode=1777 \
+  --publish=80:80 \
+  -d quay.io/aasaam/aasaam-app:php7.2 entrypoint
 ```
