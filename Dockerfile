@@ -17,7 +17,7 @@ RUN export DEBIAN_FRONTEND=noninteractive ; \
   export COMPOSER_CACHE_DIR=/tmp/composer ; \
   export LANG=en_US.utf8 ; \
   export LC_ALL=C.UTF-8 ; \
-  apt-get update && \
+  apt-get update -y \
   && apt-get -y upgrade && apt-get install -y --no-install-recommends apt-utils \
   && apt-get install -y --no-install-recommends \
     curl locales ca-certificates \
@@ -28,7 +28,7 @@ RUN export DEBIAN_FRONTEND=noninteractive ; \
   && curl -L http://deb.nodesource.com/gpgkey/nodesource.gpg.key | sudo apt-key add - \
   && echo 'deb http://dl.yarnpkg.com/debian/ stable main' >> /etc/apt/sources.list.d/repo.list \
   && echo "deb http://deb.nodesource.com/node_8.x bionic main" | sudo tee /etc/apt/sources.list.d/nodesource.list \
-  && apt-get update \
+  && apt-get update -y \
   && apt-get install -y --no-install-recommends \
     bash-completion lsb-release git cmake \
     autoconf automake autotools-dev binutils chromium-browser cython htop imagemagick \
