@@ -43,7 +43,7 @@ RUN export DEBIAN_FRONTEND=noninteractive ; \
     php7.2-odbc php7.2-opcache php7.2-pgsql php7.2-phpdbg php7.2-pspell php7.2-readline php7.2-recode php7.2-soap php7.2-sqlite3 \
     php7.2-tidy php7.2-xml php7.2-xmlrpc php7.2-xsl php7.2-zip \
   && npm -g update \
-  && cd /tmp && curl -L https://fluentbit.io/releases/0.12/fluent-bit-0.12.19.tar.gz > fluent-bit.tgz && tar -xf fluent-bit.tgz \
+  && cd /tmp && curl -L https://fluentbit.io/releases/0.13/fluent-bit-0.13.2.tar.gz > fluent-bit.tgz && tar -xf fluent-bit.tgz \
   && cd fluent-bit*/build && cmake ../ && make && make install \
   && cd /tmp \
   && curl -L https://github.com/immortal/immortal/releases/download/0.18.0/immortal_0.18.0_amd64.deb > /tmp/immortal.deb \
