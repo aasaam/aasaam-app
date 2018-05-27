@@ -1,36 +1,7 @@
 #!/bin/bash
 
-echo "HOSTNAME=$HOSTNAME" >> /etc/environment
-
-rm -rf /tmp/*
-rm -rf /tmpfs/*
-
-mkdir -p /tmp/php/spx
-mkdir -p /tmpfs/fluentbit
-mkdir -p /tmpfs/run
-mkdir -p /tmpfs/logs
-mkdir -p /tmpfs/nginx/fastcgi/cache
-mkdir -p /tmpfs/nginx/proxy/cache
-mkdir -p /tmpfs/php/seaslog
-mkdir -p /tmpfs/php/session
-mkdir -p /tmpfs/php/soap
-mkdir -p /tmpfs/php/tmp
-mkdir -p /tmpfs/php/upload
-mkdir -p /tmpfs/php/xdebug
-
-chmod 777 /tmp -R
-chmod 777 /tmpfs -R
-
-touch /tmpfs/logs/nginx.access.log && chmod 644 /tmpfs/logs/nginx.access.log
-touch /tmpfs/logs/nginx.error.log && chmod 644 /tmpfs/logs/nginx.error.log
-touch /tmpfs/logs/php.fpm.access.log && chmod 644 /tmpfs/logs/php.fpm.access.log
-
 if [ -e "/app/entrypoint" ]; then
   /app/entrypoint
-fi
-
-if [ -e "/app/etc/nginx/conf.d/addon/dhparam.pem" ]; then
-  openssl dhparam -out /app/etc/nginx/conf.d/addon/dhparam.pem 2048
 fi
 
 tail -f /dev/null

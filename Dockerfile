@@ -1,6 +1,5 @@
 # ubuntu:18.04
 FROM ubuntu:18.04
-ENV RUNLEVEL 1
 
 # build-time metadata as defined at http://label-schema.org
 LABEL org.label-schema.name="AAASAAM Application Docker Image" \
@@ -15,12 +14,10 @@ LABEL org.label-schema.name="AAASAAM Application Docker Image" \
 # installation
 RUN export DEBIAN_FRONTEND=noninteractive ; \
   export YARN_CACHE_FOLDER=/tmp/yarn ; \
-  export RUNLEVEL=1 ; \
   export COMPOSER_CACHE_DIR=/tmp/composer ; \
   export LANG=en_US.utf8 ; \
   export LC_ALL=C.UTF-8 ; \
   apt-get update && \
-  sed -i "s/^exit 101$/exit 0/" /usr/sbin/policy-rc.d \
   && apt-get -y upgrade && apt-get install -y --no-install-recommends apt-utils \
   && apt-get install -y --no-install-recommends \
     curl locales ca-certificates \
@@ -31,6 +28,7 @@ RUN export DEBIAN_FRONTEND=noninteractive ; \
   && curl -L http://deb.nodesource.com/gpgkey/nodesource.gpg.key | sudo apt-key add - \
   && echo 'deb http://dl.yarnpkg.com/debian/ stable main' >> /etc/apt/sources.list.d/repo.list \
   && echo "deb http://deb.nodesource.com/node_8.x bionic main" | sudo tee /etc/apt/sources.list.d/nodesource.list \
+  && apt-get update \
   && apt-get install -y --no-install-recommends \
     bash-completion lsb-release git cmake \
     autoconf automake autotools-dev binutils chromium-browser cython htop imagemagick \
@@ -38,12 +36,13 @@ RUN export DEBIAN_FRONTEND=noninteractive ; \
     libgeoip-dev libgpgme11-dev libhiredis-dev libjansson-dev libjemalloc-dev libmagickwand-dev libmemcached-dev \
     libnghttp2-dev librabbitmq-dev librrd-dev libspdylay-dev libssh2-1-dev libssl-dev libsystemd-dev libtool libuv1-dev \
     libvarnishapi-dev libvips libvips-dev libxml2-dev libyaml-dev libzmq3-dev \
-    logrotate nghttp2 nghttp2-client nghttp2-proxy nghttp2-server nginx-full nodejs \
+    logrotate nghttp2 nghttp2-client nghttp2-proxy nghttp2-server nginx-full nodejs yarn passwd \
     openssh-server pkg-config python re2c xterm zlib1g-dev goaccess \
     php7.2 php7.2-bcmath php7.2-bz2 php7.2-cgi php7.2-cli php7.2-common php7.2-curl php7.2-dba php7.2-dev php7.2-enchant \
     php7.2-fpm php7.2-gd php7.2-gmp php7.2-imap php7.2-interbase php7.2-intl php7.2-json php7.2-ldap php7.2-mbstring php7.2-mysql \
     php7.2-odbc php7.2-opcache php7.2-pgsql php7.2-phpdbg php7.2-pspell php7.2-readline php7.2-recode php7.2-soap php7.2-sqlite3 \
     php7.2-tidy php7.2-xml php7.2-xmlrpc php7.2-xsl php7.2-zip \
+  && npm -g update \
   && cd /tmp && curl -L https://fluentbit.io/releases/0.12/fluent-bit-0.12.19.tar.gz > fluent-bit.tgz && tar -xf fluent-bit.tgz \
   && cd fluent-bit*/build && cmake ../ && make && make install \
   && cd /tmp \
@@ -150,7 +149,7 @@ RUN export DEBIAN_FRONTEND=noninteractive ; \
   && echo 'xdebug.profiler_output_dir="/tmpfs/php/xdebug"' >> /etc/php/7.2/mods-available/xdebug.ini \
   && echo 'xdebug.trace_output_dir="/tmpfs/php/xdebug"' >> /etc/php/7.2/mods-available/xdebug.ini \
   && echo 'xdebug.gc_stats_output_dir="/tmpfs/php/xdebug"' >> /etc/php/7.2/mods-available/xdebug.ini \
-  && curl -Ls https://getcomposer.org/download/1.6.4/composer.phar > /usr/bin/composer && chmod +x /usr/bin/composer && composer selfupdate \
+  && curl -Ls https://getcomposer.org/download/1.6.5/composer.phar > /usr/bin/composer && chmod +x /usr/bin/composer && composer selfupdate \
   && phpdismod amqp && phpdismod apcu && phpdismod ast && phpdismod bcmath && phpdismod bz2 && phpdismod calendar && phpdismod ctype \
   && phpdismod dba && phpdismod ds && phpdismod enchant && phpdismod ev && phpdismod event && phpdismod exif \
   && phpdismod fann && phpdismod fileinfo && phpdismod ftp && phpdismod gd && phpdismod geoip && phpdismod geospatial && phpdismod gettext \
@@ -174,6 +173,7 @@ ADD conf/sshd_config /etc/ssh/sshd_config
 ADD conf/.npmrc /root/.npmrc
 ADD conf/.jobber /root/.jobber
 ADD conf/entrypoint /usr/bin/entrypoint
+ADD conf/aasaamuserpasswd.sh /usr/bin/aasaamuserpasswd
 ADD conf/install-zephir /usr/bin/install-zephir
 ADD conf/nginx.conf /etc/nginx/nginx.conf
 ADD conf/aasaam-php-configure.ini /etc/php/7.2/mods-available/aasaam-php-configure.ini
@@ -183,16 +183,16 @@ ADD conf/mime.types /etc/nginx/mime.types
 ENV YARN_CACHE_FOLDER /app/var/cache/yarn
 ENV COMPOSER_CACHE_DIR /app/var/cache/composer
 RUN export RANDOMAASAAMPASSWORD=$(openssl rand -base64 32 | tr -cd '[[:alnum:]]._-' | cut -c1-16) \
-  && echo $RANDOMAASAAMPASSWORD > /root/.aasaam.info \
-  && useradd -m -p $RANDOMAASAAMPASSWORD -G sudo -s /bin/bash aasaam
-RUN chmod 0600 /root/.jobber && chmod 0644 /etc/logrotate.conf && chmod +x /usr/bin/entrypoint && chmod +x /usr/bin/install-zephir && phpenmod aasaam-php-configure \
+  && useradd -m -p $RANDOMAASAAMPASSWORD -G sudo -s /bin/bash aasaam && mkdir -p /home/aasaam/aasaam && chown aasaam:aasaam /home/aasaam/aasaam \
+  && chmod +x /usr/bin/aasaamuserpasswd \
+  && chmod 0600 /root/.jobber && chmod 0644 /etc/logrotate.conf && chmod +x /usr/bin/entrypoint && chmod +x /usr/bin/install-zephir && phpenmod aasaam-php-configure \
   && phpenmod igbinary && phpenmod msgpack && phpenmod yaml && phpenmod json && phpenmod phar
 
 # ports
 EXPOSE 22 80 443
 
 # volume
-VOLUME ["/app", "/tmp", "/tmpfs"]
+VOLUME ["/app", "/tmp", "/tmpfs", "/home/aasaam/aasaam"]
 
 # work directory
 WORKDIR /app/app

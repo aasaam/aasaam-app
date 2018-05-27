@@ -62,7 +62,7 @@
 
     while (true) {
         run();
-        sleep(5);
+        sleep(mt_rand(10, 60));
     }
 
     
