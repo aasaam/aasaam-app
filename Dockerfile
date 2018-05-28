@@ -30,18 +30,20 @@ RUN export DEBIAN_FRONTEND=noninteractive ; \
   && echo "deb http://deb.nodesource.com/node_8.x bionic main" | sudo tee /etc/apt/sources.list.d/nodesource.list \
   && apt-get update -y \
   && apt-get install -y --no-install-recommends \
-    bash-completion lsb-release git cmake \
+    bash-completion lsb-release git cmake certbot \
     autoconf automake autotools-dev binutils chromium-browser cython htop imagemagick \
     libc-ares-dev libcunit1-dev libcurl4-openssl-dev libev-dev libevent-dev libfann-dev libfribidi-bin \
     libgeoip-dev libgpgme11-dev libhiredis-dev libjansson-dev libjemalloc-dev libmagickwand-dev libmemcached-dev \
     libnghttp2-dev librabbitmq-dev librrd-dev libspdylay-dev libssh2-1-dev libssl-dev libsystemd-dev libtool libuv1-dev \
     libvarnishapi-dev libvips libvips-dev libxml2-dev libyaml-dev libzmq3-dev \
-    logrotate nghttp2 nghttp2-client nghttp2-proxy nghttp2-server nginx-full nodejs yarn passwd \
-    openssh-server pkg-config python re2c xterm zlib1g-dev goaccess \
+    logrotate nghttp2 nghttp2-client nghttp2-proxy nghttp2-server nginx-full nodejs yarn \
+    pkg-config python re2c xterm zlib1g-dev goaccess \
     php7.2 php7.2-bcmath php7.2-bz2 php7.2-cgi php7.2-cli php7.2-common php7.2-curl php7.2-dba php7.2-dev php7.2-enchant \
     php7.2-fpm php7.2-gd php7.2-gmp php7.2-imap php7.2-interbase php7.2-intl php7.2-json php7.2-ldap php7.2-mbstring php7.2-mysql \
     php7.2-odbc php7.2-opcache php7.2-pgsql php7.2-phpdbg php7.2-pspell php7.2-readline php7.2-recode php7.2-soap php7.2-sqlite3 \
     php7.2-tidy php7.2-xml php7.2-xmlrpc php7.2-xsl php7.2-zip \
+  && curl -L http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz > /tmp/GeoLiteCity.dat.gz \
+  && cd /tmp/ && gunzip GeoLiteCity.dat.gz && mkdir -p /usr/local/share/GeoIP && mv GeoLiteCity.dat /usr/local/share/GeoIP/ \
   && npm -g update \
   && cd /tmp && curl -L https://fluentbit.io/releases/0.13/fluent-bit-0.13.2.tar.gz > fluent-bit.tgz && tar -xf fluent-bit.tgz \
   && cd fluent-bit*/build && cmake ../ && make && make install \
@@ -169,11 +171,9 @@ RUN export DEBIAN_FRONTEND=noninteractive ; \
 
 # configuration
 ADD conf/.bashrc /root/.bashrc
-ADD conf/sshd_config /etc/ssh/sshd_config
 ADD conf/.npmrc /root/.npmrc
 ADD conf/.jobber /root/.jobber
 ADD conf/entrypoint /usr/bin/entrypoint
-ADD conf/aasaamuserpasswd.sh /usr/bin/aasaamuserpasswd
 ADD conf/install-zephir /usr/bin/install-zephir
 ADD conf/nginx.conf /etc/nginx/nginx.conf
 ADD conf/aasaam-php-configure.ini /etc/php/7.2/mods-available/aasaam-php-configure.ini
@@ -182,17 +182,15 @@ ADD conf/logrotate.conf /etc/logrotate.conf
 ADD conf/mime.types /etc/nginx/mime.types
 ENV YARN_CACHE_FOLDER /app/var/cache/yarn
 ENV COMPOSER_CACHE_DIR /app/var/cache/composer
-RUN export RANDOMAASAAMPASSWORD=$(openssl rand -base64 32 | tr -cd '[[:alnum:]]._-' | cut -c1-16) \
-  && useradd -m -p $RANDOMAASAAMPASSWORD -G sudo -s /bin/bash aasaam && mkdir -p /home/aasaam/aasaam && chown aasaam:aasaam /home/aasaam/aasaam \
-  && chmod +x /usr/bin/aasaamuserpasswd \
-  && chmod 0600 /root/.jobber && chmod 0644 /etc/logrotate.conf && chmod +x /usr/bin/entrypoint && chmod +x /usr/bin/install-zephir && phpenmod aasaam-php-configure \
-  && phpenmod igbinary && phpenmod msgpack && phpenmod yaml && phpenmod json && phpenmod phar
+RUN chmod 0600 /root/.jobber && chmod 0644 /etc/logrotate.conf && chmod +x /usr/bin/entrypoint && chmod +x /usr/bin/install-zephir && phpenmod aasaam-php-configure \
+  && phpenmod igbinary && phpenmod msgpack && phpenmod yaml && phpenmod json && phpenmod phar && truncate -s 0 /var/log/*.log
+ADD conf/.bashrc /home/aasaam/.bashrc
 
 # ports
-EXPOSE 22 80 443
+EXPOSE 80 443
 
 # volume
-VOLUME ["/app", "/tmp", "/tmpfs", "/home/aasaam/aasaam"]
+VOLUME ["/app", "/tmp", "/tmpfs", "/etc/letsencrypt"]
 
 # work directory
 WORKDIR /app/app

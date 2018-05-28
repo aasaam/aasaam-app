@@ -1,13 +1,10 @@
 #!/bin/bash
 
 # for adding configurations
-sleep 3
+sleep 5
 
 # echo set environment for all
 echo "HOSTNAME=$HOSTNAME" >> /etc/environment
-echo "AASAAM_APPNAME=$AASAAM_APPNAME" >> /etc/environment
-echo "AASAAM_DC=$AASAAM_DC" >> /etc/environment
-echo "AASAAM_COUNTRY=$AASAAM_COUNTRY" >> /etc/environment
 
 # clear temporaries
 rm -rf /tmp/*
@@ -35,3 +32,5 @@ chmod 777 /tmpfs -R
 if [ -e "/app/etc/nginx/conf.d/addon/dhparam.pem" ]; then
   openssl dhparam -out /app/etc/nginx/conf.d/addon/dhparam.pem 2048
 fi
+
+# service nginx start

@@ -1,7 +1,13 @@
+if [ "$SSH_USER" == "" ]; then
+  export SSH_USER="host-docker"
+fi
 export LANG=en_US.utf8
 export LC_ALL=C.UTF-8
 export LS_OPTIONS='--color=auto'
 export TERM=xterm
+export HISTFILE="$HOME/.history_$SSH_USER"
+HISTFILESIZE=1000
+HISTSIZE=1000
 alias ll='ls $LS_OPTIONS -la'
 if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
   . /etc/bash_completion
