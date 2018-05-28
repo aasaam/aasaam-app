@@ -82,7 +82,7 @@ RUN export DEBIAN_FRONTEND=noninteractive ; \
   && cd /tmp && curl -L https://pecl.php.net/get/mongodb > mongodb.tgz && tar -xf mongodb.tgz && cd mongodb-* && phpize && ./configure \
   && make && make install && echo 'extension=mongodb.so' > /etc/php/7.2/mods-available/mongodb.ini \
   && cd /tmp && curl -L https://pecl.php.net/get/swoole > swoole.tgz && tar -xf swoole.tgz && cd swoole-* && phpize \
-  && ./configure --enable-openssl --enable-http2 --enable-async-redis --enable-mysqlnd \
+  && ./configure --enable-openssl --enable-http2 --enable-async-redis --enable-coroutine --enable-mysqlnd \
   && make && make install && echo 'extension=swoole.so' > /etc/php/7.2/mods-available/swoole.ini \
   && cd /tmp && curl -L https://pecl.php.net/get/amqp > amqp.tgz && tar -xf amqp.tgz && cd amqp-* && phpize && ./configure \
   && make && make install && echo 'extension=amqp.so' > /etc/php/7.2/mods-available/amqp.ini \
