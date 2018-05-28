@@ -82,7 +82,7 @@ RUN export DEBIAN_FRONTEND=noninteractive ; \
   && cd /tmp && curl -L https://pecl.php.net/get/mongodb > mongodb.tgz && tar -xf mongodb.tgz && cd mongodb-* && phpize && ./configure \
   && make && make install && echo 'extension=mongodb.so' > /etc/php/7.2/mods-available/mongodb.ini \
   && cd /tmp && curl -L https://pecl.php.net/get/swoole > swoole.tgz && tar -xf swoole.tgz && cd swoole-* && phpize \
-  && ./configure --enable-openssl --enable-http2 --enable-async-redis --enable-mysqlnd \
+  && ./configure --enable-openssl --enable-http2 --enable-async-redis --enable-coroutine --enable-mysqlnd \
   && make && make install && echo 'extension=swoole.so' > /etc/php/7.2/mods-available/swoole.ini \
   && cd /tmp && curl -L https://pecl.php.net/get/amqp > amqp.tgz && tar -xf amqp.tgz && cd amqp-* && phpize && ./configure \
   && make && make install && echo 'extension=amqp.so' > /etc/php/7.2/mods-available/amqp.ini \
@@ -167,7 +167,7 @@ RUN export DEBIAN_FRONTEND=noninteractive ; \
   && phpdismod yaf && phpdismod zmq \
   && rm -rf ~/.cache && rm -rf ~/.composer && rm -rf ~/.npm && rm -rf ~/.cache/yarn \
   && apt-get clean && apt-get autoremove -y \
-  && rm -r /var/lib/apt/lists/* && rm -rf /tmp && mkdir /tmp && chmod 777 /tmp
+  && rm -r /var/lib/apt/lists/* && rm -rf /tmp && mkdir /tmp && chmod 777 /tmp && truncate -s 0 /var/log/*.log
 
 # configuration
 ADD conf/.bashrc /root/.bashrc
@@ -184,7 +184,6 @@ ENV YARN_CACHE_FOLDER /app/var/cache/yarn
 ENV COMPOSER_CACHE_DIR /app/var/cache/composer
 RUN chmod 0600 /root/.jobber && chmod 0644 /etc/logrotate.conf && chmod +x /usr/bin/entrypoint && chmod +x /usr/bin/install-zephir && phpenmod aasaam-php-configure \
   && phpenmod igbinary && phpenmod msgpack && phpenmod yaml && phpenmod json && phpenmod phar && truncate -s 0 /var/log/*.log
-ADD conf/.bashrc /home/aasaam/.bashrc
 
 # ports
 EXPOSE 80 443
