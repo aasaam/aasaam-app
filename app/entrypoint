@@ -24,7 +24,7 @@ mkdir -p /tmpfs/php/tmp
 mkdir -p /tmpfs/php/upload
 mkdir -p /tmpfs/php/xdebug
 
-# set permission 
+# set permission
 chmod 777 /tmp -R
 chmod 777 /tmpfs -R
 

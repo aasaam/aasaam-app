@@ -49,7 +49,7 @@ location / {
 include /app/etc/nginx/conf.d/addon/*.conf;
 
 location /__status {
-  
+
   # local access
   allow 127.0.0.1;
   deny all;

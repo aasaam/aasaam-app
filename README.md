@@ -109,8 +109,6 @@ sysvshm,
 [tidy](http://php.net/tidy),
 [tokenizer](http://php.net/tokenizer),
 [uv](https://github.com/chobie/php-uv),
-[v8](https://github.com/pinepain/php-v8),
-[v8js](http://php.net/v8js),
 [varnish](http://php.net/varnish),
 [vcollect](https://github.com/viest/v-collect),
 [vips](https://github.com/jcupitt/php-vips-ext),
@@ -153,7 +151,7 @@ sysvshm,
 
 ### Jobber
 
-  Jobber is a utility for Unix-like systems that can run arbitrary commands, or “jobs”, according to a schedule. It is meant to be a better alternative to the classic Unix utility cron. 
+  Jobber is a utility for Unix-like systems that can run arbitrary commands, or “jobs”, according to a schedule. It is meant to be a better alternative to the classic Unix utility cron.
   [Read more...](https://dshearer.github.io/jobber/)
 
 ### Fluentbit
