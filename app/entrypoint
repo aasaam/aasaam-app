@@ -65,19 +65,16 @@ fi
 # phpenmod hprose
 # phpenmod hrtime
 # phpenmod iconv
-# phpenmod igbinary
 # phpenmod imagick
 # phpenmod imap
 # phpenmod interbase
 # phpenmod intl
-# phpenmod json
 # phpenmod jsond
 # phpenmod ldap
 # phpenmod libevent
 # phpenmod mbstring
 # phpenmod memcached
 # phpenmod mongodb
-# phpenmod msgpack
 # phpenmod mysqli
 # phpenmod mysqlnd
 # phpenmod odbc
@@ -131,10 +128,7 @@ fi
 # phpenmod xsl
 # phpenmod yac
 # phpenmod yaf
-# phpenmod yaml
-# phpenmod zephir_parser
 # phpenmod zip
 # phpenmod zmq
-
 
 # service nginx start

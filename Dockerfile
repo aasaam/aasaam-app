@@ -48,8 +48,7 @@ RUN export DEBIAN_FRONTEND=noninteractive ; \
   && cd /tmp && curl -L https://fluentbit.io/releases/0.13/fluent-bit-0.13.2.tar.gz > fluent-bit.tgz && tar -xf fluent-bit.tgz \
   && cd fluent-bit*/build && cmake ../ && make && make install \
   && cd /tmp \
-  && curl -L https://github.com/immortal/immortal/releases/download/0.18.0/immortal_0.18.0_amd64.deb > /tmp/immortal.deb \
-  && dpkg -i /tmp/immortal.deb \
+  && curl -s https://packagecloud.io/install/repositories/immortal/immortal/script.deb.sh | sudo bash \
   && curl -L https://github.com/dshearer/jobber/releases/download/v1.3.2/jobber_1.3.2-1_amd64_ubuntu16.deb > /tmp/jobber.deb \
   && dpkg -i /tmp/jobber.deb \
   && cd /tmp && curl -L https://pecl.php.net/get/igbinary > igbinary.tgz && tar -xf igbinary.tgz && cd igbinary-* && phpize && ./configure \
