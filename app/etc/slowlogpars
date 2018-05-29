@@ -43,7 +43,7 @@ function run() {
                 'method' => $matches['method'],
                 'file' => $matches['file'],
                 'line' => $matches['line'],
-            ]; 
+            ];
         } elseif (preg_match($patterns['otherLine'], $line, $matches)) {
             $logs[$id]['trace'][] = [
                 'message' => $matches['message'],
@@ -65,5 +65,5 @@ function run() {
 
 while (true) {
     run();
-    sleep(30);
+    sleep(mt_rand(20, 60));
 }

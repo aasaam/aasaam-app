@@ -8,7 +8,9 @@ echo "HOSTNAME=$HOSTNAME" >> /etc/environment
 
 # clear temporaries
 rm -rf /tmp/*
+rm -rf /tmp/.*
 rm -rf /tmpfs/*
+rm -rf /tmpfs/.*
 
 # make directories
 mkdir -p /tmp/php/spx
@@ -32,5 +34,107 @@ chmod 777 /tmpfs -R
 if [ -e "/app/etc/nginx/conf.d/addon/dhparam.pem" ]; then
   openssl dhparam -out /app/etc/nginx/conf.d/addon/dhparam.pem 2048
 fi
+
+# php extensions
+# enable by defaults: `igbinary, `msgpack`, `yaml, `json`, `phar`
+# phpenmod amqp
+# phpenmod apcu
+# phpenmod ast
+# phpenmod bcmath
+# phpenmod bz2
+# phpenmod calendar
+# phpenmod ctype
+# phpenmod curl
+# phpenmod dba
+# phpenmod dom
+# phpenmod ds
+# phpenmod enchant
+# phpenmod ev
+# phpenmod event
+# phpenmod exif
+# phpenmod fann
+# phpenmod fileinfo
+# phpenmod ftp
+# phpenmod gd
+# phpenmod geoip
+# phpenmod geospatial
+# phpenmod gettext
+# phpenmod gmp
+# phpenmod gnupg
+# phpenmod grpc
+# phpenmod hprose
+# phpenmod hrtime
+# phpenmod iconv
+# phpenmod igbinary
+# phpenmod imagick
+# phpenmod imap
+# phpenmod interbase
+# phpenmod intl
+# phpenmod json
+# phpenmod jsond
+# phpenmod ldap
+# phpenmod libevent
+# phpenmod mbstring
+# phpenmod memcached
+# phpenmod mongodb
+# phpenmod msgpack
+# phpenmod mysqli
+# phpenmod mysqlnd
+# phpenmod odbc
+# phpenmod opcache
+# phpenmod opencensus
+# phpenmod pdo
+# phpenmod pdo_firebird
+# phpenmod pdo_mysql
+# phpenmod pdo_odbc
+# phpenmod pdo_pgsql
+# phpenmod pdo_sqlite
+# phpenmod pgsql
+# phpenmod phar
+# phpenmod phpng_xhprof
+# phpenmod posix
+# phpenmod pspell
+# phpenmod psr
+# phpenmod raphf
+# phpenmod rar
+# phpenmod readline
+# phpenmod recode
+# phpenmod redis
+# phpenmod request
+# phpenmod rrd
+# phpenmod seaslog
+# phpenmod shmop
+# phpenmod simplexml
+# phpenmod soap
+# phpenmod sockets
+# phpenmod spx
+# phpenmod sqlite3
+# phpenmod ssh2
+# phpenmod swoole
+# phpenmod sync
+# phpenmod sysvmsg
+# phpenmod sysvsem
+# phpenmod sysvshm
+# phpenmod tidy
+# phpenmod tokenizer
+# phpenmod uopz
+# phpenmod uv
+# phpenmod varnish
+# phpenmod vcollect
+# phpenmod vips
+# phpenmod wddx
+# phpenmod xdebug
+# phpenmod xml
+# phpenmod xmlreader
+# phpenmod xmlrpc
+# phpenmod xmlwriter
+# phpenmod xsl
+# phpenmod yac
+# phpenmod yaf
+# phpenmod yaml
+# phpenmod zephir_parser
+# phpenmod zip
+# phpenmod zmq
+
 
 # service nginx start

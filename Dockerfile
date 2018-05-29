@@ -127,6 +127,8 @@ RUN export DEBIAN_FRONTEND=noninteractive ; \
   && make && make install && echo 'extension=opencensus.so' > /etc/php/7.2/mods-available/opencensus.ini \
   && cd /tmp && curl -L https://pecl.php.net/get/varnish > varnish.tgz && tar -xf varnish.tgz && cd varnish-* && phpize && ./configure \
   && make && make install && echo 'extension=varnish.so' > /etc/php/7.2/mods-available/varnish.ini \
+  && cd /tmp && curl -L https://pecl.php.net/get/uopz > uopz.tgz && tar -xf uopz.tgz && cd uopz-* && phpize && ./configure \
+  && make && make install && echo 'extension=uopz.so' > /etc/php/7.2/mods-available/uopz.ini \
   && cd /tmp && curl -L https://pecl.php.net/get/psr > psr.tgz && tar -xf psr.tgz && cd psr-* && phpize && ./configure \
   && make && make install && echo 'extension=psr.so' > /etc/php/7.2/mods-available/psr.ini \
   && cd /tmp && git clone --depth=1 https://github.com/expressif/pecl-event-libevent && cd pecl-event-libevent && phpize && ./configure \
