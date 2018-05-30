@@ -1,4 +1,5 @@
 [![Docker Repository on Quay](https://quay.io/repository/aasaam/aasaam-app/status "Docker Repository on Quay")](https://quay.io/repository/aasaam/aasaam-app)
+![MIT License](https://img.shields.io/badge/license-MIT-ff9900.svg "MIT License")
 
 ![ubuntu](https://img.shields.io/badge/ubuntu-18.04-blue.svg "ubuntu")
 ![nginx](https://img.shields.io/badge/nginx-1.14.0-blue.svg "nginx")
@@ -38,56 +39,121 @@ Docker image for PHP and JavaScript applications.
 
 #### Compiled extensions list
 
-Extension | Version | Dependency | Info
- ---  |  ---  |  ---  |  ---
-**amqp** | 1.9.3 |  | [:mag:](http://www.google.com/search?q=php+amqp+extension)
-**apcu** | 5.1.11 |  | [:mag:](http://www.google.com/search?q=php+apcu+extension)
-**ast** | 0.1.6 |  | [:mag:](http://www.google.com/search?q=php+ast+extension)
-**ds** | 1.2.6 | *Required*: json, spl | [:mag:](http://www.google.com/search?q=php+ds+extension)
-**ev** | 1.0.4 | *Optional*: sockets | [:mag:](http://www.google.com/search?q=php+ev+extension)
-**event** | 2.4.0 | *Required*: sockets | [:mag:](http://www.google.com/search?q=php+event+extension)
-**fann** | 1.1.1 |  | [:mag:](http://www.google.com/search?q=php+fann+extension)
-**fileinfo** | 1.0.5 |  | [:mag:](http://www.google.com/search?q=php+fileinfo+extension)
-**geoip** | 1.1.1 |  | [:mag:](http://www.google.com/search?q=php+geoip+extension)
-**geospatial** | 0.2.1 |  | [:mag:](http://www.google.com/search?q=php+geospatial+extension)
-**gnupg** | 1.4.0 |  | [:mag:](http://www.google.com/search?q=php+gnupg+extension)
-**grpc** | 1.12.0 |  | [:mag:](http://www.google.com/search?q=php+grpc+extension)
-**hprose** | 1.6.6 |  | [:mag:](http://www.google.com/search?q=php+hprose+extension)
-**hrtime** | 0.6.0 |  | [:mag:](http://www.google.com/search?q=php+hrtime+extension)
-**igbinary** | 2.0.6 | *Required*: standard, session | [:mag:](http://www.google.com/search?q=php+igbinary+extension)
-**imagick** | 3.4.3 | *Required*: spl | [:mag:](http://www.google.com/search?q=php+imagick+extension)
-**intl** | 1.1.0 |  | [:mag:](http://www.google.com/search?q=php+intl+extension)
-**json** | 1.6.0 |  | [:mag:](http://www.google.com/search?q=php+json+extension)
-**jsond** | 1.4.0 |  | [:mag:](http://www.google.com/search?q=php+jsond+extension)
-**libevent** | 0.2.0 | *Optional*: sockets | [:mag:](http://www.google.com/search?q=php+libevent+extension)
-**memcached** | 3.0.4 | *Required*: session, igbinary, msgpack, spl | [:mag:](http://www.google.com/search?q=php+memcached+extension)
-**mongodb** | 1.4.3 | *Required*: date, json, spl, standard | [:mag:](http://www.google.com/search?q=php+mongodb+extension)
-**msgpack** | 2.0.2 |  | [:mag:](http://www.google.com/search?q=php+msgpack+extension)
-**opencensus** | 0.2.2 |  | [:mag:](http://www.google.com/search?q=php+opencensus+extension)
-**Phar** | 2.0.2 | *Optional*: apc, bz2, openssl, zlib, standard | [:mag:](http://www.google.com/search?q=php+Phar+extension)
-**psr** | 0.4.0 | *Required*: spl | [:mag:](http://www.google.com/search?q=php+psr+extension)
-**raphf** | 2.0.0 |  | [:mag:](http://www.google.com/search?q=php+raphf+extension)
-**rar** | 4.0.0 |  | [:mag:](http://www.google.com/search?q=php+rar+extension)
-**redis** | 4.0.2 | *Required*: igbinary | [:mag:](http://www.google.com/search?q=php+redis+extension)
-**request** | 1.0.0 | *Required*: spl, date | [:mag:](http://www.google.com/search?q=php+request+extension)
-**rrd** | 2.0.1 |  | [:mag:](http://www.google.com/search?q=php+rrd+extension)
-**SeasLog** | 1.8.4 |  | [:mag:](http://www.google.com/search?q=php+SeasLog+extension)
-**SPX** | 0.2.4 |  | [:mag:](http://www.google.com/search?q=php+SPX+extension)
-**ssh2** | 1.1.2 |  | [:mag:](http://www.google.com/search?q=php+ssh2+extension)
-**swoole** | 2.2.0 |  | [:mag:](http://www.google.com/search?q=php+swoole+extension)
-**sync** | 1.1.1 |  | [:mag:](http://www.google.com/search?q=php+sync+extension)
-**uopz** | 5.0.2 |  | [:mag:](http://www.google.com/search?q=php+uopz+extension)
-**uv** | 0.2.2 |  | [:mag:](http://www.google.com/search?q=php+uv+extension)
-**varnish** | 1.2.3 | *Required*: hash | [:mag:](http://www.google.com/search?q=php+varnish+extension)
-**vcollect** | 1.0.0 |  | [:mag:](http://www.google.com/search?q=php+vcollect+extension)
-**vips** | 1.0.8 |  | [:mag:](http://www.google.com/search?q=php+vips+extension)
-**xdebug** | 2.7.0 |  | [:mag:](http://www.google.com/search?q=php+xdebug+extension)
-**xhprof** | 0.9.5 |  | [:mag:](http://www.google.com/search?q=php+xhprof+extension)
-**yac** | 2.0.2 |  | [:mag:](http://www.google.com/search?q=php+yac+extension)
-**yaf** | 3.0.7 | *Required*: spl, pcre | [:mag:](http://www.google.com/search?q=php+yaf+extension)
-**yaml** | 2.0.2 | *Optional*: date | [:mag:](http://www.google.com/search?q=php+yaml+extension)
-**zip** | 1.15.2 |  | [:mag:](http://www.google.com/search?q=php+zip+extension)
-**zmq** | 1.1.3 |  | [:mag:](http://www.google.com/search?q=php+zmq+extension)
+**amqp** *(1.9.3)*,
+**apcu** *(5.1.11)*,
+**ast** *(0.1.6)*,
+**base58** *(0.1.2)*,
+**bcmath**,
+**bz2**,
+**calendar**,
+**Core**,
+**ctype**,
+**curl**,
+**date**,
+**dba**,
+**dom**,
+**ds** *(1.2.6)*,
+**enchant**,
+**ev** *(1.0.4)*,
+**event** *(2.4.0)*,
+**exif**,
+**fann** *(1.1.1)*,
+**fileinfo** *(1.0.5)*,
+**filter**,
+**ftp**,
+**gd**,
+**geoip** *(1.1.1)*,
+**geospatial** *(0.2.1)*,
+**gettext**,
+**gmp**,
+**gnupg** *(1.4.0)*,
+**grpc** *(1.12.0)*,
+**hash**,
+**hashids** *(0.1.0)*,
+**hprose** *(1.6.6)*,
+**hrtime** *(0.6.0)*,
+**iconv**,
+**igbinary** *(2.0.6)*,
+**imagick** *(3.4.3)*,
+**imap**,
+**interbase**,
+**intl** *(1.1.0)*,
+**json** *(1.6.0)*,
+**jsond** *(1.4.0)*,
+**jwt** *(0.1.1)*,
+**ldap**,
+**libevent** *(0.2.0)*,
+**libxml**,
+**mbstring**,
+**memcached** *(3.0.4)*,
+**mongodb** *(1.4.3)*,
+**msgpack** *(2.0.2)*,
+**mysqli**,
+**mysqlnd**,
+**odbc**,
+**opencensus** *(0.2.2)*,
+**openssl**,
+**pcntl**,
+**pcre**,
+**PDO**,
+**PDO_Firebird**,
+**pdo_mysql**,
+**PDO_ODBC**,
+**pdo_pgsql**,
+**pdo_sqlite**,
+**pgsql**,
+**Phar** *(2.0.2)*,
+**posix**,
+**pspell**,
+**psr** *(0.4.0)*,
+**raphf** *(2.0.0)*,
+**rar** *(4.0.0)*,
+**readline**,
+**recode**,
+**redis** *(4.0.2)*,
+**Reflection**,
+**request** *(1.0.0)*,
+**rrd** *(2.0.1)*,
+**SeasLog** *(1.8.4)*,
+**session**,
+**sha3** *(0.2.0)*,
+**shmop**,
+**SimpleXML**,
+**soap**,
+**sockets**,
+**sodium**,
+**SPL**,
+**SPX** *(0.2.4)*,
+**sqlite3**,
+**ssh2** *(1.1.2)*,
+**standard**,
+**swoole** *(2.2.0)*,
+**sync** *(1.1.1)*,
+**sysvmsg**,
+**sysvsem**,
+**sysvshm**,
+**tidy**,
+**tokenizer**,
+**uopz** *(5.0.2)*,
+**uv** *(0.2.2)*,
+**varnish** *(1.2.3)*,
+**vcollect** *(1.0.0)*,
+**vips** *(1.0.8)*,
+**wddx**,
+**xdebug** *(2.7.0)*,
+**xhprof** *(0.9.5)*,
+**xml**,
+**xmlreader**,
+**xmlrpc**,
+**xmlwriter**,
+**xsl**,
+**yac** *(2.0.2)*,
+**yaf** *(3.0.7)*,
+**yaml** *(2.0.2)*,
+**Zend OPcache**,
+**zip** *(1.15.2)*,
+**zlib**,
+**zmq** *(1.1.3)*
 
 #### Zephir installation
 
@@ -144,6 +210,14 @@ git clone --depth=1 -b stable https://github.com/AASAAM/aasaam-app example-app
 
   Remove `.git`, `Dockerfile`, `README.md` and `conf`. You dont need them for your app.
 
+  And if you need configure jobber jobs it's on `/root/.jobber` you can copy your jobber configuration to continaer.
+
+```bash
+  docker run ... # start container
+  docker cp path/to/myjobber aasaam-testapp:/root/.jobber
+  docker exec -i -t aasaam-testapp chmod 600 /root/.jobber
+```
+
 ### Configure
 
 #### Modify initialize container
@@ -160,7 +234,8 @@ git clone --depth=1 -b stable https://github.com/AASAAM/aasaam-app example-app
 docker run --name aasaam-testapp -h aasaam-testapp \
   -it -v $(pwd)/app:/app  \
   --cap-add SYS_PTRACE \ # for phpfpm slow logs
-  --tmpfs /tmpfs:rw,size=2048m,noatime,mode=1777 \
+  --tmpfs /tmpfs:rw,size=2048m,noatime,mode=1777 \ # required for logs
   --publish=80:80 \
+  --publish=443:443 \
   -d quay.io/aasaam/aasaam-app:stable entrypoint
 ```

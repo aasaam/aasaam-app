@@ -32,12 +32,12 @@ RUN export DEBIAN_FRONTEND=noninteractive ; \
   && apt-get install -y --no-install-recommends \
     bash-completion lsb-release git cmake certbot \
     autoconf automake autotools-dev binutils chromium-browser cython htop imagemagick \
-    libc-ares-dev libcunit1-dev libcurl4-openssl-dev libev-dev libevent-dev libfann-dev libfribidi-bin \
+    libc-ares-dev libcunit1-dev libcurl4-openssl-dev libev-dev libevent-dev libfann-dev libbase58-dev libfribidi-bin \
     libgeoip-dev libgpgme11-dev libhiredis-dev libjansson-dev libjemalloc-dev libmagickwand-dev libmemcached-dev \
     libnghttp2-dev librabbitmq-dev librrd-dev libspdylay-dev libssh2-1-dev libssl-dev libsystemd-dev libtool libuv1-dev \
     libvarnishapi-dev libvips libvips-dev libxml2-dev libyaml-dev libzmq3-dev \
     logrotate nghttp2 nghttp2-client nghttp2-proxy nghttp2-server nginx-full nodejs yarn \
-    pkg-config python re2c xterm zlib1g-dev goaccess \
+    pkg-config python re2c xterm zlib1g-dev \
     php7.2 php7.2-bcmath php7.2-bz2 php7.2-cgi php7.2-cli php7.2-common php7.2-curl php7.2-dba php7.2-dev php7.2-enchant \
     php7.2-fpm php7.2-gd php7.2-gmp php7.2-imap php7.2-interbase php7.2-intl php7.2-json php7.2-ldap php7.2-mbstring php7.2-mysql \
     php7.2-odbc php7.2-opcache php7.2-pgsql php7.2-phpdbg php7.2-pspell php7.2-readline php7.2-recode php7.2-soap php7.2-sqlite3 \
@@ -136,6 +136,14 @@ RUN export DEBIAN_FRONTEND=noninteractive ; \
   && make && make install && echo 'extension=vcollect.so' > /etc/php/7.2/mods-available/vcollect.ini \
   && cd /tmp && git clone --depth=1 https://github.com/php-geospatial/geospatial && cd geospatial && phpize && ./configure \
   && make && make install && echo 'extension=geospatial.so' > /etc/php/7.2/mods-available/geospatial.ini \
+  && cd /tmp && git clone --depth=1 https://github.com/cdoco/php-jwt && cd php-jwt && phpize && ./configure --with-openssl \
+  && make && make install && echo 'extension=jwt.so' > /etc/php/7.2/mods-available/jwt.ini \
+  && cd /tmp && git clone --depth=1 https://github.com/legalthings/base58-php-ext && cd base58-php-ext && phpize && ./configure \
+  && make && make install && echo 'extension=base58.so' > /etc/php/7.2/mods-available/base58.ini \
+  && cd /tmp && git clone --depth=1 https://github.com/strawbrary/php-sha3 && cd php-sha3 && phpize && ./configure \
+  && make && make install && echo 'extension=sha3.so' > /etc/php/7.2/mods-available/sha3.ini \
+  && cd /tmp && git clone --depth=1 https://github.com/cdoco/hashids.phpc && cd hashids.phpc && phpize && ./configure \
+  && make && make install && echo 'extension=hashids.so' > /etc/php/7.2/mods-available/hashids.ini \
   && cd /tmp && git clone --depth=1 https://github.com/NoiseByNorthwest/php-spx && cd php-spx && phpize && ./configure \
   && make && make install && echo 'extension=spx.so' > /etc/php/7.2/mods-available/spx.ini \
   && echo 'spx.data_dir=/tmp/php/spx' >> /etc/php/7.2/mods-available/spx.ini \
@@ -183,6 +191,7 @@ ADD conf/logrotate.conf /etc/logrotate.conf
 ADD conf/mime.types /etc/nginx/mime.types
 ENV YARN_CACHE_FOLDER /app/var/cache/yarn
 ENV COMPOSER_CACHE_DIR /app/var/cache/composer
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD 1
 RUN chmod 0600 /root/.jobber && chmod 0644 /etc/logrotate.conf && chmod +x /usr/bin/entrypoint && chmod +x /usr/bin/install-zephir && phpenmod aasaam-php-configure \
   && phpenmod igbinary && phpenmod msgpack && phpenmod yaml && phpenmod json && phpenmod phar && truncate -s 0 /var/log/*.log
 

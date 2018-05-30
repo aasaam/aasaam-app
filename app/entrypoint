@@ -40,6 +40,7 @@ fi
 # phpenmod amqp
 # phpenmod apcu
 # phpenmod ast
+# phpenmod base58
 # phpenmod bcmath
 # phpenmod bz2
 # phpenmod calendar
@@ -62,6 +63,7 @@ fi
 # phpenmod gmp
 # phpenmod gnupg
 # phpenmod grpc
+# phpenmod hashids
 # phpenmod hprose
 # phpenmod hrtime
 # phpenmod iconv
@@ -70,6 +72,7 @@ fi
 # phpenmod interbase
 # phpenmod intl
 # phpenmod jsond
+# phpenmod jwt
 # phpenmod ldap
 # phpenmod libevent
 # phpenmod mbstring
@@ -100,6 +103,7 @@ fi
 # phpenmod request
 # phpenmod rrd
 # phpenmod seaslog
+# phpenmod sha3
 # phpenmod shmop
 # phpenmod simplexml
 # phpenmod soap
