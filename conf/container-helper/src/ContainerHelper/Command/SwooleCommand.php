@@ -17,22 +17,22 @@ use ContainerHelper\Profiles;
 use ContainerHelper\Template;
 use Symfony\Component\Console\Input\InputArgument;
 
-class ConfigureCommand extends AbstractCommand
+class SwooleCommand extends AbstractCommand
 {
     protected function configure()
     {
         $this
-            ->setName('configure')
-            ->addArgument('profile', InputArgument::REQUIRED)
-            ->setDescription('Configure the container by profile.')
-            ->setHelp('Quick way to configure the nginx, php of container');
+            ->setName('swoole')
+            ->addArgument('enable', InputArgument::REQUIRED)
+            ->setDescription('Configure the container is swoole base app.')
+            ->setHelp('Quick way to configure the nginx, php for swoole app');
     }
 
     protected function executeMe(): void
     {
-        define('RANDOM_KEY', substr(preg_replace('/[^a-z0-9]/i', '', base64_encode(hash('sha1', microtime(true) . uniqid()))), 1, 12));
+        define('RANDOM_KEY', substr(preg_replace('/[^a-z0-9]/i', '', base64_encode(hash('sha1', microtime(true) . uniqid('', true)))), 1, 12));
         $profiles = new Profiles();
-        $profiles->setProfile($this->input->getArgument('profile'));
+        $profiles->setSwoole((bool)$this->input->getArgument('enable'));
         $profiles->apply();
         $swooleMode = $profiles->isSwoole() ? 'active' : 'disable';
         $this->output->writeln(vsprintf('Profile now is <info>%s</info> and swoole mode is <comment>%s</comment>', [

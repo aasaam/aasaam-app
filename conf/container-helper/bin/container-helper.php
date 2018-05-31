@@ -20,8 +20,8 @@ if (getenv('DEBUG')) {
 
 (function () {
     $extensions = array_flip(get_loaded_extensions());
-    if (!isset($extensions['curl']) || !isset($extensions['event'])) {
-        fwrite(STDERR, 'You need to enable extensions: `curl`, `event`');
+    if (!isset($extensions['curl']) || !isset($extensions['igbinary']) || !isset($extensions['event'])) {
+        fwrite(STDERR, 'You need to enable extensions: `curl`, `igbinary`, `event`');
         exit(1);
     }
 })();
@@ -32,12 +32,18 @@ if (defined('PHAR_MODE')) {
     require 'vendor/autoload.php';
 }
 
+if (!defined('PHAR_VERSION')) {
+    define('PHAR_VERSION', 'v' . gmdate('y.m.d'));
+}
+
 $application = new Symfony\Component\Console\Application();
 
 $application->setName('Container Helper');
+$application->setVersion(PHAR_VERSION);
 
 $application->add(new ContainerHelper\Command\ConfigureCommand());
 $application->add(new ContainerHelper\Command\LogCommand());
 $application->add(new ContainerHelper\Command\RestartServices());
+$application->add(new ContainerHelper\Command\SwooleCommand());
 
 $application->run();

@@ -210,14 +210,6 @@ git clone --depth=1 -b stable https://github.com/AASAAM/aasaam-app example-app
 
   Remove `.git`, `Dockerfile`, `README.md` and `conf`. You dont need them for your app.
 
-  And if you need configure jobber jobs it's on `/root/.jobber` you can copy your jobber configuration to continaer.
-
-```bash
-  docker run ... # start container
-  docker cp path/to/myjobber aasaam-testapp:/root/.jobber
-  docker exec -i -t aasaam-testapp chmod 600 /root/.jobber
-```
-
 ### Configure
 
 #### Modify initialize container
@@ -231,16 +223,23 @@ git clone --depth=1 -b stable https://github.com/AASAAM/aasaam-app example-app
 #### Start container
 
 ```bash
-docker run --name aasaam-testapp -h aasaam-testapp -it \
-  -v $(pwd)/app:/app  \
-  -v $(pwd)/var/tmp:/tmp  \
-  -v $(pwd)/var/letsencrypt:/etc/letsencrypt  \
-  -e CONTAINER_NAME='aasaam-testapp' \
-  -e CONTAINER_DATACENTER='itc' \
-  -e CONTAINER_COUNTRY='IR' \
+docker run --name sampleapp -h sampleapp -it \
+  -v $(pwd)/app:/app \
+  -v $(pwd)/.jobber:/root/.jobber \
+  -v $(pwd)/var/tmp:/tmp \
+  -v $(pwd)/var/letsencrypt:/etc/letsencrypt \
+  # -e CONTAINER_ENV='dev' \ # container in development mode
+  -e CONTAINER_NAME='sampleapp' \ # container name
+  -e CONTAINER_DATACENTER='dc1' \ # datacenter name
+  -e CONTAINER_COUNTRY='IR' \ # countru code
   --cap-add SYS_PTRACE \ # for phpfpm slow logs
   --tmpfs /tmpfs:rw,size=2048m,noatime,mode=1777 \ # required for logs
   --publish=80:80 \
   --publish=443:443 \
   -d quay.io/aasaam/aasaam-app:stable entrypoint
 ```
+
+#### Container helper
+
+  You can use `container-helper` command to configure container on the fly.
+  It's change configuration of nginx, php in several profiles.

@@ -18,6 +18,7 @@ use ContainerHelper\Log\ConnectivityStatus;
 use ContainerHelper\Log\NginxStatus;
 use ContainerHelper\Log\PhpFpmSlow;
 use ContainerHelper\Log\PhpFpmStatus;
+use ContainerHelper\Profiles;
 use function Amp\asyncCall;
 use React\Promise\Deferred;
 
@@ -33,15 +34,18 @@ class LogCommand extends AbstractCommand
 
     protected function executeMe(): void
     {
+        $profiles = new Profiles();
         while (true) {
-            asyncCall(function () {
-                new PhpFpmStatus();
-                yield new Delayed(30 * TIME_RATIO);
-            });
-            asyncCall(function () {
-                new PhpFpmSlow();
-                yield new Delayed(120 * TIME_RATIO);
-            });
+            if (!$profiles->isSwoole()) {
+                asyncCall(function () {
+                    new PhpFpmStatus();
+                    yield new Delayed(30 * TIME_RATIO);
+                });
+                asyncCall(function () {
+                    new PhpFpmSlow();
+                    yield new Delayed(120 * TIME_RATIO);
+                });
+            }
             asyncCall(function () {
                 new NginxStatus();
                 yield new Delayed(20 * TIME_RATIO);

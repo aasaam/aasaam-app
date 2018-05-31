@@ -14,7 +14,6 @@ namespace ContainerHelper\Command;
 
 use ContainerHelper\Command\AbstractCommand;
 use ContainerHelper\Profiles;
-use ContainerHelper\Template;
 use Symfony\Component\Console\Input\InputArgument;
 
 class RestartServices extends AbstractCommand
@@ -29,15 +28,24 @@ class RestartServices extends AbstractCommand
 
     protected function executeMe(): void
     {
+        $profiles = new Profiles();
+
         $commands = [
             'service nginx stop',
             'service php7.2-fpm stop',
             'service jobber restart',
             'immortalctl halt "*"',
-            'immortaldir /app/etc/immortal > /dev/null 2>&1 &',
-            'service nginx start',
-            'service php7.2-fpm start',
         ];
+
+        if (getenv('CONTAINER_ENV') !== 'dev') {
+            $commands[] = 'immortal -c /app/etc/immortal/fluent-bit.yml';
+            $commands[] = 'immortal -c /app/etc/immortal/container-helper-log.yml';
+        }
+
+        if (!$profiles->isSwoole()) {
+            $commands[] = 'service php7.2-fpm start';
+        }
+        $commands[] = 'service nginx start';
         foreach ($commands as $c) {
             shell_exec($c);
         }

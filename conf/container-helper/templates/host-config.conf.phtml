@@ -69,6 +69,7 @@ location ~* "(.+)\.([0-9]{8})(\.)(eot|woff2|woff|gif|jpg|jpeg|png|ttf|ico|html|c
   try_files $1$3$4 =404;
 }
 
+<?php if (!$isSwoole): ?>
 location /__status {
   access_log off;
   allow 127.0.0.1;
@@ -83,14 +84,58 @@ location /__status {
   }
 }
 
+<?php endif; ?>
+include /app/etc/nginx/conf.d/addon/*.conf;
+
+<?php if ($isSwoole): ?>
+location / {
+  try_files $uri $uri/ @swoole;
+}
+
+location @swoole {
+  proxy_redirect off;
+  proxy_http_version 1.1;
+  proxy_pass http://127.0.0.1:8080;
+  proxy_set_header Host $host;
+  proxy_set_header X-Real-IP $remote_addr;
+  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+
+<?php if (isset($env['CONTAINER_NAME'])) : ?>
+  proxy_set_header Container-Name '<?=$env['CONTAINER_NAME'];?>';
+<?php else : ?>
+<?php if (isset($env['CONTAINER_ENV'])) : ?>
+  proxy_set_header Container-Env '<?=$env['CONTAINER_ENV'];?>';
+<?php else : ?>
+  proxy_set_header Container-Name 'unknown';
+<?php endif; ?>
+<?php if (isset($env['CONTAINER_DATACENTER'])) : ?>
+  proxy_set_header Container-Datacenter '<?=$env['CONTAINER_DATACENTER'];?>';
+<?php else : ?>
+  proxy_set_header Container-Datacenter 'unknown';
+<?php endif; ?>
+<?php if (isset($env['CONTAINER_COUNTRY'])) : ?>
+  proxy_set_header Container-Country '<?=$env['CONTAINER_COUNTRY'];?>';
+<?php else : ?>
+  proxy_set_header Container-Country 'VA';
+<?php endif; ?>
+  proxy_set_header Nginx-Cache-Key $request_method$scheme$host$request_uri;
+  proxy_set_header Nginx-Cache-Config '/tmpfs/nginx/proxy/cache levels=1:2:2 keys_zone=PROXYCACHE:1024m inactive=30m';
+
+  # cache
+  proxy_cache PROXYCACHE;
+<?php if ($proxycache): ?>
+  proxy_cache_bypass $http_x_nocache $cookie_xnocache;
+<?php else: ?>
+  proxy_cache_bypass '1';
+<?php endif; ?>
+}
+<?php else: ?>
 location / {
   expires max;
   etag on;
   if_modified_since exact;
   try_files $uri /index.php$is_args$args;
 }
-
-include /app/etc/nginx/conf.d/addon/*.conf;
 
 # php
 location ~ \.php$ {
@@ -108,9 +153,30 @@ location ~ \.php$ {
   fastcgi_send_timeout 30;
   fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
 
+<?php if (isset($env['CONTAINER_NAME'])) : ?>
+  fastcgi_param CONTAINER_NAME '<?=$env['CONTAINER_NAME'];?>';
+<?php else : ?>
+  fastcgi_param CONTAINER_NAME 'unknown';
+<?php endif; ?>
+<?php if (isset($env['CONTAINER_ENV'])) : ?>
+  fastcgi_param CONTAINER_ENV '<?=$env['CONTAINER_ENV'];?>';
+<?php else : ?>
+  fastcgi_param CONTAINER_ENV 'prod';
+<?php endif; ?>
+<?php if (isset($env['CONTAINER_DATACENTER'])) : ?>
+  fastcgi_param CONTAINER_DATACENTER '<?=$env['CONTAINER_DATACENTER'];?>';
+<?php else : ?>
+  fastcgi_param CONTAINER_DATACENTER 'unknown';
+<?php endif; ?>
+<?php if (isset($env['CONTAINER_COUNTRY'])) : ?>
+  fastcgi_param CONTAINER_COUNTRY '<?=$env['CONTAINER_COUNTRY'];?>';
+<?php else : ?>
+  fastcgi_param CONTAINER_COUNTRY 'VA';
+<?php endif; ?>
+
   fastcgi_param NGINX_SECURE_PROXY '127.0.0.1';
   fastcgi_param NGINX_CACHE_KEY $request_method$scheme$host$request_uri;
-  fastcgi_param NGINX_CACHE_CONFIG '/tmpfs/nginx/fastcgi/cache levels=1:2:2 keys_zone=FASTCGICACHE:2048m inactive=30m';
+  fastcgi_param NGINX_CACHE_CONFIG '/tmpfs/nginx/fastcgi/cache levels=1:2:2 keys_zone=FASTCGICACHE:1024m inactive=30m';
 
   # cache
   fastcgi_cache FASTCGICACHE;
@@ -120,3 +186,4 @@ location ~ \.php$ {
   fastcgi_cache_bypass '1';
 <?php endif; ?>
 }
+<?php endif; ?>

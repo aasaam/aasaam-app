@@ -20,6 +20,11 @@ class Profiles
     protected $profile = 'prod-logs';
 
     /**
+     * @var bool
+     */
+    protected $isSwoole = false;
+
+    /**
      * @var array
      */
     protected $config = [
@@ -30,6 +35,7 @@ class Profiles
         'phpfpmaccesslog' => false,
         'opcacheperformance' => false,
         'fastcgicache' => true,
+        'proxycache' => true,
     ];
 
     /**
@@ -44,6 +50,7 @@ class Profiles
             'phpfpmaccesslog' => true,
             'opcacheperformance' => false,
             'fastcgicache' => false,
+            'proxycache' => false,
         ],
         'dev-cache' => [
             'nginxaccesslog' => true,
@@ -53,6 +60,7 @@ class Profiles
             'phpfpmaccesslog' => true,
             'opcacheperformance' => false,
             'fastcgicache' => true,
+            'proxycache' => true,
         ],
         'prod-logs' => [
             'nginxaccesslog' => true,
@@ -62,6 +70,7 @@ class Profiles
             'phpfpmaccesslog' => true,
             'opcacheperformance' => true,
             'fastcgicache' => true,
+            'proxycache' => true,
         ],
         'prod-debug' => [
             'nginxaccesslog' => true,
@@ -71,6 +80,7 @@ class Profiles
             'phpfpmaccesslog' => true,
             'opcacheperformance' => false,
             'fastcgicache' => true,
+            'proxycache' => true,
         ],
         'prod' => [
             'nginxaccesslog' => false,
@@ -80,6 +90,7 @@ class Profiles
             'phpfpmaccesslog' => false,
             'opcacheperformance' => true,
             'fastcgicache' => true,
+            'proxycache' => true,
         ],
     ];
 
@@ -92,6 +103,7 @@ class Profiles
     public function __construct()
     {
         $defaults = [
+            'isSwoole' => $this->isSwoole,
             'profile' => $this->profile,
             'config' => $this->config,
         ];
@@ -100,6 +112,25 @@ class Profiles
         }
         $this->profile = $defaults['profile'];
         $this->config = $defaults['config'];
+        $this->isSwoole = $defaults['isSwoole'];
+    }
+
+    /**
+     * Apply
+     *
+     * @return void
+     */
+    public function apply(): void
+    {
+        $this->setProfile($this->profile);
+        if ($this->isSwoole) {
+            $this->config['phpxdebug'] = false;
+            $this->config['phpspx'] = false;
+            $this->config['phpfpmslowlog'] = false;
+            $this->config['phpfpmaccesslog'] = false;
+            $this->config['opcacheperformance'] = false;
+            $this->config['fastcgicache'] = false;
+        }
     }
 
     /**
@@ -114,6 +145,27 @@ class Profiles
             $this->profile = $profile;
             $this->config = $this->profileConfig[$profile];
         }
+    }
+
+    /**
+     * Set profile
+     *
+     * @param bool $isSwoole
+     * @return void
+     */
+    public function setSwoole(bool $isSwoole): void
+    {
+        $this->isSwoole = $isSwoole;
+    }
+
+    /**
+     * Is swoole
+     *
+     * @return boolean
+     */
+    public function isSwoole(): bool
+    {
+        return $this->isSwoole;
     }
 
     /**
@@ -151,6 +203,20 @@ class Profiles
     }
 
     /**
+     * Get config file
+     *
+     * @return array
+     */
+    public function getConfigFile(): array
+    {
+        return [
+            'profile' => $this->profile,
+            'config' => $this->config,
+            'isSwoole' => $this->isSwoole,
+        ];
+    }
+
+    /**
      * Destructor
      */
     public function __destruct()
@@ -158,6 +224,7 @@ class Profiles
         $defaults = [
             'profile' => $this->profile,
             'config' => $this->config,
+            'isSwoole' => $this->isSwoole,
         ];
         file_put_contents(self::CONFIG_FILE, json_encode($defaults, JSON_PRETTY_PRINT));
     }

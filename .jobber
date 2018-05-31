@@ -13,3 +13,11 @@ runLog:
   notifyOnError: true
   notifyOnFailure: true
   notifyOnSuccess: true
+
+# - name: CertBot
+#   cmd: /usr/bin/certbot renew --post-hook "service nginx reload"
+#   time: '* * 0 * * *'
+#   onError: Continue
+#   notifyOnError: true
+#   notifyOnFailure: true
+#   notifyOnSuccess: true

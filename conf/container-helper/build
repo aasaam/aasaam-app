@@ -20,17 +20,20 @@ class Compiler
           }
         }
 
-        $stub = <<<'EOF'
+        $stub = vsprintf("
 #!/usr/bin/env php
 <?php
 define('PHAR_MODE', 1);
+define('PHAR_VERSION', 'v%s');
 if (extension_loaded('apc') && ini_get('apc.enable_cli') && ini_get('apc.cache_by_default')) {
     ini_set('apc.cache_by_default', 0);
 }
 Phar::mapPhar('container-helper.phar');
 require 'phar://container-helper.phar/bin/container-helper.php';
 __HALT_COMPILER();
-EOF;
+", [
+  gmdate('y.m.d'),
+]);
 
         $this->phar->setStub($stub);
     }

@@ -32,6 +32,8 @@ class Template
         $this->profiles = $profiles;
         $this->templates = new Engine('templates', 'phtml');
         $this->templates->addData(['date' => gmdate('r') . "\n"]);
+        $this->templates->addData(['env' => $_SERVER]);
+        $this->templates->addData(['isSwoole' => $this->profiles->isSwoole()]);
         $this->apply();
     }
 
@@ -61,6 +63,10 @@ class Template
             shell_exec('phpenmod spx');
         } else {
             shell_exec('phpdismod spx');
+        }
+
+        if ($this->profiles->isSwoole()) {
+            shell_exec('phpdismod xhprof');
         }
     }
 

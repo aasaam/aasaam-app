@@ -186,7 +186,7 @@ RUN export DEBIAN_FRONTEND=noninteractive ; \
 # configuration
 ADD conf/.bashrc /root/.bashrc
 ADD conf/.npmrc /root/.npmrc
-ADD conf/.jobber /root/.jobber
+ADD .jobber /root/.jobber
 ADD conf/entrypoint /usr/bin/entrypoint
 ADD conf/install-zephir /usr/bin/install-zephir
 ADD conf/nginx.conf /etc/nginx/nginx.conf

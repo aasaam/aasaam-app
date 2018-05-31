@@ -7,6 +7,7 @@ sleep 5
 echo "CONTAINER_NAME=$CONTAINER_NAME" >> /etc/environment
 echo "CONTAINER_DATACENTER=$CONTAINER_DATACENTER" >> /etc/environment
 echo "CONTAINER_COUNTRY=$CONTAINER_COUNTRY" >> /etc/environment
+echo "CONTAINER_ENV=$CONTAINER_ENV" >> /etc/environment
 
 # clear temporaries
 rm -rf /tmp/*
@@ -140,4 +141,16 @@ fi
 # phpenmod zip
 # phpenmod zmq
 
-# service nginx start
+# configure if swoole app
+# container-helper swoole 1
+
+# configure to `prod-logs`
+container-helper configure prod-logs --no-ansi
+if [ "$CONTAINER_ENV" = "dev" ]; then
+  container-helper configure dev --no-ansi
+fi
+
+service jobber start
+immortaldir /app/etc/immortal > /dev/null 2>&1 &
+service php7.2-fpm start
+service nginx start
