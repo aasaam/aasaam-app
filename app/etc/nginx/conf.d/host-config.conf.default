@@ -1,3 +1,4 @@
+# dont change this file it's will be generated
 charset utf-8;
 
 root /app/app/public;
@@ -5,7 +6,8 @@ root /app/app/public;
 index index.php index.html;
 
 access_log /tmpfs/logs/nginx.access.log jsonlog;
-# access_log off;
+
+include /app/etc/nginx/conf.d/errorpages.conf;
 
 gzip on;
 gzip_static on;
@@ -49,11 +51,8 @@ location / {
 include /app/etc/nginx/conf.d/addon/*.conf;
 
 location /__status {
-
-  # local access
   allow 127.0.0.1;
   deny all;
-
   location /__status {
     stub_status on;
   }

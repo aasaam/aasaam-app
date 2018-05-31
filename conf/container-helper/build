@@ -1,0 +1,38 @@
+#!/usr/bin/env php
+<?php
+error_reporting(E_ALL);
+
+class Compiler
+{
+    public function __construct()
+    {
+        $srcRoot = realpath(__DIR__);
+        $buildRoot = realpath(__DIR__);
+
+        $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($srcRoot, FilesystemIterator::SKIP_DOTS), RecursiveIteratorIterator::LEAVES_ONLY);
+        $this->phar = new Phar($buildRoot . '/container-helper.phar', 0, 'container-helper.phar');
+
+        foreach ($iterator as $file) {
+          if (in_array(strtolower($file->getExtension()), ['php', 'phtml'])) {
+            $path = str_replace($buildRoot . '/', '', $file->getRealPath());
+            $content = file_get_contents($file);
+            $this->phar->addFromString($path, $content);
+          }
+        }
+
+        $stub = <<<'EOF'
+#!/usr/bin/env php
+<?php
+if (extension_loaded('apc') && ini_get('apc.enable_cli') && ini_get('apc.cache_by_default')) {
+    ini_set('apc.cache_by_default', 0);
+}
+Phar::mapPhar('container-helper.phar');
+require 'phar://container-helper.phar/bin/container-helper.php';
+__HALT_COMPILER();
+EOF;
+
+        $this->phar->setStub($stub);
+    }
+}
+
+new Compiler();

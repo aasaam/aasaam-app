@@ -1,0 +1,122 @@
+# dont change this file it's will be generated <?=$date?>
+charset utf-8;
+
+root /app/app/public;
+
+index index.php index.html;
+
+include /app/etc/nginx/conf.d/errorpages.conf;
+
+<?php if ($nginxaccesslog): ?>
+access_log /tmpfs/logs/nginx.access.log jsonlog;
+<?php else: ?>
+access_log off;
+<?php endif; ?>
+
+gzip on;
+gzip_static on;
+gzip_comp_level 9;
+gzip_min_length 1;
+gzip_buffers 16 8k;
+gzip_vary on;
+gzip_types
+
+  # json and xml
+  application/atom+xml
+  application/json
+  application/ld+json
+  application/rss+xml
+  application/vnd.geo+json
+  application/xml
+  application/javascript
+  application/manifest+json
+  application/x-web-app-manifest+json
+  text/cache-manifest
+
+  # fonts
+  application/vnd.ms-fontobject
+  application/x-font-ttf
+  font/opentype
+
+  # others
+  text/css
+  text/csv
+  text/markdown
+  text/plain
+  text/vcard;
+
+# Precompressed assets version:
+#   'css/main.12345678.gzip.css' => 'css/main.gzip.css'
+#   'js/main.12345678.gzip.js' => 'js/main.gzip.js'
+#   'json/main.12345678.gzip.json' => 'json/main.gzip.json'
+#   'html/main.12345678.gzip.html' => 'html/main.gzip.html'
+#   'webmanifest/webmanifest.12345678.gzip.webmanifest' => 'webmanifest/main.gzip.webmanifest'
+location ~* "(.+)\.([0-9]{8})\.gzip\.(html|css|js|json|webmanifest)$" {
+  gzip off;
+  add_header 'Cache-control' 'maxage=315360000, post-check=0, pre-check=0';
+  add_header 'Pragma' 'public';
+  add_header Content-Encoding gzip;
+  add_header Vary Accept-Encoding;
+  try_files $1.gzip.$3 =500;
+}
+
+# Assets version:
+#   'images/logo.12345678.png' => 'images/logo.png'
+#   'fonts/font.woff2' -> 'fonts/font.12345678.woff2'
+location ~* "(.+)\.([0-9]{8})(\.)(eot|woff2|woff|gif|jpg|jpeg|png|ttf|ico|html|css|js)$" {
+  add_header 'Cache-control' 'maxage=315360000, post-check=0, pre-check=0';
+  add_header 'Pragma' 'public';
+  try_files $1$3$4 =404;
+}
+
+location /__status {
+  access_log off;
+  allow 127.0.0.1;
+  deny all;
+  location /__status {
+    stub_status on;
+  }
+  location /__status/fpm {
+    include fastcgi_params;
+    fastcgi_pass 127.0.0.1:9000;
+    fastcgi_param SCRIPT_FILENAME $fastcgi_script_name;
+  }
+}
+
+location / {
+  expires max;
+  etag on;
+  if_modified_since exact;
+  try_files $uri /index.php$is_args$args;
+}
+
+include /app/etc/nginx/conf.d/addon/*.conf;
+
+# php
+location ~ \.php$ {
+  internal;
+  include fastcgi_params;
+
+  # configure
+  fastcgi_buffer_size 32k;
+  fastcgi_buffers 8 16k;
+  fastcgi_connect_timeout 20;
+  fastcgi_index index.php;
+  fastcgi_intercept_errors on;
+  fastcgi_pass 127.0.0.1:9000;
+  fastcgi_read_timeout 10;
+  fastcgi_send_timeout 30;
+  fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+
+  fastcgi_param NGINX_SECURE_PROXY '127.0.0.1';
+  fastcgi_param NGINX_CACHE_KEY $request_method$scheme$host$request_uri;
+  fastcgi_param NGINX_CACHE_CONFIG '/tmpfs/nginx/fastcgi/cache levels=1:2:2 keys_zone=FASTCGICACHE:2048m inactive=30m';
+
+  # cache
+  fastcgi_cache FASTCGICACHE;
+<?php if ($fastcgicache): ?>
+  fastcgi_cache_bypass $http_x_nocache $cookie_xnocache;
+<?php else: ?>
+  fastcgi_cache_bypass '1';
+<?php endif; ?>
+}

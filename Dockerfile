@@ -28,10 +28,11 @@ RUN export DEBIAN_FRONTEND=noninteractive ; \
   && curl -L http://deb.nodesource.com/gpgkey/nodesource.gpg.key | sudo apt-key add - \
   && echo 'deb http://dl.yarnpkg.com/debian/ stable main' >> /etc/apt/sources.list.d/repo.list \
   && echo "deb http://deb.nodesource.com/node_8.x bionic main" | sudo tee /etc/apt/sources.list.d/nodesource.list \
+  && curl -s https://packagecloud.io/install/repositories/immortal/immortal/script.deb.sh | sudo bash \
   && apt-get update -y \
   && apt-get install -y --no-install-recommends \
     bash-completion lsb-release git cmake certbot \
-    autoconf automake autotools-dev binutils chromium-browser cython htop imagemagick \
+    autoconf automake autotools-dev binutils chromium-browser cython htop imagemagick immortal iputils-ping \
     libc-ares-dev libcunit1-dev libcurl4-openssl-dev libev-dev libevent-dev libfann-dev libbase58-dev libfribidi-bin \
     libgeoip-dev libgpgme11-dev libhiredis-dev libjansson-dev libjemalloc-dev libmagickwand-dev libmemcached-dev \
     libnghttp2-dev librabbitmq-dev librrd-dev libspdylay-dev libssh2-1-dev libssl-dev libsystemd-dev libtool libuv1-dev \
@@ -43,12 +44,11 @@ RUN export DEBIAN_FRONTEND=noninteractive ; \
     php7.2-odbc php7.2-opcache php7.2-pgsql php7.2-phpdbg php7.2-pspell php7.2-readline php7.2-recode php7.2-soap php7.2-sqlite3 \
     php7.2-tidy php7.2-xml php7.2-xmlrpc php7.2-xsl php7.2-zip \
   && curl -L http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz > /tmp/GeoLiteCity.dat.gz \
-  && cd /tmp/ && gunzip GeoLiteCity.dat.gz && mkdir -p /usr/local/share/GeoIP && mv GeoLiteCity.dat /usr/local/share/GeoIP/ \
+  && cd /tmp/ && gunzip GeoLiteCity.dat.gz && mkdir -p /usr/local/share/GeoIP && mv GeoLiteCity.dat /usr/local/share/GeoIP/GeoIPCity.dat \
   && npm -g update \
   && cd /tmp && curl -L https://fluentbit.io/releases/0.13/fluent-bit-0.13.2.tar.gz > fluent-bit.tgz && tar -xf fluent-bit.tgz \
   && cd fluent-bit*/build && cmake ../ && make && make install \
   && cd /tmp \
-  && curl -s https://packagecloud.io/install/repositories/immortal/immortal/script.deb.sh | sudo bash \
   && curl -L https://github.com/dshearer/jobber/releases/download/v1.3.2/jobber_1.3.2-1_amd64_ubuntu16.deb > /tmp/jobber.deb \
   && dpkg -i /tmp/jobber.deb \
   && cd /tmp && curl -L https://pecl.php.net/get/igbinary > igbinary.tgz && tar -xf igbinary.tgz && cd igbinary-* && phpize && ./configure \
@@ -162,7 +162,7 @@ RUN export DEBIAN_FRONTEND=noninteractive ; \
   && echo 'xdebug.gc_stats_output_dir="/tmpfs/php/xdebug"' >> /etc/php/7.2/mods-available/xdebug.ini \
   && curl -Ls https://getcomposer.org/download/1.6.5/composer.phar > /usr/bin/composer && chmod +x /usr/bin/composer && composer selfupdate \
   && phpdismod amqp && phpdismod apcu && phpdismod ast && phpdismod bcmath && phpdismod bz2 && phpdismod calendar && phpdismod ctype \
-  && phpdismod dba && phpdismod ds && phpdismod enchant && phpdismod ev && phpdismod event && phpdismod exif \
+  && phpdismod dba && phpdismod ds && phpdismod enchant && phpdismod ev && phpdismod exif \
   && phpdismod fann && phpdismod fileinfo && phpdismod ftp && phpdismod gd && phpdismod geoip && phpdismod geospatial && phpdismod gettext \
   && phpdismod gmp && phpdismod gnupg && phpdismod grpc && phpdismod hprose && phpdismod hrtime && phpdismod iconv && phpdismod imagick \
   && phpdismod imap && phpdismod interbase && phpdismod intl && phpdismod jsond && phpdismod ldap && phpdismod libevent \
@@ -171,9 +171,12 @@ RUN export DEBIAN_FRONTEND=noninteractive ; \
   && phpdismod pgsql && phpdismod phpng_xhprof && phpdismod posix && phpdismod pspell && phpdismod psr && phpdismod raphf \
   && phpdismod rar && phpdismod recode && phpdismod redis && phpdismod request && phpdismod rrd && phpdismod seaslog && phpdismod shmop \
   && phpdismod simplexml && phpdismod soap && phpdismod spx && phpdismod sqlite3 && phpdismod ssh2 && phpdismod swoole && phpdismod sync \
-  && phpdismod sysvmsg && phpdismod sysvsem && phpdismod sysvshm && phpdismod tidy && phpdismod tokenizer && phpdismod uv && phpdismod varnish \
+  && phpdismod sysvmsg && phpdismod sysvsem && phpdismod sysvshm && phpdismod tidy && phpdismod uv && phpdismod varnish \
   && phpdismod vcollect && phpdismod vips && phpdismod wddx && phpdismod xdebug && phpdismod xmlrpc && phpdismod yac \
   && phpdismod yaf && phpdismod zmq \
+  && git clone --depth=1 -b stable https://github.com/AASAAM/aasaam-app /tmp/aasaam-app \
+  && cd /tmp/aasaam-app/conf/container-helper && composer install --no-dev --optimize-autoloader \
+  && ./prebuild && ./build && ./postbuild && chmod +x container-helper.phar && mv container-helper.phar /usr/bin/container-helper \
   && rm -rf ~/.cache && rm -rf ~/.composer && rm -rf ~/.npm && rm -rf ~/.cache/yarn \
   && apt-get clean && apt-get autoremove -y \
   && rm -r /var/lib/apt/lists/* && rm -rf /tmp && mkdir /tmp && chmod 777 /tmp && truncate -s 0 /var/log/*.log
@@ -193,7 +196,8 @@ ENV YARN_CACHE_FOLDER /app/var/cache/yarn
 ENV COMPOSER_CACHE_DIR /app/var/cache/composer
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD 1
 RUN chmod 0600 /root/.jobber && chmod 0644 /etc/logrotate.conf && chmod +x /usr/bin/entrypoint && chmod +x /usr/bin/install-zephir && phpenmod aasaam-php-configure \
-  && phpenmod igbinary && phpenmod msgpack && phpenmod yaml && phpenmod json && phpenmod phar && truncate -s 0 /var/log/*.log
+  && phpenmod igbinary && phpenmod msgpack && phpenmod yaml && phpenmod json && phpenmod phar && phpenmod event && phpenmod curl && phpenmod tokenizer \
+  && truncate -s 0 /var/log/*.log
 
 # ports
 EXPOSE 80 443

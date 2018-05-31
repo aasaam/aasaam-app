@@ -1,0 +1,26 @@
+{
+  "name": "aasaam/container-helper",
+  "description": "AASAAM Application Container Config",
+  "authors": [
+    {
+      "name": "Muhammad Hussein Fattahizadeh",
+      "email": "m@mhf.ir",
+      "homepage": "http://mhf.ir",
+      "role": "Developer"
+    }
+  ],
+  "type": "project",
+  "autoload": {
+    "psr-4": {
+      "ContainerHelper\\": "src/ContainerHelper/"
+    }
+  },
+  "require": {
+    "symfony/console": "^4.1",
+    "league/plates": "^3.3",
+    "amphp/amp": "^2.0"
+  },
+  "require-dev": {
+    "squizlabs/php_codesniffer": "^3.2"
+  }
+}

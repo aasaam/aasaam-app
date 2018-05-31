@@ -1,0 +1,3 @@
+cmd: /usr/bin/container-helper log
+user: root
+wait: 5

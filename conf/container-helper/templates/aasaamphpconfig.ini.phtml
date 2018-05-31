@@ -1,0 +1,8 @@
+; priority=99
+<?php if ($opcacheperformance) : ?>
+opcache.max_wasted_percentag=10
+opcache.validate_timestamps=0
+<?php else : ?>
+opcache.revalidate_freq=1
+opcache.validate_timestamps=1
+<?php endif; ?>

@@ -1,3 +1,7 @@
+# AASAAM Application Docker Image
+
+Docker image for PHP and JavaScript applications.
+
 [![Docker Repository on Quay](https://quay.io/repository/aasaam/aasaam-app/status "Docker Repository on Quay")](https://quay.io/repository/aasaam/aasaam-app)
 ![MIT License](https://img.shields.io/badge/license-MIT-ff9900.svg "MIT License")
 
@@ -13,10 +17,6 @@
 ![jobber](https://img.shields.io/badge/jobber-1.3.2-blue.svg "jobber")
 ![fluentbit](https://img.shields.io/badge/fluentbit-0.13.2-blue.svg "fluentbit")
 ![chromium](https://img.shields.io/badge/chromium-66.0-blue.svg "chromium")
-
-# AASAAM Application Docker Image
-
-Docker image for PHP and JavaScript applications.
 
 ## Ubuntu 18.04 LTS (Bionic Beaver)
 
