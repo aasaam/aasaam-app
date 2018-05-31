@@ -175,6 +175,7 @@ RUN export DEBIAN_FRONTEND=noninteractive ; \
   && phpdismod sysvmsg && phpdismod sysvsem && phpdismod sysvshm && phpdismod tidy && phpdismod uv && phpdismod varnish \
   && phpdismod vcollect && phpdismod vips && phpdismod wddx && phpdismod xdebug && phpdismod xmlrpc && phpdismod yac \
   && phpdismod yaf && phpdismod zmq \
+  && phpenmod igbinary && phpenmod msgpack && phpenmod yaml && phpenmod json && phpenmod phar && phpenmod event && phpenmod curl && phpenmod tokenizer \
   && git clone --depth=1 -b stable https://github.com/AASAAM/aasaam-app /tmp/aasaam-app \
   && cd /tmp/aasaam-app/conf/container-helper && composer install --no-dev --optimize-autoloader \
   && ./prebuild && ./build && ./postbuild && chmod +x container-helper.phar && mv container-helper.phar /usr/bin/container-helper \
@@ -197,7 +198,6 @@ ENV YARN_CACHE_FOLDER /app/var/cache/yarn
 ENV COMPOSER_CACHE_DIR /app/var/cache/composer
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD 1
 RUN chmod 0600 /root/.jobber && chmod 0644 /etc/logrotate.conf && chmod +x /usr/bin/entrypoint && chmod +x /usr/bin/install-zephir && phpenmod aasaam-php-configure \
-  && phpenmod igbinary && phpenmod msgpack && phpenmod yaml && phpenmod json && phpenmod phar && phpenmod event && phpenmod curl && phpenmod tokenizer \
   && truncate -s 0 /var/log/*.log
 
 # ports

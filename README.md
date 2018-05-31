@@ -231,8 +231,13 @@ git clone --depth=1 -b stable https://github.com/AASAAM/aasaam-app example-app
 #### Start container
 
 ```bash
-docker run --name aasaam-testapp -h aasaam-testapp \
-  -it -v $(pwd)/app:/app  \
+docker run --name aasaam-testapp -h aasaam-testapp -it \
+  -v $(pwd)/app:/app  \
+  -v $(pwd)/var/tmp:/tmp  \
+  -v $(pwd)/var/letsencrypt:/etc/letsencrypt  \
+  -e CONTAINER_NAME='aasaam-testapp' \
+  -e CONTAINER_DATACENTER='itc' \
+  -e CONTAINER_COUNTRY='IR' \
   --cap-add SYS_PTRACE \ # for phpfpm slow logs
   --tmpfs /tmpfs:rw,size=2048m,noatime,mode=1777 \ # required for logs
   --publish=80:80 \

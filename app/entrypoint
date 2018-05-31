@@ -4,7 +4,9 @@
 sleep 5
 
 # echo set environment for all
-echo "HOSTNAME=$HOSTNAME" >> /etc/environment
+echo "CONTAINER_NAME=$CONTAINER_NAME" >> /etc/environment
+echo "CONTAINER_DATACENTER=$CONTAINER_DATACENTER" >> /etc/environment
+echo "CONTAINER_COUNTRY=$CONTAINER_COUNTRY" >> /etc/environment
 
 # clear temporaries
 rm -rf /tmp/*
@@ -36,7 +38,6 @@ if [ -e "/app/etc/nginx/conf.d/addon/dhparam.pem" ]; then
 fi
 
 # php extensions
-# enable by defaults: `igbinary, `msgpack`, `yaml, `json`, `phar`
 # phpenmod amqp
 # phpenmod apcu
 # phpenmod ast
@@ -67,10 +68,12 @@ fi
 # phpenmod hprose
 # phpenmod hrtime
 # phpenmod iconv
+# phpenmod igbinary
 # phpenmod imagick
 # phpenmod imap
 # phpenmod interbase
 # phpenmod intl
+# phpenmod json
 # phpenmod jsond
 # phpenmod jwt
 # phpenmod ldap
@@ -78,6 +81,7 @@ fi
 # phpenmod mbstring
 # phpenmod memcached
 # phpenmod mongodb
+# phpenmod msgpack
 # phpenmod mysqli
 # phpenmod mysqlnd
 # phpenmod odbc
@@ -132,6 +136,7 @@ fi
 # phpenmod xsl
 # phpenmod yac
 # phpenmod yaf
+# phpenmod yaml
 # phpenmod zip
 # phpenmod zmq
 
