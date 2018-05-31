@@ -54,6 +54,10 @@ class Template
         }
 
         if ($configs['phpspx']) {
+            $content = file_get_contents('/etc/php/7.2/mods-available/spx.ini');
+            $replacement = 'spx.http_key="' . RANDOM_KEY . '"';
+            $result = preg_replace('/spx\.http_key="[^"]+"/', $replacement, $content);
+            file_put_contents('/etc/php/7.2/mods-available/spx.ini', $result);
             shell_exec('phpenmod spx');
         } else {
             shell_exec('phpdismod spx');

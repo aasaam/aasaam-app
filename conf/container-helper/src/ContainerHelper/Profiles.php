@@ -84,7 +84,7 @@ class Profiles
     ];
 
 
-    const CONFIG_FILE = '/tmpfs/container-config.bin';
+    const CONFIG_FILE = '/tmpfs/container-config.json';
 
     /**
      * Constructor
@@ -96,7 +96,7 @@ class Profiles
             'config' => $this->config,
         ];
         if (file_exists(self::CONFIG_FILE)) {
-            $defaults = igbinary_unserialize(file_get_contents(self::CONFIG_FILE));
+            $defaults = json_decode(file_get_contents(self::CONFIG_FILE), true);
         }
         $this->profile = $defaults['profile'];
         $this->config = $defaults['config'];
@@ -159,6 +159,6 @@ class Profiles
             'profile' => $this->profile,
             'config' => $this->config,
         ];
-        file_put_contents(self::CONFIG_FILE, igbinary_serialize($defaults));
+        file_put_contents(self::CONFIG_FILE, json_encode($defaults, JSON_PRETTY_PRINT));
     }
 }

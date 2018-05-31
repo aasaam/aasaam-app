@@ -20,13 +20,17 @@ if (getenv('DEBUG')) {
 
 (function () {
     $extensions = array_flip(get_loaded_extensions());
-    if (!isset($extensions['curl']) || !isset($extensions['igbinary']) || !isset($extensions['event'])) {
-        fwrite(STDERR, 'You need to enable extensions: `curl`, `igbinary`, `event`');
+    if (!isset($extensions['curl']) || !isset($extensions['event'])) {
+        fwrite(STDERR, 'You need to enable extensions: `curl`, `event`');
         exit(1);
     }
 })();
 
-require 'vendor/autoload.php';
+if (defined('PHAR_MODE')) {
+    require 'phar://container-helper.phar/vendor/autoload.php';
+} else {
+    require 'vendor/autoload.php';
+}
 
 $application = new Symfony\Component\Console\Application();
 

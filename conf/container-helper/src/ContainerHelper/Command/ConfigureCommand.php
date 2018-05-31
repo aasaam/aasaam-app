@@ -30,11 +30,17 @@ class ConfigureCommand extends AbstractCommand
 
     protected function executeMe(): void
     {
+        define('RANDOM_KEY', substr(preg_replace('/[^a-z0-9]/i', '', base64_encode(hash('sha1', microtime(true) . uniqid()))), 1, 12));
         $profiles = new Profiles();
         $profiles->setProfile($this->input->getArgument('profile'));
         $this->output->writeln(vsprintf('Profile now is <info>%s</info>', [
             $profiles->getProfile(),
         ]));
+        if ($profiles->getConfig()['phpspx']) {
+            $this->output->writeln(vsprintf('SPX http key now is <info>%s</info>', [
+                RANDOM_KEY,
+            ]));
+        }
         new Template($profiles);
     }
 }
