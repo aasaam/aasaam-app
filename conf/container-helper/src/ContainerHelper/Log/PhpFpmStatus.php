@@ -21,6 +21,7 @@ class PhpFpmStatus extends AbstractLog
     {
         $data = $this->request('http://127.0.0.1/__status/fpm?json');
         if ($data) {
+            $data = json_decode($data, true);
             file_put_contents('/tmpfs/logs/php.fpm.status.log', json_encode(array_merge([
                 'time' => gmdate('Y-m-d\TH:i:s'),
                 'success' => true,

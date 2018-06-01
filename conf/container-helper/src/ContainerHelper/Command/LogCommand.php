@@ -16,6 +16,7 @@ use Amp\Delayed;
 use Amp\Loop;
 use ContainerHelper\Log\ConnectivityStatus;
 use ContainerHelper\Log\NginxStatus;
+use ContainerHelper\Log\PhpErrorLog;
 use ContainerHelper\Log\PhpFpmSlow;
 use ContainerHelper\Log\PhpFpmStatus;
 use ContainerHelper\Profiles;
@@ -46,6 +47,10 @@ class LogCommand extends AbstractCommand
                     yield new Delayed(120 * TIME_RATIO);
                 });
             }
+            asyncCall(function () {
+                new PhpErrorLog();
+                yield new Delayed(90 * TIME_RATIO);
+            });
             asyncCall(function () {
                 new NginxStatus();
                 yield new Delayed(20 * TIME_RATIO);

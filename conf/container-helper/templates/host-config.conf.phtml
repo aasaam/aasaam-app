@@ -69,7 +69,6 @@ location ~* "(.+)\.([0-9]{8})(\.)(eot|woff2|woff|gif|jpg|jpeg|png|ttf|ico|html|c
   try_files $1$3$4 =404;
 }
 
-<?php if (!$isSwoole): ?>
 location /__status {
   access_log off;
   allow 127.0.0.1;
@@ -77,34 +76,40 @@ location /__status {
   location /__status {
     stub_status on;
   }
+<?php if (!$isSwoole): ?>
   location /__status/fpm {
     include fastcgi_params;
     fastcgi_pass 127.0.0.1:9000;
     fastcgi_param SCRIPT_FILENAME $fastcgi_script_name;
   }
+<?php endif; ?>
 }
 
-<?php endif; ?>
 include /app/etc/nginx/conf.d/addon/*.conf;
 
 <?php if ($isSwoole): ?>
 location / {
+  expires max;
+  etag on;
+  if_modified_since exact;
   try_files $uri $uri/ @swoole;
 }
 
 location @swoole {
   proxy_redirect off;
   proxy_http_version 1.1;
+<?php if (isset($env['SWOOLE_ENV'])) : ?>
+  proxy_pass http://127.0.0.1:<?=$env['SWOOLE_ENV'];?>;
+<?php else : ?>
   proxy_pass http://127.0.0.1:8080;
+<?php endif; ?>
+
   proxy_set_header Host $host;
   proxy_set_header X-Real-IP $remote_addr;
   proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 
 <?php if (isset($env['CONTAINER_NAME'])) : ?>
   proxy_set_header Container-Name '<?=$env['CONTAINER_NAME'];?>';
-<?php else : ?>
-<?php if (isset($env['CONTAINER_ENV'])) : ?>
-  proxy_set_header Container-Env '<?=$env['CONTAINER_ENV'];?>';
 <?php else : ?>
   proxy_set_header Container-Name 'unknown';
 <?php endif; ?>
@@ -157,11 +162,6 @@ location ~ \.php$ {
   fastcgi_param CONTAINER_NAME '<?=$env['CONTAINER_NAME'];?>';
 <?php else : ?>
   fastcgi_param CONTAINER_NAME 'unknown';
-<?php endif; ?>
-<?php if (isset($env['CONTAINER_ENV'])) : ?>
-  fastcgi_param CONTAINER_ENV '<?=$env['CONTAINER_ENV'];?>';
-<?php else : ?>
-  fastcgi_param CONTAINER_ENV 'prod';
 <?php endif; ?>
 <?php if (isset($env['CONTAINER_DATACENTER'])) : ?>
   fastcgi_param CONTAINER_DATACENTER '<?=$env['CONTAINER_DATACENTER'];?>';

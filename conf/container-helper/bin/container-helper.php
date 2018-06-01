@@ -20,8 +20,8 @@ if (getenv('DEBUG')) {
 
 (function () {
     $extensions = array_flip(get_loaded_extensions());
-    if (!isset($extensions['curl']) || !isset($extensions['igbinary']) || !isset($extensions['event'])) {
-        fwrite(STDERR, 'You need to enable extensions: `curl`, `igbinary`, `event`');
+    if (!isset($extensions['curl']) || !isset($extensions['event'])) {
+        fwrite(STDERR, 'You need to enable extensions: `curl`, `event`');
         exit(1);
     }
 })();

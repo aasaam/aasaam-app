@@ -66,7 +66,7 @@ class Template
         }
 
         if ($this->profiles->isSwoole()) {
-            shell_exec('phpdismod xhprof');
+            shell_exec('phpdismod phpng_xhprof');
         }
     }
 

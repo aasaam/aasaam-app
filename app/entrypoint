@@ -151,6 +151,7 @@ if [ "$CONTAINER_ENV" = "dev" ]; then
 fi
 
 service jobber start
-immortaldir /app/etc/immortal > /dev/null 2>&1 &
+immortal -c /app/etc/immortal/fluent-bit.yml
+immortal -c /app/etc/immortal/container-helper-log.yml
 service php7.2-fpm start
 service nginx start
