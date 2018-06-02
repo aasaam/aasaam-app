@@ -20,7 +20,7 @@ class Compiler
           }
         }
 
-        $stub = vsprintf("
+        $stub = vsprintf(trim("
 #!/usr/bin/env php
 <?php
 define('PHAR_MODE', 1);
@@ -31,7 +31,7 @@ if (extension_loaded('apc') && ini_get('apc.enable_cli') && ini_get('apc.cache_b
 Phar::mapPhar('container-helper.phar');
 require 'phar://container-helper.phar/bin/container-helper.php';
 __HALT_COMPILER();
-", [
+"), [
   gmdate('y.m.d'),
 ]);
 
