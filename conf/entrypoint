@@ -4,4 +4,6 @@ if [ -e "/app/entrypoint" ]; then
   /app/entrypoint
 fi
 
+service dnsmasq start
+
 tail -f /dev/null

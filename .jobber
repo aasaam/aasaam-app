@@ -7,8 +7,8 @@ runLog:
 
 [jobs]
 - name: LogRotate
-  cmd: /usr/sbin/logrotate -f /etc/logrotate.conf
-  time: '* * 0 * * *'
+  cmd: /usr/sbin/logrotate /etc/logrotate.conf
+  time: '* * 2 * * *'
   onError: Continue
   notifyOnError: true
   notifyOnFailure: true
@@ -16,7 +16,7 @@ runLog:
 
 # - name: CertBot
 #   cmd: /usr/bin/certbot renew --post-hook "service nginx reload"
-#   time: '* * 0 * * *'
+#   time: '* * 3 * * *'
 #   onError: Continue
 #   notifyOnError: true
 #   notifyOnFailure: true

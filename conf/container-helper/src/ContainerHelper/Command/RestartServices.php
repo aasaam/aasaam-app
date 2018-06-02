@@ -38,13 +38,14 @@ class RestartServices extends AbstractCommand
         ];
 
         if (getenv('CONTAINER_ENV') !== 'dev') {
-            $commands[] = 'immortal -c /app/etc/immortal/fluent-bit.yml';
+            $commands[] = 'immortal -c /app/etc/immortal/beanstalkd.yml';
             $commands[] = 'immortal -c /app/etc/immortal/container-helper-log.yml';
         }
 
         if (!$profiles->isSwoole()) {
             $commands[] = 'service php7.2-fpm start';
         }
+
         $commands[] = 'service nginx start';
         foreach ($commands as $c) {
             shell_exec($c);

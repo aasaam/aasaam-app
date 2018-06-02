@@ -150,8 +150,14 @@ if [ "$CONTAINER_ENV" = "dev" ]; then
   container-helper configure dev --no-ansi
 fi
 
+# jobber
 service jobber start
+
+# immortal
+immortal -c /app/etc/immortal/beanstalkd.yml
 immortal -c /app/etc/immortal/fluent-bit.yml
 immortal -c /app/etc/immortal/container-helper-log.yml
+
+# services
 service php7.2-fpm start
 service nginx start

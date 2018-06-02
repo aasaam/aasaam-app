@@ -30,7 +30,6 @@ class SwooleCommand extends AbstractCommand
 
     protected function executeMe(): void
     {
-        define('RANDOM_KEY', substr(preg_replace('/[^a-z0-9]/i', '', base64_encode(hash('sha1', microtime(true) . uniqid('', true)))), 1, 12));
         $profiles = new Profiles();
         $profiles->setSwoole((bool)$this->input->getArgument('enable'));
         $profiles->apply();
@@ -39,14 +38,20 @@ class SwooleCommand extends AbstractCommand
             $profiles->getProfile(),
             $swooleMode,
         ]));
+        $config = $profiles->getConfigFile();
         if ($profiles->getConfig()['phpspx']) {
-            $this->output->writeln(vsprintf('SPX http key now is <info>%s</info>', [
-                RANDOM_KEY,
+            $this->output->writeln(vsprintf('SPX http key now is <question>%s</question>', [
+                $profiles->getSpxKey(),
+            ]));
+            $this->output->writeln(vsprintf("Your configuration is now <info>%s</info>", [
+                json_encode($config, JSON_PRETTY_PRINT),
+            ]));
+        } else {
+            unset($config['spxKey']);
+            $this->output->writeln(vsprintf("Your configuration is now <info>%s</info>", [
+                json_encode($config, JSON_PRETTY_PRINT),
             ]));
         }
-        $this->output->writeln(vsprintf("Your configuration is now <info>%s</info>", [
-            json_encode($profiles->getConfigFile(), JSON_PRETTY_PRINT),
-        ]));
         new Template($profiles);
     }
 }

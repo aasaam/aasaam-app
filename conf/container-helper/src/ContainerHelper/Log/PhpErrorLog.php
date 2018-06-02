@@ -29,21 +29,54 @@ class PhpErrorLog extends AbstractLog
         copy(self::ERRORLOGPATH, self::ERRORLOGPATH_TMP);
         file_put_contents(self::ERRORLOGPATH, '');
 
-        $m = [];
+        $id = 0;
+        $patterns = [
+            'firstLine' => '/^\[(?P<date>[^\]]{22,})\](?P<log>.*)$/',
+            'otherLine' => '/^(?P<log>.*)$/',
+        ];
+
+        $logs = [];
+        foreach ($this->readFileLine(self::ERRORLOGPATH_TMP) as $line) {
+            $matches = [];
+            if (preg_match($patterns['firstLine'], $line, $matches)) {
+                $id++;
+                $logs[$id]['time'] = gmdate('Y-m-d\TH:i:s', strtotime($matches['date']));
+                $logs[$id]['log'][] = trim($matches['log']);
+            } elseif (preg_match($patterns['otherLine'], $line, $matches)) {
+                $logs[$id]['log'][] = trim($matches['log']);
+            }
+        }
+
+        if (empty($logs)) {
+            return;
+        }
+
         $file = fopen(self::ERRORLOGPATH_OUTPUT, "a");
-        preg_match_all('/\[(?P<date>[^\]]{22,})\](?P<mode>[^:]+):(?P<message>[^\[]+)/m', file_get_contents(self::ERRORLOGPATH_TMP), $m);
-        foreach ($m['date'] as $key => $date) {
-            $time = gmdate('Y-m-d\TH:i:s', strtotime(trim($date)));
-            $mode = trim($m['mode'][$key]);
-            $message = trim($m['message'][$key]);
-            fwrite($file, json_encode([
-                'time' => $time,
-                'mode' => $mode,
-                'message' => $message,
-            ]) . "\n");    
+        foreach ($logs as $log) {
+            $log['log'] = implode("\n", $log['log']);
+            $log['hash'] = sha1($log['log']);
+            fwrite($file, json_encode($log) . "\n");
         }
         fclose($file);
         unlink(self::ERRORLOGPATH_TMP);
         return;
+    }
+
+
+    /**
+     * Read file line
+     *
+     * @param string $path
+     * @return string
+     */
+    private function readFileLine(string $path)
+    {
+        $handle = fopen($path, "r");
+        if ($handle) {
+            while (($line = fgets($handle)) !== false) {
+                yield trim($line);
+            }
+            fclose($handle);
+        }
     }
 }

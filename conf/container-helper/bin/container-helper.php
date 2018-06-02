@@ -10,12 +10,13 @@
  * @link      https://github.com/AASAAM/aasaam-app/
  */
 
+define('BOT_USERAGENT', 'AasaamBot/0.1');
 if (getenv('DEBUG')) {
     ini_set('display_errors', '1');
     ini_set('display_startup_errors', '1');
     define('TIME_RATIO', 10);
 } else {
-    define('TIME_RATIO', 100);
+    define('TIME_RATIO', 1000);
 }
 
 (function () {
@@ -26,6 +27,13 @@ if (getenv('DEBUG')) {
     }
 })();
 
+function random_string(int $length = 12)
+{
+    $hex = bin2hex(openssl_random_pseudo_bytes(8));
+    $base62 = preg_replace('/[^a-z0-9]/i', '', base64_encode($hex));
+    return substr($base62, 0, $length);
+}
+
 if (defined('PHAR_MODE')) {
     require 'phar://container-helper.phar/vendor/autoload.php';
 } else {
@@ -33,7 +41,7 @@ if (defined('PHAR_MODE')) {
 }
 
 if (!defined('PHAR_VERSION')) {
-    define('PHAR_VERSION', 'v' . gmdate('y.m.d'));
+    define('PHAR_VERSION', 'v' . gmdate('y.n.j'));
 }
 
 $application = new Symfony\Component\Console\Application();

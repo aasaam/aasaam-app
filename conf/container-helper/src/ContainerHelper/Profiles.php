@@ -20,6 +20,11 @@ class Profiles
     protected $profile = 'prod-logs';
 
     /**
+     * @var string
+     */
+    protected $spxKey = 'dev';
+
+    /**
      * @var bool
      */
     protected $isSwoole = false;
@@ -28,12 +33,12 @@ class Profiles
      * @var array
      */
     protected $config = [
-        'nginxaccesslog' => false,
+        'nginxaccesslog' => true,
         'phpxdebug' => false,
         'phpspx' => false,
-        'phpfpmslowlog' => false,
-        'phpfpmaccesslog' => false,
-        'opcacheperformance' => false,
+        'phpfpmslowlog' => true,
+        'phpfpmaccesslog' => true,
+        'opcacheperformance' => true,
         'fastcgicache' => true,
         'proxycache' => true,
     ];
@@ -95,7 +100,7 @@ class Profiles
     ];
 
 
-    const CONFIG_FILE = '/tmpfs/container-config.json';
+    const CONFIG_FILE = '/tmpfs/container-helper/config.json';
 
     /**
      * Constructor
@@ -103,6 +108,7 @@ class Profiles
     public function __construct()
     {
         $defaults = [
+            'spxKey' => $this->spxKey,
             'isSwoole' => $this->isSwoole,
             'profile' => $this->profile,
             'config' => $this->config,
@@ -113,6 +119,30 @@ class Profiles
         $this->profile = $defaults['profile'];
         $this->config = $defaults['config'];
         $this->isSwoole = $defaults['isSwoole'];
+    }
+
+    /**
+     * Change spx key
+     *
+     * @return void
+     */
+    public function changeSpxKey(): void
+    {
+        if (getenv('CONTAINER_ENV') !== 'dev') {
+            $this->spxKey = random_string();
+        } else {
+            $this->spxKey = 'dev';
+        }
+    }
+
+    /**
+     * Get spx key
+     *
+     * @return string
+     */
+    public function getSpxKey(): string
+    {
+        return $this->spxKey;
     }
 
     /**
@@ -210,6 +240,7 @@ class Profiles
     public function getConfigFile(): array
     {
         return [
+            'spxKey' => $this->spxKey,
             'profile' => $this->profile,
             'config' => $this->config,
             'isSwoole' => $this->isSwoole,
@@ -222,6 +253,7 @@ class Profiles
     public function __destruct()
     {
         $defaults = [
+            'spxKey' => $this->spxKey,
             'profile' => $this->profile,
             'config' => $this->config,
             'isSwoole' => $this->isSwoole,

@@ -30,9 +30,15 @@ class Template
     public function __construct(Profiles $profiles)
     {
         $this->profiles = $profiles;
-        $this->templates = new Engine('templates', 'phtml');
+        if (defined('PHAR_MODE')) {
+            $this->templates = new Engine('phar://container-helper.phar/templates', 'phtml');
+        } else {
+            $this->templates = new Engine('templates', 'phtml');
+        }
+
         $this->templates->addData(['date' => gmdate('r') . "\n"]);
         $this->templates->addData(['env' => $_SERVER]);
+        $this->templates->addData(['profile' => $this->profiles->getProfile()]);
         $this->templates->addData(['isSwoole' => $this->profiles->isSwoole()]);
         $this->apply();
     }
@@ -57,7 +63,7 @@ class Template
 
         if ($configs['phpspx']) {
             $content = file_get_contents('/etc/php/7.2/mods-available/spx.ini');
-            $replacement = 'spx.http_key="' . RANDOM_KEY . '"';
+            $replacement = 'spx.http_key="' . $this->profiles->getSpxKey() . '"';
             $result = preg_replace('/spx\.http_key="[^"]+"/', $replacement, $content);
             file_put_contents('/etc/php/7.2/mods-available/spx.ini', $result);
             shell_exec('phpenmod spx');

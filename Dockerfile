@@ -7,8 +7,8 @@ LABEL org.label-schema.name="AAASAAM Application Docker Image" \
       org.label-schema.url="https://aasaam.com" \
       org.label-schema.vcs-url="https://github.com/AASAAM/aasaam-app" \
       org.label-schema.vendor="AASAAM" \
-      org.label-schema.version="2.0.0" \
-      org.label-schema.schema-version="2.0.0" \
+      org.label-schema.version="2.0.1" \
+      org.label-schema.schema-version="2.0.1" \
       maintainer="Muhammad Hussein Fattahizadeh <m@mhf.ir>"
 
 # installation
@@ -37,7 +37,7 @@ RUN export DEBIAN_FRONTEND=noninteractive ; \
     libgeoip-dev libgpgme11-dev libhiredis-dev libjansson-dev libjemalloc-dev libmagickwand-dev libmemcached-dev \
     libnghttp2-dev librabbitmq-dev librrd-dev libspdylay-dev libssh2-1-dev libssl-dev libsystemd-dev libtool libuv1-dev \
     libvarnishapi-dev libvips libvips-dev libxml2-dev libyaml-dev libzmq3-dev \
-    logrotate nghttp2 nghttp2-client nghttp2-proxy nghttp2-server nginx-full nodejs yarn \
+    logrotate nghttp2 nghttp2-client nghttp2-proxy nghttp2-server nginx-extras nodejs yarn dnsmasq \
     pkg-config python re2c xterm zlib1g-dev \
     php7.2 php7.2-bcmath php7.2-bz2 php7.2-cgi php7.2-cli php7.2-common php7.2-curl php7.2-dba php7.2-dev php7.2-enchant \
     php7.2-fpm php7.2-gd php7.2-gmp php7.2-imap php7.2-interbase php7.2-intl php7.2-json php7.2-ldap php7.2-mbstring php7.2-mysql \
@@ -51,6 +51,7 @@ RUN export DEBIAN_FRONTEND=noninteractive ; \
   && cd /tmp \
   && curl -L https://github.com/dshearer/jobber/releases/download/v1.3.2/jobber_1.3.2-1_amd64_ubuntu16.deb > /tmp/jobber.deb \
   && dpkg -i /tmp/jobber.deb \
+  && cd /tmp/ && git clone --depth=1 https://github.com/kr/beanstalkd && cd beanstalkd && make && make install \
   && cd /tmp && curl -L https://pecl.php.net/get/igbinary > igbinary.tgz && tar -xf igbinary.tgz && cd igbinary-* && phpize && ./configure \
   && make && make install && echo '; priority=1' > /etc/php/7.2/mods-available/igbinary.ini \
   && echo 'extension=igbinary.so' >> /etc/php/7.2/mods-available/igbinary.ini && phpenmod igbinary \
@@ -166,7 +167,7 @@ RUN export DEBIAN_FRONTEND=noninteractive ; \
   && phpdismod dba && phpdismod ds && phpdismod enchant && phpdismod ev && phpdismod exif \
   && phpdismod fann && phpdismod fileinfo && phpdismod ftp && phpdismod gd && phpdismod geoip && phpdismod geospatial && phpdismod gettext \
   && phpdismod gmp && phpdismod gnupg && phpdismod grpc && phpdismod hprose && phpdismod hrtime && phpdismod iconv && phpdismod imagick \
-  && phpdismod imap && phpdismod interbase && phpdismod intl && phpdismod jsond && phpdismod ldap && phpdismod libevent \
+  && phpdismod imap && phpdismod interbase && phpdismod jsond && phpdismod ldap && phpdismod libevent \
   && phpdismod memcached && phpdismod mongodb && phpdismod mysqli && phpdismod mysqlnd && phpdismod odbc && phpdismod opencensus \
   && phpdismod pdo && phpdismod pdo_firebird && phpdismod pdo_mysql && phpdismod pdo_odbc && phpdismod pdo_pgsql && phpdismod pdo_sqlite \
   && phpdismod pgsql && phpdismod phpng_xhprof && phpdismod posix && phpdismod pspell && phpdismod psr && phpdismod raphf \
@@ -175,7 +176,7 @@ RUN export DEBIAN_FRONTEND=noninteractive ; \
   && phpdismod sysvmsg && phpdismod sysvsem && phpdismod sysvshm && phpdismod tidy && phpdismod uv && phpdismod varnish \
   && phpdismod vcollect && phpdismod vips && phpdismod wddx && phpdismod xdebug && phpdismod xmlrpc && phpdismod yac \
   && phpdismod yaf && phpdismod zmq \
-  && phpenmod igbinary && phpenmod msgpack && phpenmod yaml && phpenmod json && phpenmod phar && phpenmod event && phpenmod curl && phpenmod tokenizer \
+  && phpenmod igbinary && phpenmod msgpack && phpenmod yaml && phpenmod json && phpenmod intl && phpenmod phar && phpenmod event && phpenmod curl && phpenmod tokenizer \
   && git clone --depth=1 -b stable https://github.com/AASAAM/aasaam-app /tmp/aasaam-app \
   && cd /tmp/aasaam-app/conf/container-helper && composer install --no-dev --optimize-autoloader \
   && ./prebuild && ./build && ./postbuild && chmod +x container-helper.phar && mv container-helper.phar /usr/bin/container-helper \
@@ -188,6 +189,7 @@ ADD conf/.bashrc /root/.bashrc
 ADD conf/.npmrc /root/.npmrc
 ADD .jobber /root/.jobber
 ADD conf/entrypoint /usr/bin/entrypoint
+ADD conf/dnsmasq.conf /etc/dnsmasq.conf
 ADD conf/install-zephir /usr/bin/install-zephir
 ADD conf/nginx.conf /etc/nginx/nginx.conf
 ADD conf/aasaam-php-configure.ini /etc/php/7.2/mods-available/aasaam-php-configure.ini

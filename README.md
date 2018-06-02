@@ -6,8 +6,10 @@ Docker image for PHP and JavaScript applications.
 ![MIT License](https://img.shields.io/badge/license-MIT-ff9900.svg "MIT License")
 
 ![ubuntu](https://img.shields.io/badge/ubuntu-18.04-blue.svg "ubuntu")
+![dnsmasq](https://img.shields.io/badge/dnsmasq-2.7-blue.svg "dnsmasq")
 ![nginx](https://img.shields.io/badge/nginx-1.14.0-blue.svg "nginx")
 ![nghttpd](https://img.shields.io/badge/nghttpd-1.30.0-blue.svg "nghttpd")
+![certbot](https://img.shields.io/badge/certbot-0.23.0-blue.svg "certbot")
 ![php](https://img.shields.io/badge/php-7.2.5-blue.svg "php")
 ![composer](https://img.shields.io/badge/composer-1.6.5-blue.svg "composer")
 ![nodejs](https://img.shields.io/badge/nodejs-8.11.2-blue.svg "nodejs")
@@ -16,7 +18,6 @@ Docker image for PHP and JavaScript applications.
 ![immortal](https://img.shields.io/badge/immortal-0.19.0-blue.svg "immortal")
 ![jobber](https://img.shields.io/badge/jobber-1.3.2-blue.svg "jobber")
 ![fluentbit](https://img.shields.io/badge/fluentbit-0.13.2-blue.svg "fluentbit")
-![chromium](https://img.shields.io/badge/chromium-66.0-blue.svg "chromium")
 
 ## Ubuntu 18.04 LTS (Bionic Beaver)
 
@@ -151,6 +152,7 @@ Docker image for PHP and JavaScript applications.
 **yaf** *(3.0.7)*,
 **yaml** *(2.0.2)*,
 **Zend OPcache**,
+**Zephir Parser** *(1.1.2)*,
 **zip** *(1.15.2)*,
 **zlib**,
 **zmq** *(1.1.3)*
@@ -194,6 +196,21 @@ Docker image for PHP and JavaScript applications.
   **Why?** Because we need puppeter for testing, pdf and image generation.
   [Read more about puppeteer](https://github.com/GoogleChrome/puppeteer)
 
+### Beanstalkd
+
+  Beanstalk is a simple, fast work queue.
+  [Read more...](http://kr.github.io/beanstalkd/)
+
+### Dnsmasq
+
+  Dns/cache server for improve dns lookup inside container.
+  [Read more...](http://www.thekelleys.org.uk/dnsmasq/doc.html)
+
+### Certbot
+
+  Automatically enable HTTPS on your website with EFF's Certbot, deploying Let's Encrypt certificates.
+  [Read more...](https://certbot.eff.org/)
+
 ## Usage
 
 ### Pull docker image
@@ -233,7 +250,7 @@ docker run --name sampleapp -h sampleapp -it \
   -e CONTAINER_DATACENTER='dc1' \ # datacenter name
   -e CONTAINER_COUNTRY='IR' \ # countru code
   --cap-add SYS_PTRACE \ # for phpfpm slow logs
-  --tmpfs /tmpfs:rw,size=2048m,noatime,mode=1777 \ # required for logs
+  --tmpfs /tmpfs:rw,size=2048m,noatime,mode=1777 \ # !!! required
   --publish=80:80 \
   --publish=443:443 \
   -d quay.io/aasaam/aasaam-app:stable entrypoint

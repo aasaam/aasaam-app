@@ -20,6 +20,7 @@ use ContainerHelper\Log\PhpErrorLog;
 use ContainerHelper\Log\PhpFpmSlow;
 use ContainerHelper\Log\PhpFpmStatus;
 use ContainerHelper\Profiles;
+use ContainerHelper\NetworkEndpoints;
 use function Amp\asyncCall;
 use React\Promise\Deferred;
 
@@ -37,27 +38,30 @@ class LogCommand extends AbstractCommand
     {
         $profiles = new Profiles();
         while (true) {
+            if (!NetworkEndpoints::hasInit()) {
+                NetworkEndpoints::reload();
+            }
             if (!$profiles->isSwoole()) {
                 asyncCall(function () {
                     new PhpFpmStatus();
-                    yield new Delayed(30 * TIME_RATIO);
+                    yield new Delayed(50 * TIME_RATIO);
                 });
                 asyncCall(function () {
                     new PhpFpmSlow();
-                    yield new Delayed(120 * TIME_RATIO);
+                    yield new Delayed(55 * TIME_RATIO);
                 });
             }
             asyncCall(function () {
                 new PhpErrorLog();
-                yield new Delayed(90 * TIME_RATIO);
+                yield new Delayed(30 * TIME_RATIO);
             });
             asyncCall(function () {
                 new NginxStatus();
-                yield new Delayed(20 * TIME_RATIO);
+                yield new Delayed(45 * TIME_RATIO);
             });
             asyncCall(function () {
                 new ConnectivityStatus();
-                yield new Delayed(180 * TIME_RATIO);
+                yield new Delayed(120 * TIME_RATIO);
             });
             Loop::run();
             sleep(1);

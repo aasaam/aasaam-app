@@ -32,7 +32,7 @@ Phar::mapPhar('container-helper.phar');
 require 'phar://container-helper.phar/bin/container-helper.php';
 __HALT_COMPILER();
 "), [
-  gmdate('y.m.d'),
+  gmdate('y.n.j'),
 ]);
 
         $this->phar->setStub($stub);

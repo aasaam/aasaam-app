@@ -22,13 +22,14 @@ abstract class AbstractLog
      * @param string $url
      * @return mixed
      */
-    public function request(string $url)
+    protected function request(string $url)
     {
         try {
             $ch = curl_init($url);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
             curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+            curl_setopt($ch, CURLOPT_USERAGENT, BOT_USERAGENT);
             $response = curl_exec($ch);
             $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
             if ($response !== false && $httpcode === 200) {
