@@ -17,8 +17,8 @@ rm -rf /tmpfs/.*
 
 # make directories
 mkdir -p /tmp/php/spx
+mkdir -p /tmpfs/container-helper
 mkdir -p /tmpfs/fluentbit
-mkdir -p /tmpfs/run
 mkdir -p /tmpfs/logs
 mkdir -p /tmpfs/nginx/fastcgi/cache
 mkdir -p /tmpfs/nginx/proxy/cache
@@ -28,6 +28,7 @@ mkdir -p /tmpfs/php/soap
 mkdir -p /tmpfs/php/tmp
 mkdir -p /tmpfs/php/upload
 mkdir -p /tmpfs/php/xdebug
+mkdir -p /tmpfs/run
 
 # set permission
 chmod 777 /tmp -R
