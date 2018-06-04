@@ -32,13 +32,60 @@ abstract class AbstractLog
             curl_setopt($ch, CURLOPT_USERAGENT, BOT_USERAGENT);
             $response = curl_exec($ch);
             $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-            if ($response !== false && $httpcode === 200) {
-                return $response;
+            if ($response !== false && $httpcode >= 200 && $httpcode < 400) {
+                return [
+                    'response' => $response,
+                    'info' => curl_getinfo($ch),
+                ];
             }
         } catch (Throwable $e) {
             return false;
         }
 
         return false;
+    }
+
+    /**
+     * Read file line
+     *
+     * @param string $path
+     * @return string
+     */
+    protected function readFileLine(string $path)
+    {
+        $handle = fopen($path, "r");
+        if ($handle) {
+            while (($line = fgets($handle)) !== false) {
+                yield trim($line);
+            }
+            fclose($handle);
+        }
+    }
+
+    /**
+     * Write faild
+     *
+     * @return void
+     */
+    protected function writeFaild(): void
+    {
+        file_put_contents($this->logpath, json_encode([
+            'time' => gmdate('Y-m-d\TH:i:s'),
+            'success' => false,
+        ]) . "\n", FILE_APPEND);
+    }
+
+    /**
+     * Write success
+     *
+     * @param array $result
+     * @return void
+     */
+    protected function writeSuccess(array $result): void
+    {
+        file_put_contents($this->logpath, json_encode(array_merge([
+            'time' => gmdate('Y-m-d\TH:i:s'),
+            'success' => true,
+        ], $result)) . "\n", FILE_APPEND);
     }
 }

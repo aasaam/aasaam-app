@@ -35,6 +35,7 @@ abstract class AbstractCommand extends Command
     {
         $this->input = $input;
         $this->output = $output;
+        $this->checkArguments();
         $this->executeMe();
     }
 
@@ -42,4 +43,14 @@ abstract class AbstractCommand extends Command
      * Execute the command
      */
     abstract protected function executeMe(): void;
+
+    /**
+     * Check arguments
+     *
+     * @return void
+     */
+    protected function checkArguments()
+    {
+        return;
+    }
 }

@@ -1,0 +1,95 @@
+---
+networklog: true
+profile:
+  profile: fpm-prodlog
+  defaults:
+    fpm:
+      fpm: true
+      proxyport: 0
+      debugkey: ""
+      adminkey: '@random'
+      nginxaccesslog: true
+      phpxdebug: false
+      phpspx: false
+      phpfpmslowlog: true
+      phpfpmaccesslog: true
+      opcacheperformance: true
+      fastcgicache: true
+      proxycache: true
+    proxy:
+      fpm: false
+      proxyport: 8080
+      debugkey: ""
+      adminkey: '@random'
+      nginxaccesslog: true
+      phpxdebug: false
+      phpspx: false
+      phpfpmslowlog: false
+      phpfpmaccesslog: false
+      opcacheperformance: true
+      fastcgicache: true
+      proxycache: true
+  config:
+    fpm-dev:
+      debugkey: dev
+      adminkey: dev
+      phpxdebug: true
+      phpspx: true
+      opcacheperformance: false
+      fastcgicache: false
+    fpm-devcache:
+      debugkey: dev
+      adminkey: dev
+      phpxdebug: true
+      phpspx: true
+      opcacheperformance: false
+    fpm-prodlog: []
+    fpm-proddebug:
+      debugkey: '@random'
+      phpxdebug: true
+      phpspx: true
+    fpm-prod:
+      adminkey: ""
+      nginxaccesslog: false
+    proxy-dev:
+      debugkey: dev
+      adminkey: dev
+      opcacheperformance: false
+      proxycache: false
+    proxy-devcache:
+      debugkey: dev
+      adminkey: dev
+      opcacheperformance: false
+    proxy-prodlog: []
+    proxy-proddebug:
+      debugkey: '@random'
+    proxy-prod:
+      adminkey: ""
+      nginxaccesslog: false
+connectionstatus:
+  ping:
+    default:
+      US:
+        8.8.8.8: Mountain View
+        4.2.2.4: Dallas
+        208.67.222.222: San Francisco
+      DE:
+        213.133.98.98: Freising
+      NL:
+        62.212.64.121: Amsterdam
+      CA:
+        128.189.4.1: Vancouver
+      IR:
+        185.147.178.12: Tehran
+    publicdnslist:
+    - https://public-dns.info/nameserver/ir.json
+  testurls:
+  - https://lib.arvancloud.com/robots.txt
+  - https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.css
+  - https://ajax.googleapis.com/robots.txt
+  - https://irancell.ir/robots.txt
+  - https://www.asiatech.ir/robots.txt
+  - https://www.tebyan.net/robots.txt
+  - https://www.parsonline.com/robots.txt
+  - https://www.shatel.ir/robots.txt
+...

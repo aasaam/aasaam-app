@@ -18,6 +18,7 @@ Docker image for PHP and JavaScript applications.
 ![immortal](https://img.shields.io/badge/immortal-0.19.0-blue.svg "immortal")
 ![jobber](https://img.shields.io/badge/jobber-1.3.2-blue.svg "jobber")
 ![fluentbit](https://img.shields.io/badge/fluentbit-0.13.2-blue.svg "fluentbit")
+![chromium](https://img.shields.io/badge/chromium-66.0-blue.svg "chromium")
 
 ## Ubuntu 18.04 LTS (Bionic Beaver)
 
@@ -81,7 +82,7 @@ Docker image for PHP and JavaScript applications.
 **intl** *(1.1.0)*,
 **json** *(1.6.0)*,
 **jsond** *(1.4.0)*,
-**jwt** *(0.1.1)*,
+**jwt** *(0.2.1)*,
 **ldap**,
 **libevent** *(0.2.0)*,
 **libxml**,
@@ -248,11 +249,12 @@ docker run --name sampleapp -h sampleapp -it \
   # -e CONTAINER_ENV='dev' \ # container in development mode
   -e CONTAINER_NAME='sampleapp' \ # container name
   -e CONTAINER_DATACENTER='dc1' \ # datacenter name
-  -e CONTAINER_COUNTRY='IR' \ # countru code
+  -e CONTAINER_COUNTRY='IR' \ # country code
   --cap-add SYS_PTRACE \ # for phpfpm slow logs
   --tmpfs /tmpfs:rw,size=2048m,noatime,mode=1777 \ # !!! required
   --publish=80:80 \
   --publish=443:443 \
+  --dns=127.0.0.1 \ # for force dns inside container
   -d quay.io/aasaam/aasaam-app:stable entrypoint
 ```
 

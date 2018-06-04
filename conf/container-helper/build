@@ -8,12 +8,12 @@ class Compiler
     {
         $srcRoot = realpath(__DIR__);
         $buildRoot = realpath(__DIR__);
-
+        shell_exec('rm -rf ' . $buildRoot . '/container-helper.phar');
         $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($srcRoot, FilesystemIterator::SKIP_DOTS), RecursiveIteratorIterator::LEAVES_ONLY);
         $this->phar = new Phar($buildRoot . '/container-helper.phar', 0, 'container-helper.phar');
 
         foreach ($iterator as $file) {
-          if (in_array(strtolower($file->getExtension()), ['php', 'phtml'])) {
+          if (in_array(strtolower($file->getExtension()), ['php', 'phtml', 'yml'])) {
             $path = str_replace($buildRoot . '/', '', $file->getRealPath());
             $content = file_get_contents($file);
             $this->phar->addFromString($path, $content);
@@ -28,6 +28,7 @@ define('PHAR_VERSION', 'v%s');
 if (extension_loaded('apc') && ini_get('apc.enable_cli') && ini_get('apc.cache_by_default')) {
     ini_set('apc.cache_by_default', 0);
 }
+Phar::interceptFileFuncs();
 Phar::mapPhar('container-helper.phar');
 require 'phar://container-helper.phar/bin/container-helper.php';
 __HALT_COMPILER();

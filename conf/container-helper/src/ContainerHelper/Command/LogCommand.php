@@ -12,59 +12,101 @@
 
 namespace ContainerHelper\Command;
 
-use Amp\Delayed;
-use Amp\Loop;
-use ContainerHelper\Log\ConnectivityStatus;
+use ContainerHelper\Command\AbstractCommand;
+use ContainerHelper\Config;
+use ContainerHelper\Log\NetworkConnection;
 use ContainerHelper\Log\NginxStatus;
 use ContainerHelper\Log\PhpErrorLog;
 use ContainerHelper\Log\PhpFpmSlow;
 use ContainerHelper\Log\PhpFpmStatus;
+use ContainerHelper\Log\PingStatus;
 use ContainerHelper\Profiles;
-use ContainerHelper\NetworkEndpoints;
-use function Amp\asyncCall;
-use React\Promise\Deferred;
+use React\EventLoop\Factory as EventLoopFactory;
+use Symfony\Component\Console\Output\OutputInterface;
 
 class LogCommand extends AbstractCommand
 {
+    /**
+     * @var \ContainerHelper\Profiles
+     */
+    protected $profiles;
+
     protected function configure()
     {
         $this
-            ->setName('log')
-            ->setDescription('Log events to file')
-            ->setHelp('Check statuses and log to files for process fluentbit');
+            ->setName('log');
     }
 
     protected function executeMe(): void
     {
-        $profiles = new Profiles();
-        while (true) {
-            if (!NetworkEndpoints::hasInit()) {
-                NetworkEndpoints::reload();
-            }
-            if (!$profiles->isSwoole()) {
-                asyncCall(function () {
-                    new PhpFpmStatus();
-                    yield new Delayed(50 * TIME_RATIO);
-                });
-                asyncCall(function () {
-                    new PhpFpmSlow();
-                    yield new Delayed(55 * TIME_RATIO);
-                });
-            }
-            asyncCall(function () {
-                new PhpErrorLog();
-                yield new Delayed(30 * TIME_RATIO);
-            });
-            asyncCall(function () {
-                new NginxStatus();
-                yield new Delayed(45 * TIME_RATIO);
-            });
-            asyncCall(function () {
-                new ConnectivityStatus();
-                yield new Delayed(120 * TIME_RATIO);
-            });
-            Loop::run();
-            sleep(1);
+        $config = Config::get();
+
+        if ($config['networklog']) {
+            new PingStatus();
         }
+
+
+        $loop = EventLoopFactory::create();
+
+        $NginxStatus = function () {
+            new NginxStatus();
+            $this->output->writeln(
+                'Nginx status',
+                OutputInterface::VERBOSITY_VERY_VERBOSE
+            );
+        };
+
+        $PingStatus = function () {
+            new PingStatus();
+            $this->output->writeln(
+                'Ping status',
+                OutputInterface::VERBOSITY_VERY_VERBOSE
+            );
+        };
+
+        $NetworkConnection = function () {
+            new NetworkConnection();
+            $this->output->writeln(
+                'Ping status',
+                OutputInterface::VERBOSITY_VERY_VERBOSE
+            );
+        };
+
+        $PhpErrorLog = function () {
+            new PhpErrorLog();
+            $this->output->writeln(
+                'Php fpm status',
+                OutputInterface::VERBOSITY_VERY_VERBOSE
+            );
+        };
+
+        $PhpFpmStatus = function () {
+            new PhpFpmStatus();
+            $this->output->writeln(
+                'Php fpm status',
+                OutputInterface::VERBOSITY_VERY_VERBOSE
+            );
+        };
+
+        $PhpFpmSlow = function () {
+            new PhpFpmSlow();
+            $this->output->writeln(
+                'Php fpm status',
+                OutputInterface::VERBOSITY_VERY_VERBOSE
+            );
+        };
+
+
+        $loop->addPeriodicTimer(29, $NginxStatus);
+        $loop->addPeriodicTimer(59, $PhpFpmStatus);
+        $loop->addPeriodicTimer(101, $PhpErrorLog);
+        $loop->addPeriodicTimer(127, $PhpFpmSlow);
+
+        if ($config['networklog']) {
+            $loop->addPeriodicTimer(41, $PingStatus);
+            $loop->addPeriodicTimer(47, $NetworkConnection);
+        }
+
+        $loop->run();
     }
 }

@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# for adding configurations
-sleep 5
-
 # echo set environment for all
 echo "CONTAINER_NAME=$CONTAINER_NAME" >> /etc/environment
 echo "CONTAINER_DATACENTER=$CONTAINER_DATACENTER" >> /etc/environment
@@ -156,8 +153,10 @@ service jobber start
 
 # immortal
 immortal -c /app/etc/immortal/beanstalkd.yml
-immortal -c /app/etc/immortal/fluent-bit.yml
-immortal -c /app/etc/immortal/container-helper-log.yml
+if [ "$CONTAINER_ENV" != "dev" ]; then
+  immortal -c /app/etc/immortal/fluent-bit.yml
+  immortal -c /app/etc/immortal/container-helper-log.yml
+fi
 
 # services
 service php7.2-fpm start

@@ -1,4 +1,4 @@
-# dont change this file it's will be generated <?=$date?>
+# dont change this file it's will be generated; <?=$date?>
 charset utf-8;
 
 root /app/app/public;
@@ -7,7 +7,7 @@ index index.php index.html;
 
 include /app/etc/nginx/conf.d/errorpages.conf;
 
-<?php if ($nginxaccesslog): ?>
+<?php if ($config['nginxaccesslog']): ?>
 access_log /tmpfs/logs/nginx.access.log jsonlog;
 <?php else: ?>
 access_log off;
@@ -76,33 +76,149 @@ location /__status {
   location /__status {
     stub_status on;
   }
-<?php if (!$isSwoole): ?>
   location /__status/fpm {
     include fastcgi_params;
     fastcgi_pass 127.0.0.1:9000;
     fastcgi_param SCRIPT_FILENAME $fastcgi_script_name;
   }
-<?php endif; ?>
 }
 
 include /app/etc/nginx/conf.d/addon/*.conf;
 
-<?php if ($isSwoole): ?>
+<?php if ($config['fpm']): ?>
+<?php if (!empty($adminkey)): ?>
+# admin
+# phpmyadmin
+location /__phpmyadmin {
+  access_log off;
+  root /usr/share/misc/phpmyadmin;
+<?php if ($adminkey !== 'dev'): ?>
+  auth_basic "Restricted phpmyadmin";
+  auth_basic_user_file /app/var/config/admin.htpasswd;
+<?php endif; ?>
+  # php
+  location ~ ^/__phpmyadmin/(.+\.php)$ {
+    include fastcgi_params;
+    fastcgi_pass 127.0.0.1:9000;
+    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    fastcgi_cache_bypass '1';
+  }
+}
+# adminer
+location /__adminer {
+  access_log off;
+  root /usr/share/misc/adminer;
+<?php if ($adminkey !== 'dev'): ?>
+  auth_basic "Restricted adminer";
+  auth_basic_user_file /app/var/config/admin.htpasswd;
+<?php endif; ?>
+  # php
+  location ~ ^/__adminer/(.+\.php)$ {
+    include fastcgi_params;
+    fastcgi_pass 127.0.0.1:9000;
+    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    fastcgi_cache_bypass '1';
+  }
+}
+# phpinfo
+location /__phpinfo {
+  access_log off;
+  root /usr/share/misc/phpinfo;
+<?php if ($adminkey !== 'dev'): ?>
+  auth_basic "Restricted phpinfo";
+  auth_basic_user_file /app/var/config/admin.htpasswd;
+<?php endif; ?>
+  # php
+  location ~ ^/__phpinfo/(.+\.php)$ {
+    include fastcgi_params;
+    fastcgi_pass 127.0.0.1:9000;
+    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    fastcgi_cache_bypass '1';
+  }
+}
+<?php endif; ?>
+<?php if (!empty($debugkey)): ?>
+location /__webgrind {
+  access_log off;
+  root /usr/share/misc/webgrind;
+<?php if ($config['debugkey'] !== 'dev'): ?>
+  auth_basic "Restricted webgrind";
+  auth_basic_user_file /app/var/config/debug.htpasswd;
+<?php endif; ?>
+  # php
+  location ~ ^/__webgrind/(.+\.php)$ {
+    include fastcgi_params;
+    fastcgi_pass 127.0.0.1:9000;
+    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    fastcgi_cache_bypass '1';
+  }
+}
+<?php endif; ?>
+
 location / {
   expires max;
   etag on;
   if_modified_since exact;
-  try_files $uri $uri/ @swoole;
+  try_files $uri /index.php$is_args$args;
+
+  # php
+  location ~ \.php$ {
+    internal;
+    include fastcgi_params;
+
+    # configure
+    fastcgi_buffer_size 32k;
+    fastcgi_buffers 8 16k;
+    fastcgi_connect_timeout 20;
+    fastcgi_index index.php;
+    fastcgi_intercept_errors on;
+    fastcgi_pass 127.0.0.1:9000;
+    fastcgi_read_timeout 10;
+    fastcgi_send_timeout 30;
+    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+
+    fastcgi_param CONTAINER_PROFILE '<?=$profile;?>';
+<?php if (isset($env['CONTAINER_NAME'])) : ?>
+    fastcgi_param CONTAINER_NAME '<?=$env['CONTAINER_NAME'];?>';
+<?php else : ?>
+    fastcgi_param CONTAINER_NAME 'unknown';
+<?php endif; ?>
+<?php if (isset($env['CONTAINER_DATACENTER'])) : ?>
+    fastcgi_param CONTAINER_DATACENTER '<?=$env['CONTAINER_DATACENTER'];?>';
+<?php else : ?>
+    fastcgi_param CONTAINER_DATACENTER 'unknown';
+<?php endif; ?>
+<?php if (isset($env['CONTAINER_COUNTRY'])) : ?>
+    fastcgi_param CONTAINER_COUNTRY '<?=$env['CONTAINER_COUNTRY'];?>';
+<?php else : ?>
+    fastcgi_param CONTAINER_COUNTRY 'VA';
+<?php endif; ?>
+
+    fastcgi_param NGINX_SECURE_PROXY '127.0.0.1';
+    fastcgi_param NGINX_CACHE_KEY $request_method$scheme$host$request_uri;
+    fastcgi_param NGINX_CACHE_CONFIG '/tmpfs/nginx/fastcgi/cache levels=1:2:2 keys_zone=FASTCGICACHE:1024m inactive=30m';
+
+    # cache
+    fastcgi_cache FASTCGICACHE;
+<?php if ($config['fastcgicache']): ?>
+    fastcgi_cache_bypass $http_x_nocache $cookie_xnocache;
+<?php else: ?>
+    fastcgi_cache_bypass '1';
+<?php endif; ?>
+  }
+}
+<?php else: // it's proxy mode ?>
+location / {
+  expires max;
+  etag on;
+  if_modified_since exact;
+  try_files $uri $uri/ @proxyapp;
 }
 
-location @swoole {
+location @proxyapp {
   proxy_redirect off;
   proxy_http_version 1.1;
-<?php if (isset($env['SWOOLE_ENV'])) : ?>
-  proxy_pass http://127.0.0.1:<?=$env['SWOOLE_ENV'];?>;
-<?php else : ?>
-  proxy_pass http://127.0.0.1:8080;
-<?php endif; ?>
+  proxy_pass http://127.0.0.1:<?=$config['proxyport'];?>;
 
   proxy_set_header Host $host;
   proxy_set_header X-Real-IP $remote_addr;
@@ -129,63 +245,10 @@ location @swoole {
 
   # cache
   proxy_cache PROXYCACHE;
-<?php if ($proxycache): ?>
+<?php if ($config['proxycache']): ?>
   proxy_cache_bypass $http_x_nocache $cookie_xnocache;
 <?php else: ?>
   proxy_cache_bypass '1';
-<?php endif; ?>
-}
-<?php else: ?>
-location / {
-  expires max;
-  etag on;
-  if_modified_since exact;
-  try_files $uri /index.php$is_args$args;
-}
-
-# php
-location ~ \.php$ {
-  internal;
-  include fastcgi_params;
-
-  # configure
-  fastcgi_buffer_size 32k;
-  fastcgi_buffers 8 16k;
-  fastcgi_connect_timeout 20;
-  fastcgi_index index.php;
-  fastcgi_intercept_errors on;
-  fastcgi_pass 127.0.0.1:9000;
-  fastcgi_read_timeout 10;
-  fastcgi_send_timeout 30;
-  fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-
-  fastcgi_param CONTAINER_PROFILE '<?=$profile;?>';
-<?php if (isset($env['CONTAINER_NAME'])) : ?>
-  fastcgi_param CONTAINER_NAME '<?=$env['CONTAINER_NAME'];?>';
-<?php else : ?>
-  fastcgi_param CONTAINER_NAME 'unknown';
-<?php endif; ?>
-<?php if (isset($env['CONTAINER_DATACENTER'])) : ?>
-  fastcgi_param CONTAINER_DATACENTER '<?=$env['CONTAINER_DATACENTER'];?>';
-<?php else : ?>
-  fastcgi_param CONTAINER_DATACENTER 'unknown';
-<?php endif; ?>
-<?php if (isset($env['CONTAINER_COUNTRY'])) : ?>
-  fastcgi_param CONTAINER_COUNTRY '<?=$env['CONTAINER_COUNTRY'];?>';
-<?php else : ?>
-  fastcgi_param CONTAINER_COUNTRY 'VA';
-<?php endif; ?>
-
-  fastcgi_param NGINX_SECURE_PROXY '127.0.0.1';
-  fastcgi_param NGINX_CACHE_KEY $request_method$scheme$host$request_uri;
-  fastcgi_param NGINX_CACHE_CONFIG '/tmpfs/nginx/fastcgi/cache levels=1:2:2 keys_zone=FASTCGICACHE:1024m inactive=30m';
-
-  # cache
-  fastcgi_cache FASTCGICACHE;
-<?php if ($fastcgicache): ?>
-  fastcgi_cache_bypass $http_x_nocache $cookie_xnocache;
-<?php else: ?>
-  fastcgi_cache_bypass '1';
 <?php endif; ?>
 }
 <?php endif; ?>

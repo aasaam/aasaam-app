@@ -13,27 +13,27 @@
 namespace ContainerHelper\Log;
 
 use ContainerHelper\Log\AbstractLog;
-use Throwable;
 
 class PhpFpmStatus extends AbstractLog
 {
+    /**
+     * @var string
+     */
+    protected $logpath = '/tmpfs/logs/php.fpm.status.log';
+
+    /**
+     * Constructor
+     */
     public function __construct()
     {
-        $data = $this->request('http://127.0.0.1/__status/fpm?json');
-        if ($data) {
-            $data = json_decode($data, true);
-            if (is_array($data)) {
-                file_put_contents('/tmpfs/logs/php.fpm.status.log', json_encode(array_merge([
-                    'time' => gmdate('Y-m-d\TH:i:s'),
-                    'success' => true,
-                ], $data)) . "\n", FILE_APPEND);
-                return;
-            }
+        $response = $this->request('http://127.0.0.1/__status/fpm?json');
+        if (!$response) {
+            $this->writeFaild();
+            return;
         }
-        file_put_contents('/tmpfs/logs/php.fpm.status.log', json_encode([
-            'time' => gmdate('Y-m-d\TH:i:s'),
-            'success' => false,
-        ]) . "\n", FILE_APPEND);
-        return false;
+        $result = json_decode($response['response'], true);
+        if (is_array($result)) {
+            $this->writeSuccess($result);
+        }
     }
 }

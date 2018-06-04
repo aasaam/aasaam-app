@@ -1,3 +1,4 @@
+# dont change this file it's will be generated;
 charset utf-8;
 
 root /app/app/public;
@@ -85,33 +86,34 @@ location / {
   etag on;
   if_modified_since exact;
   try_files $uri /index.php$is_args$args;
-}
 
-# php
-location ~ \.php$ {
-  internal;
-  include fastcgi_params;
+  # php
+  location ~ \.php$ {
+    internal;
+    include fastcgi_params;
 
-  # configure
-  fastcgi_buffer_size 32k;
-  fastcgi_buffers 8 16k;
-  fastcgi_connect_timeout 20;
-  fastcgi_index index.php;
-  fastcgi_intercept_errors on;
-  fastcgi_pass 127.0.0.1:9000;
-  fastcgi_read_timeout 10;
-  fastcgi_send_timeout 30;
-  fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    # configure
+    fastcgi_buffer_size 32k;
+    fastcgi_buffers 8 16k;
+    fastcgi_connect_timeout 20;
+    fastcgi_index index.php;
+    fastcgi_intercept_errors on;
+    fastcgi_pass 127.0.0.1:9000;
+    fastcgi_read_timeout 10;
+    fastcgi_send_timeout 30;
+    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
 
-  fastcgi_param CONTAINER_NAME 'unknown';
-  fastcgi_param CONTAINER_DATACENTER 'unknown';
-  fastcgi_param CONTAINER_COUNTRY 'VA';
+    fastcgi_param CONTAINER_PROFILE 'fpm-prodlog';
+    fastcgi_param CONTAINER_NAME 'unknown';
+    fastcgi_param CONTAINER_DATACENTER 'unknown';
+    fastcgi_param CONTAINER_COUNTRY 'VA';
 
-  fastcgi_param NGINX_SECURE_PROXY '127.0.0.1';
-  fastcgi_param NGINX_CACHE_KEY $request_method$scheme$host$request_uri;
-  fastcgi_param NGINX_CACHE_CONFIG '/tmpfs/nginx/fastcgi/cache levels=1:2:2 keys_zone=FASTCGICACHE:1024m inactive=30m';
+    fastcgi_param NGINX_SECURE_PROXY '127.0.0.1';
+    fastcgi_param NGINX_CACHE_KEY $request_method$scheme$host$request_uri;
+    fastcgi_param NGINX_CACHE_CONFIG '/tmpfs/nginx/fastcgi/cache levels=1:2:2 keys_zone=FASTCGICACHE:1024m inactive=30m';
 
-  # cache
-  fastcgi_cache FASTCGICACHE;
-  fastcgi_cache_bypass $http_x_nocache $cookie_xnocache;
+    # cache
+    fastcgi_cache FASTCGICACHE;
+    fastcgi_cache_bypass $http_x_nocache $cookie_xnocache;
+  }
 }

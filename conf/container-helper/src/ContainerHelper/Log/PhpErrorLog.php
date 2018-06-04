@@ -22,7 +22,7 @@ class PhpErrorLog extends AbstractLog
 
     public function __construct()
     {
-        if (!file_exists(self::ERRORLOGPATH)) {
+        if (!file_exists(self::ERRORLOGPATH) || filesize(self::ERRORLOGPATH) < 8) {
             return;
         }
 
@@ -54,29 +54,10 @@ class PhpErrorLog extends AbstractLog
         $file = fopen(self::ERRORLOGPATH_OUTPUT, "a");
         foreach ($logs as $log) {
             $log['log'] = implode("\n", $log['log']);
-            $log['hash'] = sha1($log['log']);
+            $log['hash'] = md5($log['log']);
             fwrite($file, json_encode($log) . "\n");
         }
         fclose($file);
         unlink(self::ERRORLOGPATH_TMP);
-        return;
-    }
-
-
-    /**
-     * Read file line
-     *
-     * @param string $path
-     * @return string
-     */
-    private function readFileLine(string $path)
-    {
-        $handle = fopen($path, "r");
-        if ($handle) {
-            while (($line = fgets($handle)) !== false) {
-                yield trim($line);
-            }
-            fclose($handle);
-        }
     }
 }

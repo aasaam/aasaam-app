@@ -15,200 +15,83 @@ namespace ContainerHelper;
 class Profiles
 {
     /**
-     * @var string
+     * @var array
      */
-    protected $profile = 'prod-logs';
+    protected $profiles = [];
 
     /**
      * @var string
      */
-    protected $spxKey = 'dev';
-
-    /**
-     * @var bool
-     */
-    protected $isSwoole = false;
+    protected $currentProfile = '';
 
     /**
      * @var array
      */
-    protected $config = [
-        'nginxaccesslog' => true,
-        'phpxdebug' => false,
-        'phpspx' => false,
-        'phpfpmslowlog' => true,
-        'phpfpmaccesslog' => true,
-        'opcacheperformance' => true,
-        'fastcgicache' => true,
-        'proxycache' => true,
-    ];
+    protected $config = [];
 
     /**
-     * @var array
+     * @var string
      */
-    protected $profileConfig = [
-        'dev' => [
-            'nginxaccesslog' => true,
-            'phpxdebug' => true,
-            'phpspx' => true,
-            'phpfpmslowlog' => true,
-            'phpfpmaccesslog' => true,
-            'opcacheperformance' => false,
-            'fastcgicache' => false,
-            'proxycache' => false,
-        ],
-        'dev-cache' => [
-            'nginxaccesslog' => true,
-            'phpxdebug' => true,
-            'phpspx' => true,
-            'phpfpmslowlog' => true,
-            'phpfpmaccesslog' => true,
-            'opcacheperformance' => false,
-            'fastcgicache' => true,
-            'proxycache' => true,
-        ],
-        'prod-logs' => [
-            'nginxaccesslog' => true,
-            'phpxdebug' => false,
-            'phpspx' => false,
-            'phpfpmslowlog' => true,
-            'phpfpmaccesslog' => true,
-            'opcacheperformance' => true,
-            'fastcgicache' => true,
-            'proxycache' => true,
-        ],
-        'prod-debug' => [
-            'nginxaccesslog' => true,
-            'phpxdebug' => true,
-            'phpspx' => true,
-            'phpfpmslowlog' => true,
-            'phpfpmaccesslog' => true,
-            'opcacheperformance' => false,
-            'fastcgicache' => true,
-            'proxycache' => true,
-        ],
-        'prod' => [
-            'nginxaccesslog' => false,
-            'phpxdebug' => false,
-            'phpspx' => false,
-            'phpfpmslowlog' => false,
-            'phpfpmaccesslog' => false,
-            'opcacheperformance' => true,
-            'fastcgicache' => true,
-            'proxycache' => true,
-        ],
-    ];
+    protected $debugkey = '';
 
-
-    const CONFIG_FILE = '/tmpfs/container-helper/config.json';
+    /**
+     * @var string
+     */
+    protected $adminkey = '';
 
     /**
      * Constructor
-     */
-    public function __construct()
-    {
-        $defaults = [
-            'spxKey' => $this->spxKey,
-            'isSwoole' => $this->isSwoole,
-            'profile' => $this->profile,
-            'config' => $this->config,
-        ];
-        if (file_exists(self::CONFIG_FILE)) {
-            $defaults = json_decode(file_get_contents(self::CONFIG_FILE), true);
-        }
-        $this->profile = $defaults['profile'];
-        $this->config = $defaults['config'];
-        $this->isSwoole = $defaults['isSwoole'];
-    }
-
-    /**
-     * Change spx key
      *
+     * @param array $config
      * @return void
      */
-    public function changeSpxKey(): void
+    public function __construct(array $config)
     {
-        if (getenv('CONTAINER_ENV') !== 'dev') {
-            $this->spxKey = random_string();
-        } else {
-            $this->spxKey = 'dev';
+        $defaultConfigs = $config['profile']['defaults'];
+        foreach ($config['profile']['config'] as $profile => $c) {
+            $m = [];
+            if (preg_match('/^(?P<type>[a-z]+).*/', $profile, $m)) {
+                $this->profiles[$profile] = array_merge($defaultConfigs[$m['type']], $c);
+            }
         }
+        $this->currentProfile = $config['profile']['profile'];
+        $this->config = $this->profiles[$this->currentProfile];
     }
 
     /**
-     * Get spx key
+     * Get debug key
      *
      * @return string
      */
-    public function getSpxKey(): string
+    public function getDebugKey(): string
     {
-        return $this->spxKey;
+        return $this->debugkey;
     }
 
     /**
-     * Apply
+     * Get admin key
+     *
+     * @return string
+     */
+    public function getAdminKey(): string
+    {
+        return $this->adminkey;
+    }
+
+    /**
+     * Refresh keys
      *
      * @return void
      */
-    public function apply(): void
+    public function refresh()
     {
-        $this->setProfile($this->profile);
-        if ($this->isSwoole) {
-            $this->config['phpxdebug'] = false;
-            $this->config['phpspx'] = false;
-            $this->config['phpfpmslowlog'] = false;
-            $this->config['phpfpmaccesslog'] = false;
-            $this->config['opcacheperformance'] = false;
-            $this->config['fastcgicache'] = false;
+        $this->debugkey = $this->config['debugkey'];
+        if ($this->debugkey === '@random') {
+            $this->debugkey = random_string();
         }
-    }
-
-    /**
-     * Set profile
-     *
-     * @param string $profile
-     * @return void
-     */
-    public function setProfile(string $profile): void
-    {
-        if (isset($this->profileConfig[$profile])) {
-            $this->profile = $profile;
-            $this->config = $this->profileConfig[$profile];
-        }
-    }
-
-    /**
-     * Set profile
-     *
-     * @param bool $isSwoole
-     * @return void
-     */
-    public function setSwoole(bool $isSwoole): void
-    {
-        $this->isSwoole = $isSwoole;
-    }
-
-    /**
-     * Is swoole
-     *
-     * @return boolean
-     */
-    public function isSwoole(): bool
-    {
-        return $this->isSwoole;
-    }
-
-    /**
-     * Set config
-     *
-     * @param string $name
-     * @param boolean $state
-     * @return void
-     */
-    public function setConfig(string $name, bool $state): void
-    {
-        if (isset($this->config[$name])) {
-            $this->config[$name] = $state;
+        $this->adminkey = $this->config['adminkey'];
+        if ($this->config['adminkey'] === '@random') {
+            $this->adminkey = random_string();
         }
     }
 
@@ -219,11 +102,21 @@ class Profiles
      */
     public function getProfile(): string
     {
-        return $this->profile;
+        return $this->currentProfile;
     }
 
     /**
-     * Get Config
+     * Get available profiles
+     *
+     * @return array
+     */
+    public function getAvailableProfiles(): array
+    {
+        return array_keys($this->profiles);
+    }
+
+    /**
+     * Get config
      *
      * @return array
      */
@@ -233,31 +126,14 @@ class Profiles
     }
 
     /**
-     * Get config file
+     * Set profile
      *
-     * @return array
+     * @param string $profile
+     * @return void
      */
-    public function getConfigFile(): array
+    public function setProfile(string $profile)
     {
-        return [
-            'spxKey' => $this->spxKey,
-            'profile' => $this->profile,
-            'config' => $this->config,
-            'isSwoole' => $this->isSwoole,
-        ];
-    }
-
-    /**
-     * Destructor
-     */
-    public function __destruct()
-    {
-        $defaults = [
-            'spxKey' => $this->spxKey,
-            'profile' => $this->profile,
-            'config' => $this->config,
-            'isSwoole' => $this->isSwoole,
-        ];
-        file_put_contents(self::CONFIG_FILE, json_encode($defaults, JSON_PRETTY_PRINT));
+        $this->currentProfile = $profile;
+        $this->config = $this->profiles[$this->currentProfile];
     }
 }

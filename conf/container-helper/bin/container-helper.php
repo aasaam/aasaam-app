@@ -19,6 +19,10 @@ if (getenv('DEBUG')) {
     define('TIME_RATIO', 1000);
 }
 
+if (!defined('PHAR_VERSION')) {
+    define('PHAR_VERSION', 'v' . gmdate('y.n.j'));
+}
+
 (function () {
     $extensions = array_flip(get_loaded_extensions());
     if (!isset($extensions['curl']) || !isset($extensions['event'])) {
@@ -27,31 +31,30 @@ if (getenv('DEBUG')) {
     }
 })();
 
-function random_string(int $length = 12)
+function random_string()
 {
-    $hex = bin2hex(openssl_random_pseudo_bytes(8));
+    $hex = bin2hex(openssl_random_pseudo_bytes(10));
     $base62 = preg_replace('/[^a-z0-9]/i', '', base64_encode($hex));
-    return substr($base62, 0, $length);
+    return substr($base62, 0, 16);
 }
 
 if (defined('PHAR_MODE')) {
-    require 'phar://container-helper.phar/vendor/autoload.php';
+    define('ROOT_PATH', 'phar://container-helper.phar');
 } else {
-    require 'vendor/autoload.php';
+    define('ROOT_PATH', dirname(__DIR__));
 }
 
-if (!defined('PHAR_VERSION')) {
-    define('PHAR_VERSION', 'v' . gmdate('y.n.j'));
-}
+require ROOT_PATH . '/vendor/autoload.php';
+
+ContainerHelper\Config::init();
 
 $application = new Symfony\Component\Console\Application();
 
 $application->setName('Container Helper');
 $application->setVersion(PHAR_VERSION);
 
-$application->add(new ContainerHelper\Command\ConfigureCommand());
+$application->add(new ContainerHelper\Command\ConfigCommand());
 $application->add(new ContainerHelper\Command\LogCommand());
-$application->add(new ContainerHelper\Command\RestartServices());
-$application->add(new ContainerHelper\Command\SwooleCommand());
+$application->add(new ContainerHelper\Command\StatusCommand());
 
 $application->run();

@@ -7,8 +7,8 @@ LABEL org.label-schema.name="AAASAAM Application Docker Image" \
       org.label-schema.url="https://aasaam.com" \
       org.label-schema.vcs-url="https://github.com/AASAAM/aasaam-app" \
       org.label-schema.vendor="AASAAM" \
-      org.label-schema.version="2.0.1" \
-      org.label-schema.schema-version="2.0.1" \
+      org.label-schema.version="2.0.2" \
+      org.label-schema.schema-version="2.0.2" \
       maintainer="Muhammad Hussein Fattahizadeh <m@mhf.ir>"
 
 # installation
@@ -37,21 +37,33 @@ RUN export DEBIAN_FRONTEND=noninteractive ; \
     libgeoip-dev libgpgme11-dev libhiredis-dev libjansson-dev libjemalloc-dev libmagickwand-dev libmemcached-dev \
     libnghttp2-dev librabbitmq-dev librrd-dev libspdylay-dev libssh2-1-dev libssl-dev libsystemd-dev libtool libuv1-dev \
     libvarnishapi-dev libvips libvips-dev libxml2-dev libyaml-dev libzmq3-dev \
+    nano vim graphviz apache2-utils \
     logrotate nghttp2 nghttp2-client nghttp2-proxy nghttp2-server nginx-extras nodejs yarn dnsmasq \
     pkg-config python re2c xterm zlib1g-dev \
     php7.2 php7.2-bcmath php7.2-bz2 php7.2-cgi php7.2-cli php7.2-common php7.2-curl php7.2-dba php7.2-dev php7.2-enchant \
     php7.2-fpm php7.2-gd php7.2-gmp php7.2-imap php7.2-interbase php7.2-intl php7.2-json php7.2-ldap php7.2-mbstring php7.2-mysql \
     php7.2-odbc php7.2-opcache php7.2-pgsql php7.2-phpdbg php7.2-pspell php7.2-readline php7.2-recode php7.2-soap php7.2-sqlite3 \
     php7.2-tidy php7.2-xml php7.2-xmlrpc php7.2-xsl php7.2-zip \
+  ## geoip
   && curl -L http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz > /tmp/GeoLiteCity.dat.gz \
   && cd /tmp/ && gunzip GeoLiteCity.dat.gz && mkdir -p /usr/local/share/GeoIP && mv GeoLiteCity.dat /usr/local/share/GeoIP/GeoIPCity.dat \
+  && curl -L http://geolite.maxmind.com/download/geoip/database/GeoLiteCountry/GeoIP.dat.gz > /tmp/GeoIP.dat.gz \
+  && cd /tmp/ && gunzip GeoIP.dat.gz && mkdir -p /usr/local/share/GeoIP && mv GeoIP.dat /usr/local/share/GeoIP/GeoIP.dat \
+  ## update npm
   && npm -g update \
+  ## nano rc
+  && git clone --depth=1 https://github.com/scopatz/nanorc.git ~/.nano && cp ~/.nano/nanorc ~/.nanorc && rm -rf ~/.nano/.git \
+  && find ~/.nano -type f ! -name '*.nanorc' -delete \
+  ## fluentbit
   && cd /tmp && curl -L https://fluentbit.io/releases/0.13/fluent-bit-0.13.2.tar.gz > fluent-bit.tgz && tar -xf fluent-bit.tgz \
   && cd fluent-bit*/build && cmake ../ && make && make install \
+  # jobber
   && cd /tmp \
   && curl -L https://github.com/dshearer/jobber/releases/download/v1.3.2/jobber_1.3.2-1_amd64_ubuntu16.deb > /tmp/jobber.deb \
   && dpkg -i /tmp/jobber.deb \
+  ## beanstalkd
   && cd /tmp/ && git clone --depth=1 https://github.com/kr/beanstalkd && cd beanstalkd && make && make install \
+  ## php extensions
   && cd /tmp && curl -L https://pecl.php.net/get/igbinary > igbinary.tgz && tar -xf igbinary.tgz && cd igbinary-* && phpize && ./configure \
   && make && make install && echo '; priority=1' > /etc/php/7.2/mods-available/igbinary.ini \
   && echo 'extension=igbinary.so' >> /etc/php/7.2/mods-available/igbinary.ini && phpenmod igbinary \
@@ -160,26 +172,47 @@ RUN export DEBIAN_FRONTEND=noninteractive ; \
   && make && make install && echo 'zend_extension=/usr/lib/php/20170718/xdebug.so' > /etc/php/7.2/mods-available/xdebug.ini \
   && echo 'xdebug.profiler_enable_trigger=1' >> /etc/php/7.2/mods-available/xdebug.ini \
   && echo 'xdebug.profiler_output_dir="/tmpfs/php/xdebug"' >> /etc/php/7.2/mods-available/xdebug.ini \
+  && echo 'xdebug.profiler_enable_trigger_value="dev"' >> /etc/php/7.2/mods-available/xdebug.ini \
   && echo 'xdebug.trace_output_dir="/tmpfs/php/xdebug"' >> /etc/php/7.2/mods-available/xdebug.ini \
   && echo 'xdebug.gc_stats_output_dir="/tmpfs/php/xdebug"' >> /etc/php/7.2/mods-available/xdebug.ini \
+  ## php composer
   && curl -Ls https://getcomposer.org/download/1.6.5/composer.phar > /usr/bin/composer && chmod +x /usr/bin/composer && composer selfupdate \
-  && phpdismod amqp && phpdismod apcu && phpdismod ast && phpdismod bcmath && phpdismod bz2 && phpdismod calendar && phpdismod ctype \
+  ## disable php extensions
+  && phpdismod amqp && phpdismod apcu && phpdismod ast && phpdismod bcmath && phpdismod bz2 && phpdismod calendar \
   && phpdismod dba && phpdismod ds && phpdismod enchant && phpdismod ev && phpdismod exif \
   && phpdismod fann && phpdismod fileinfo && phpdismod ftp && phpdismod gd && phpdismod geoip && phpdismod geospatial && phpdismod gettext \
   && phpdismod gmp && phpdismod gnupg && phpdismod grpc && phpdismod hprose && phpdismod hrtime && phpdismod iconv && phpdismod imagick \
   && phpdismod imap && phpdismod interbase && phpdismod jsond && phpdismod ldap && phpdismod libevent \
-  && phpdismod memcached && phpdismod mongodb && phpdismod mysqli && phpdismod mysqlnd && phpdismod odbc && phpdismod opencensus \
-  && phpdismod pdo && phpdismod pdo_firebird && phpdismod pdo_mysql && phpdismod pdo_odbc && phpdismod pdo_pgsql && phpdismod pdo_sqlite \
+  && phpdismod memcached && phpdismod mongodb && phpdismod mysqli && phpdismod odbc && phpdismod opencensus \
+  && phpdismod pdo_firebird && phpdismod pdo_odbc && phpdismod pdo_pgsql && phpdismod pdo_sqlite \
   && phpdismod pgsql && phpdismod phpng_xhprof && phpdismod posix && phpdismod pspell && phpdismod psr && phpdismod raphf \
   && phpdismod rar && phpdismod recode && phpdismod redis && phpdismod request && phpdismod rrd && phpdismod seaslog && phpdismod shmop \
   && phpdismod simplexml && phpdismod soap && phpdismod spx && phpdismod sqlite3 && phpdismod ssh2 && phpdismod swoole && phpdismod sync \
   && phpdismod sysvmsg && phpdismod sysvsem && phpdismod sysvshm && phpdismod tidy && phpdismod uv && phpdismod varnish \
   && phpdismod vcollect && phpdismod vips && phpdismod wddx && phpdismod xdebug && phpdismod xmlrpc && phpdismod yac \
   && phpdismod yaf && phpdismod zmq \
-  && phpenmod igbinary && phpenmod msgpack && phpenmod yaml && phpenmod json && phpenmod intl && phpenmod phar && phpenmod event && phpenmod curl && phpenmod tokenizer \
+  ## enable defaults
+  && phpenmod igbinary && phpenmod ctype && phpenmod pdo && phpenmod pdo_mysql && phpenmod mysqli && phpenmod mysqlnd && phpenmod msgpack && phpenmod yaml && phpenmod json && phpenmod intl && phpenmod phar && phpenmod event \
+  && phpenmod curl && phpenmod tokenizer \
+  ## webgrind
+  && git clone --depth=1 https://github.com/jokkedk/webgrind /tmp/webgrind && cd /tmp/webgrind && make \
+  && rm .git -rf && find . -type f ! -name '*.css' ! -name '*.gif' ! -name '*.ico' ! -name '*.js' ! -name '*.php' ! -name '*.phtml' ! -name '*.png' ! -name '*.py' ! -name 'preprocessor' -delete \
+  && cd /tmp && mkdir -p /usr/share/misc/webgrind && mv /tmp/webgrind /usr/share/misc/webgrind/__webgrind \
+  ## phpmyadmin
+  && git clone --branch=STABLE --depth=1 https://github.com/phpmyadmin/phpmyadmin /tmp/phpmyadmin && cd /tmp/phpmyadmin && composer install --no-dev --optimize-autoloader \
+  && rm .git .github test -rf && find . -type f ! -name '*.css' ! -name '*.gif' ! -name '*.ico' ! -name 'theme.json' ! -name '*.js' ! -name '*.php' ! -name '*.phtml' ! -name '*.png' ! -name '*.html' ! -name '*.twig' ! -name '*.sql' -delete \
+  && rm config.sample.inc.php \
+  && echo 'PD9waHAKJGNmZ1siYmxvd2Zpc2hfc2VjcmV0Il0gPSBoYXNoKCJjcmMzMmIiLCBnbWRhdGUoIlltZCIpIC4gZmlsZV9nZXRfY29udGVudHMoIi9ldGMvZW52aXJvbm1lbnQiKSk7CiRpID0gMDsKJGkrKzsKJGNmZ1siU2VydmVycyJdWyRpXVsiYXV0aF90eXBlIl0gPSAiY29va2llIjsKJGNmZ1siU2VydmVycyJdWyRpXVsiaG9zdCJdID0gIm1hcmlhZGIiOwokY2ZnWyJTZXJ2ZXJzIl1bJGldWyJjb21wcmVzcyJdID0gZmFsc2U7CiRjZmdbIlNlcnZlcnMiXVskaV1bIkFsbG93Tm9QYXNzd29yZCJdID0gdHJ1ZTsKJGkrKzsKJGNmZ1siU2VydmVycyJdWyRpXVsiYXV0aF90eXBlIl0gPSAiY29va2llIjsKJGNmZ1siU2VydmVycyJdWyRpXVsiaG9zdCJdID0gInRpZGIiOwokY2ZnWyJTZXJ2ZXJzIl1bJGldWyJjb21wcmVzcyJdID0gZmFsc2U7CiRjZmdbIlNlcnZlcnMiXVskaV1bIkFsbG93Tm9QYXNzd29yZCJdID0gdHJ1ZTsKJGkrKzsKJGNmZ1siU2VydmVycyJdWyRpXVsiYXV0aF90eXBlIl0gPSAiY29va2llIjsKJGNmZ1siU2VydmVycyJdWyRpXVsiaG9zdCJdID0gIm15c3FsIjsKJGNmZ1siU2VydmVycyJdWyRpXVsiY29tcHJlc3MiXSA9IGZhbHNlOwokY2ZnWyJTZXJ2ZXJzIl1bJGldWyJBbGxvd05vUGFzc3dvcmQiXSA9IHRydWU7CiRjZmdbIlVwbG9hZERpciJdID0gIiI7CiRjZmdbIlNhdmVEaXIiXSA9ICIiOwokY2ZnWyJEZWZhdWx0TGFuZyJdID0gImVuIjsKJGNmZ1siRGlzcGxheVNlcnZlcnNMaXN0Il0gPSB0cnVlOw==' | base64 --decode > config.inc.php \
+  && cd /tmp && mkdir -p /usr/share/misc/phpmyadmin && mv /tmp/phpmyadmin /usr/share/misc/phpmyadmin/__phpmyadmin \
+  ## adminer
+  && mkdir -p /usr/share/misc/adminer/__adminer && curl -L https://github.com/vrana/adminer/releases/download/v4.6.2/adminer-4.6.2-en.php > /usr/share/misc/adminer/__adminer/index.php \
+  ## phpinfo
+  && mkdir -p /usr/share/misc/phpinfo/__phpinfo && echo '<?php phpinfo();' > /usr/share/misc/phpinfo/__phpinfo/index.php \
+  ## container-helper
   && git clone --depth=1 -b stable https://github.com/AASAAM/aasaam-app /tmp/aasaam-app \
   && cd /tmp/aasaam-app/conf/container-helper && composer install --no-dev --optimize-autoloader \
   && ./prebuild && ./build && ./postbuild && chmod +x container-helper.phar && mv container-helper.phar /usr/bin/container-helper \
+  ## gc
   && rm -rf ~/.cache && rm -rf ~/.composer && rm -rf ~/.npm && rm -rf ~/.cache/yarn \
   && apt-get clean && apt-get autoremove -y \
   && rm -r /var/lib/apt/lists/* && rm -rf /tmp && mkdir /tmp && chmod 777 /tmp && truncate -s 0 /var/log/*.log

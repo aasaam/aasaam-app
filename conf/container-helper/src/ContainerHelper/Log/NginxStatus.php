@@ -16,16 +16,22 @@ use ContainerHelper\Log\AbstractLog;
 
 class NginxStatus extends AbstractLog
 {
+    /**
+     * @var string
+     */
+    protected $logpath = '/tmpfs/logs/nginx.status.log';
+
+    /**
+     * Constructor
+     */
     public function __construct()
     {
-        $data = $this->request('http://127.0.0.1/__status');
-        if (!$data) {
-            file_put_contents('/tmpfs/logs/nginx.status.log', json_encode([
-                'time' => gmdate('Y-m-d\TH:i:s'),
-                'success' => false,
-            ]) . "\n", FILE_APPEND);
+        $response = $this->request('http://127.0.0.1/__status');
+        if (!$response) {
+            $this->writeFaild();
             return;
         }
+        $data = $response['response'];
         $m = [];
         $result = [];
         if (preg_match('/Active : (?P<nginxActive>[0-9]+)/', $data, $m)) {
@@ -50,9 +56,6 @@ class NginxStatus extends AbstractLog
         if (preg_match('/Waiting: (?P<nginxWaiting>[0-9]+)/', $data, $q)) {
             $result['waiting'] = (int)$q['nginxWaiting'];
         }
-        file_put_contents('/tmpfs/logs/nginx.status.log', json_encode(array_merge([
-            'time' => gmdate('Y-m-d\TH:i:s'),
-        ], $result)) . "\n", FILE_APPEND);
-        return;
+        $this->writeSuccess($result);
     }
 }

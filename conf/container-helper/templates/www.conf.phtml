@@ -1,4 +1,4 @@
-; dont change this file it's will be generated <?=$date?>
+; dont change this file it's will be generated; <?=$date?>
 [www]
 user = www-data
 group = www-data
@@ -15,11 +15,11 @@ pm.max_spare_servers = 128
 pm.max_requests = 1024
 catch_workers_output = yes
 security.limit_extensions = .php
-<?php if ($phpfpmslowlog): ?>
+<?php if ($config['phpfpmslowlog']): ?>
 slowlog = /tmpfs/logs/php.fpm.slow.log
 request_slowlog_timeout = 2s
 <?php endif; ?>
-<?php if ($phpfpmaccesslog): ?>
+<?php if ($config['phpfpmaccesslog']): ?>
 access.log = /tmpfs/logs/php.fpm.access.log
 access.format = "%m '%r%Q%q' '%{%a, %d %b %Y %T %z}T' %{mili}d %{kilo}M %C"
 <?php endif; ?>

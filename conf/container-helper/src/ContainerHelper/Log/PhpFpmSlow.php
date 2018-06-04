@@ -22,12 +22,12 @@ class PhpFpmSlow extends AbstractLog
 
     public function __construct()
     {
-        if (!file_exists(PhpFpmSlow::SLOWLOGPATH)) {
+        if (!file_exists(self::SLOWLOGPATH) || filesize(self::SLOWLOGPATH) < 8) {
             return;
         }
 
-        copy(PhpFpmSlow::SLOWLOGPATH, PhpFpmSlow::SLOWLOGPATH_TMP);
-        file_put_contents(PhpFpmSlow::SLOWLOGPATH, '');
+        copy(self::SLOWLOGPATH, self::SLOWLOGPATH_TMP);
+        file_put_contents(self::SLOWLOGPATH, '');
 
         $id = 0;
         $patterns = [
@@ -38,7 +38,7 @@ class PhpFpmSlow extends AbstractLog
 
         $logs = [];
 
-        foreach ($this->readFileLine(PhpFpmSlow::SLOWLOGPATH_TMP) as $line) {
+        foreach ($this->readFileLine(self::SLOWLOGPATH_TMP) as $line) {
             $matches = [];
             if (preg_match($patterns['firstLine'], $line, $matches)) {
                 $id++;
@@ -60,28 +60,11 @@ class PhpFpmSlow extends AbstractLog
             return;
         }
 
-        $file = fopen(PhpFpmSlow::SLOWLOGPATH_OUTPUT, "a");
+        $file = fopen(self::SLOWLOGPATH_OUTPUT, "a");
         foreach ($logs as $log) {
             fwrite($file, json_encode($log) . "\n");
         }
         fclose($file);
-        unlink(PhpFpmSlow::SLOWLOGPATH_TMP);
-    }
-
-    /**
-     * Read file line
-     *
-     * @param string $path
-     * @return string
-     */
-    private function readFileLine(string $path)
-    {
-        $handle = fopen($path, "r");
-        if ($handle) {
-            while (($line = fgets($handle)) !== false) {
-                yield trim($line);
-            }
-            fclose($handle);
-        }
+        unlink(self::SLOWLOGPATH_TMP);
     }
 }
