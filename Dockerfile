@@ -183,17 +183,18 @@ RUN export DEBIAN_FRONTEND=noninteractive ; \
   && phpdismod fann && phpdismod fileinfo && phpdismod ftp && phpdismod gd && phpdismod geoip && phpdismod geospatial && phpdismod gettext \
   && phpdismod gmp && phpdismod gnupg && phpdismod grpc && phpdismod hprose && phpdismod hrtime && phpdismod iconv && phpdismod imagick \
   && phpdismod imap && phpdismod interbase && phpdismod jsond && phpdismod ldap && phpdismod libevent \
-  && phpdismod memcached && phpdismod mongodb && phpdismod mysqli && phpdismod odbc && phpdismod opencensus \
-  && phpdismod pdo_firebird && phpdismod pdo_odbc && phpdismod pdo_pgsql && phpdismod pdo_sqlite \
-  && phpdismod pgsql && phpdismod phpng_xhprof && phpdismod posix && phpdismod pspell && phpdismod psr && phpdismod raphf \
+  && phpdismod memcached && phpdismod mongodb && phpdismod odbc && phpdismod opencensus \
+  && phpdismod pdo_firebird && phpdismod pdo_odbc && phpdismod pdo_sqlite \
+  && phpdismod pgsql && phpdismod phpng_xhprof && phpdismod pspell && phpdismod psr && phpdismod raphf \
   && phpdismod rar && phpdismod recode && phpdismod redis && phpdismod request && phpdismod rrd && phpdismod seaslog && phpdismod shmop \
-  && phpdismod simplexml && phpdismod soap && phpdismod spx && phpdismod sqlite3 && phpdismod ssh2 && phpdismod swoole && phpdismod sync \
+  && phpdismod soap && phpdismod spx && phpdismod sqlite3 && phpdismod ssh2 && phpdismod swoole && phpdismod sync \
   && phpdismod sysvmsg && phpdismod sysvsem && phpdismod sysvshm && phpdismod tidy && phpdismod uv && phpdismod varnish \
   && phpdismod vcollect && phpdismod vips && phpdismod wddx && phpdismod xdebug && phpdismod xmlrpc && phpdismod yac \
   && phpdismod yaf && phpdismod zmq \
   ## enable defaults
-  && phpenmod igbinary && phpenmod ctype && phpenmod pdo && phpenmod pdo_mysql && phpenmod mysqli && phpenmod mysqlnd && phpenmod msgpack && phpenmod yaml && phpenmod json && phpenmod intl && phpenmod phar && phpenmod event \
-  && phpenmod curl && phpenmod tokenizer \
+  && phpenmod igbinary && phpenmod ctype && phpenmod pdo && phpenmod pdo_mysql && phpenmod mysqli && phpenmod mysqlnd && phpenmod msgpack \
+  && phpenmod yaml && phpenmod json && phpenmod intl && phpenmod phar && phpenmod event \
+  && phpenmod curl && phpenmod tokenizer && phpenmod xml && phpenmod dom && phpenmod simplexml && phpenmod posix \
   ## webgrind
   && git clone --depth=1 https://github.com/jokkedk/webgrind /tmp/webgrind && cd /tmp/webgrind && make \
   && rm .git -rf && find . -type f ! -name '*.css' ! -name '*.gif' ! -name '*.ico' ! -name '*.js' ! -name '*.php' ! -name '*.phtml' ! -name '*.png' ! -name '*.py' ! -name 'preprocessor' -delete \
