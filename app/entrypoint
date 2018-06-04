@@ -143,9 +143,9 @@ fi
 # container-helper swoole 1
 
 # configure to `prod-logs`
-container-helper configure prod-logs --no-ansi
+container-helper config -p fpm-prodlog --no-ansi
 if [ "$CONTAINER_ENV" = "dev" ]; then
-  container-helper configure dev --no-ansi
+  container-helper config -p fpm-dev --no-ansi
 fi
 
 # jobber
