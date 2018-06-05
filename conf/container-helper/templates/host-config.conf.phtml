@@ -80,6 +80,8 @@ location /__status {
     include fastcgi_params;
     fastcgi_pass 127.0.0.1:9000;
     fastcgi_param SCRIPT_FILENAME $fastcgi_script_name;
+    fastcgi_cache_bypass '1';
+    fastcgi_no_cache '1';
   }
 }
 
@@ -102,6 +104,7 @@ location /__phpmyadmin {
     fastcgi_pass 127.0.0.1:9000;
     fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
     fastcgi_cache_bypass '1';
+    fastcgi_no_cache '1';
   }
 }
 # adminer
@@ -118,6 +121,7 @@ location /__adminer {
     fastcgi_pass 127.0.0.1:9000;
     fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
     fastcgi_cache_bypass '1';
+    fastcgi_no_cache '1';
   }
 }
 # phpinfo
@@ -134,6 +138,7 @@ location /__phpinfo {
     fastcgi_pass 127.0.0.1:9000;
     fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
     fastcgi_cache_bypass '1';
+    fastcgi_no_cache '1';
   }
 }
 <?php endif; ?>
@@ -151,6 +156,7 @@ location /__webgrind {
     fastcgi_pass 127.0.0.1:9000;
     fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
     fastcgi_cache_bypass '1';
+    fastcgi_no_cache '1';
   }
 }
 <?php endif; ?>
@@ -204,6 +210,7 @@ location / {
     fastcgi_cache_bypass $http_x_nocache $cookie_xnocache;
 <?php else: ?>
     fastcgi_cache_bypass '1';
+    fastcgi_no_cache '1';
 <?php endif; ?>
   }
 }
@@ -248,6 +255,7 @@ location @proxyapp {
 <?php if ($config['proxycache']): ?>
   proxy_cache_bypass $http_x_nocache $cookie_xnocache;
 <?php else: ?>
+  proxy_no_cache '1';
   proxy_cache_bypass '1';
 <?php endif; ?>
 }

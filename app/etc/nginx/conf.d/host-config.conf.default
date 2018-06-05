@@ -76,6 +76,8 @@ location /__status {
     include fastcgi_params;
     fastcgi_pass 127.0.0.1:9000;
     fastcgi_param SCRIPT_FILENAME $fastcgi_script_name;
+    fastcgi_cache_bypass '1';
+    fastcgi_no_cache '1';
   }
 }
 

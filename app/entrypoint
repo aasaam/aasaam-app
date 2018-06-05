@@ -30,7 +30,7 @@ chmod 777 /tmp -R
 chmod 777 /tmpfs -R
 
 # init dhparm
-if [ -e "/app/etc/nginx/conf.d/addon/dhparam.pem" ]; then
+if [ ! -f /app/etc/nginx/conf.d/addon/dhparam.pem ]; then
   openssl dhparam -out /app/etc/nginx/conf.d/addon/dhparam.pem 2048
 fi
 
@@ -141,7 +141,7 @@ fi
 if [ "$CONTAINER_ENV" = "dev" ]; then
   container-helper config -p fpm-dev --no-ansi
 else
-container-helper config -p fpm-prodlog --no-ansi
+  container-helper config -p fpm-prodlog --no-ansi
 fi
 
 # jobber
