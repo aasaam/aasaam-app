@@ -5,7 +5,7 @@ root /app/app/public;
 
 index index.php index.html;
 
-include /app/etc/nginx/conf.d/errorpages.conf;
+include /app/etc/nginx/errorpages.conf;
 
 access_log /tmpfs/logs/nginx.access.log jsonlog;
 

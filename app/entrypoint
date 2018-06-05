@@ -7,10 +7,8 @@ echo "CONTAINER_COUNTRY=$CONTAINER_COUNTRY" >> /etc/environment
 echo "CONTAINER_ENV=$CONTAINER_ENV" >> /etc/environment
 
 # clear temporaries
-rm -rf /tmp/*
-rm -rf /tmp/.*
-rm -rf /tmpfs/*
-rm -rf /tmpfs/.*
+rm -rf /tmp/{.[^.],.??*}
+rm -rf /tmpfs/{.[^.],.??*}
 
 # make directories
 mkdir -p /tmp/php/spx
@@ -121,7 +119,7 @@ fi
 # phpenmod sysvshm
 # phpenmod tidy
 # phpenmod tokenizer
-# phpenmod uopz
+# phpenmod uopz # careful this one
 # phpenmod uv
 # phpenmod varnish
 # phpenmod vcollect
@@ -139,13 +137,11 @@ fi
 # phpenmod zip
 # phpenmod zmq
 
-# configure if swoole app
-# container-helper swoole 1
-
-# configure to `prod-logs`
-container-helper config -p fpm-prodlog --no-ansi
+# config
 if [ "$CONTAINER_ENV" = "dev" ]; then
   container-helper config -p fpm-dev --no-ansi
+else
+container-helper config -p fpm-prodlog --no-ansi
 fi
 
 # jobber
