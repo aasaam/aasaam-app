@@ -39,6 +39,7 @@ class Applier
         $this->templates->addData(['date' => gmdate('r') . "\n"]);
         $this->templates->addData(['env' => $_SERVER]);
         $this->templates->addData(['config' => $this->profiles->getConfig()]);
+        $this->templates->addData(['devmode' => $this->profiles->isDevMode()]);
         $this->templates->addData(['profile' => $this->profiles->getProfile()]);
         $this->templates->addData(['debugkey' => $this->profiles->getDebugKey()]);
         $this->templates->addData(['adminkey' => $this->profiles->getAdminKey()]);

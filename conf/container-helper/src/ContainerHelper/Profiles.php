@@ -35,6 +35,11 @@ class Profiles
     protected $debugkey = '';
 
     /**
+     * @var bool
+     */
+    protected $devmode = false;
+
+    /**
      * @var string
      */
     protected $adminkey = '';
@@ -55,6 +60,9 @@ class Profiles
             }
         }
         $this->currentProfile = $config['profile']['profile'];
+        if (strpos($this->currentProfile, 'dev') || strpos($this->currentProfile, 'debug')) {
+            $this->devmode = true;
+        }
         $this->config = $this->profiles[$this->currentProfile];
     }
 
@@ -66,6 +74,19 @@ class Profiles
     public function getDebugKey(): string
     {
         return $this->debugkey;
+    }
+
+    /**
+     * Is dev mode
+     *
+     * @return string
+     */
+    public function isDevMode(): string
+    {
+        if ($this->devmode) {
+            return '1';
+        }
+        return '0';
     }
 
     /**

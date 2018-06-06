@@ -184,6 +184,7 @@ location / {
     fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
 
     fastcgi_param CONTAINER_PROFILE '<?=$profile;?>';
+    fastcgi_param CONTAINER_DEVMODE '<?=$devmode;?>';
 <?php if (isset($env['CONTAINER_NAME'])) : ?>
     fastcgi_param CONTAINER_NAME '<?=$env['CONTAINER_NAME'];?>';
 <?php else : ?>
@@ -232,6 +233,7 @@ location @proxyapp {
   proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 
   proxy_set_header Container-Profile '<?=$profile;?>';
+  proxy_set_header Container-DevMode '<?=$devmode;?>';
 <?php if (isset($env['CONTAINER_NAME'])) : ?>
   proxy_set_header Container-Name '<?=$env['CONTAINER_NAME'];?>';
 <?php else : ?>
